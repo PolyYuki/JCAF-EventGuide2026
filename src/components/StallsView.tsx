@@ -391,11 +391,11 @@ export const StallsView: React.FC<StallsViewProps> = ({
 
             <div className="sheet-body">
               {inspectStall.imageUrl && (
-                <div className={inspectStall.category === 'sponsor' ? styles.sponsorModalImageWrapper : undefined}>
+                <div className={styles.modalImageWrapper}>
                   <img
                     src={inspectStall.imageUrl}
                     alt={isJa ? inspectStall.nameJa : inspectStall.nameEn}
-                    className={`${styles.modalImage} ${inspectStall.category === 'sponsor' ? styles.sponsorModalImage : ''}`}
+                    className={styles.modalImage}
                     onError={(e) => {
                       const target = e.currentTarget;
                       if (target.src.includes('drive.google.com/thumbnail')) {
