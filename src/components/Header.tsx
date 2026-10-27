@@ -1,8 +1,43 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useFavorites } from '../context/FavoritesContext';
 import type { EventInfo } from '../types';
 import { Bookmark, Settings, Globe, Volume2 } from 'lucide-react';
+
+/**
+ * ローカル環境（localhost / 開発モード）または管理者モードであるかを判定
+ */
+function isLocalOrAdmin(): boolean {
+  if (typeof window === 'undefined') return false;
+
+  // 1. Vite開発環境
+  if (import.meta.env.DEV) return true;
+
+  // 2. ローカル環境 (localhost, 127.0.0.1, ローカルIP等)
+  const hostname = window.location.hostname;
+  if (
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname.startsWith('192.168.') ||
+    hostname.startsWith('10.') ||
+    hostname.endsWith('.local')
+  ) {
+    return true;
+  }
+
+  // 3. 管理者アクセス用のクエリパラメータ (例: ?admin=true または ?sync=true)
+  // 本番公開後でも、運営スタッフが同期したい時にアクセス可能にする
+  const searchParams = new URLSearchParams(window.location.search);
+  if (
+    searchParams.get('admin') === 'true' ||
+    searchParams.get('sync') === 'true' ||
+    searchParams.get('settings') === 'true'
+  ) {
+    return true;
+  }
+
+  return false;
+}
 
 interface HeaderProps {
   eventInfo: EventInfo;
@@ -21,6 +56,7 @@ export const Header: React.FC<HeaderProps> = ({
   const { favoriteStallIds } = useFavorites();
 
   const isJa = lang === 'ja';
+  const showAdminSettings = useMemo(() => isLocalOrAdmin(), []);
 
   return (
     <>
@@ -87,15 +123,17 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
-          {/* スプレッドシート設定 */}
-          <button
-            onClick={onOpenSettings}
-            className="icon-btn"
-            title={t('header.data_sync')}
-            aria-label="Google Sheets settings"
-          >
-            <Settings size={17} />
-          </button>
+          {/* スプレッドシート設定 (ローカル環境または管理者モード時のみ表示) */}
+          {showAdminSettings && (
+            <button
+              onClick={onOpenSettings}
+              className="icon-btn"
+              title={t('header.data_sync')}
+              aria-label="Google Sheets settings"
+            >
+              <Settings size={17} />
+            </button>
+          )}
         </div>
       </header>
 
