@@ -1,8 +1,12 @@
 .container {
-  padding: 16px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+  overflow-x: hidden;
 }
 
 .sectionCard {

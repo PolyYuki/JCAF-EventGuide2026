@@ -12,14 +12,15 @@
 
 .mapToolbar {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  right: 12px;
+  top: 10px;
+  left: 8px;
+  right: 8px;
   z-index: 20;
   display: flex;
   flex-direction: column;
   gap: 8px;
   pointer-events: none;
+  box-sizing: border-box;
 }
 
 .filterScroll {
@@ -27,7 +28,9 @@
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  padding: 2px 4px;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .filterChip {

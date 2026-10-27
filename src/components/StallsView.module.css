@@ -1,19 +1,26 @@
 .container {
-  padding: 16px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  overflow-x: hidden;
 }
 
 .searchHeader {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .searchBarWrapper {
   position: relative;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .searchIcon {
@@ -27,6 +34,7 @@
 
 .searchInput {
   width: 100%;
+  box-sizing: border-box;
   padding: 12px 14px 12px 42px;
   border-radius: var(--radius-full);
   border: 1.5px solid var(--color-border);
@@ -60,6 +68,8 @@
   flex-wrap: wrap;
   gap: 6px;
   padding-bottom: 2px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .pill {
