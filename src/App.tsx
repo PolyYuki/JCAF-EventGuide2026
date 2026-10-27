@@ -16,10 +16,32 @@ import { FavoritesModal } from './components/FavoritesModal';
 const AppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('map');
 
-  // データステート
+  // データステート (初回レンダリング時から最新初期値/キャッシュを即時反映)
   const [eventInfo] = useState<EventInfo>(initialEventInfo);
-  const [stalls, setStalls] = useState<Stall[]>(initialStalls);
-  const [stages, setStages] = useState<StagePerformance[]>(initialStages);
+  const [stalls, setStalls] = useState<Stall[]>(() => {
+    try {
+      const cached = localStorage.getItem('jcaf_cached_stalls');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // ignore
+    }
+    return initialStalls;
+  });
+  const [stages, setStages] = useState<StagePerformance[]>(() => {
+    try {
+      const cached = localStorage.getItem('jcaf_cached_stages');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // ignore
+    }
+    return initialStages;
+  });
   const [facilities, setFacilities] = useState<Facility[]>(initialFacilities);
   const [isRemoteLoaded, setIsRemoteLoaded] = useState<boolean>(false);
   const [_isLoading, setIsLoading] = useState<boolean>(true);
