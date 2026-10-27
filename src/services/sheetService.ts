@@ -40,19 +40,32 @@ export interface SyncConfig {
   facilitiesCsvUrl: string;
 }
 
+export const DEFAULT_SYNC_CONFIG: SyncConfig = {
+  marketCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=0&single=true&output=csv',
+  sponsorCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=131662202&single=true&output=csv',
+  paidWorkshopCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1804696312&single=true&output=csv',
+  freeWorkshopCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1233726698&single=true&output=csv',
+  foodCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1944448555&single=true&output=csv',
+  stageCsvUrl: '',
+  outdoorCsvUrl: '',
+  stallsCsvUrl: '',
+  stagesCsvUrl: '',
+  facilitiesCsvUrl: ''
+};
+
 export function getSyncConfig(): SyncConfig {
   return {
-    marketCsvUrl: localStorage.getItem(STORAGE_KEYS.MARKET_CSV_URL) || '',
-    sponsorCsvUrl: localStorage.getItem(STORAGE_KEYS.SPONSOR_CSV_URL) || '',
-    paidWorkshopCsvUrl: localStorage.getItem(STORAGE_KEYS.PAID_WORKSHOP_CSV_URL) || '',
-    freeWorkshopCsvUrl: localStorage.getItem(STORAGE_KEYS.FREE_WORKSHOP_CSV_URL) || '',
-    foodCsvUrl: localStorage.getItem(STORAGE_KEYS.FOOD_CSV_URL) || '',
-    stageCsvUrl: localStorage.getItem(STORAGE_KEYS.STAGE_CSV_URL) || '',
-    outdoorCsvUrl: localStorage.getItem(STORAGE_KEYS.OUTDOOR_CSV_URL) || '',
+    marketCsvUrl: localStorage.getItem(STORAGE_KEYS.MARKET_CSV_URL) || DEFAULT_SYNC_CONFIG.marketCsvUrl,
+    sponsorCsvUrl: localStorage.getItem(STORAGE_KEYS.SPONSOR_CSV_URL) || DEFAULT_SYNC_CONFIG.sponsorCsvUrl,
+    paidWorkshopCsvUrl: localStorage.getItem(STORAGE_KEYS.PAID_WORKSHOP_CSV_URL) || DEFAULT_SYNC_CONFIG.paidWorkshopCsvUrl,
+    freeWorkshopCsvUrl: localStorage.getItem(STORAGE_KEYS.FREE_WORKSHOP_CSV_URL) || DEFAULT_SYNC_CONFIG.freeWorkshopCsvUrl,
+    foodCsvUrl: localStorage.getItem(STORAGE_KEYS.FOOD_CSV_URL) || DEFAULT_SYNC_CONFIG.foodCsvUrl,
+    stageCsvUrl: localStorage.getItem(STORAGE_KEYS.STAGE_CSV_URL) || DEFAULT_SYNC_CONFIG.stageCsvUrl,
+    outdoorCsvUrl: localStorage.getItem(STORAGE_KEYS.OUTDOOR_CSV_URL) || DEFAULT_SYNC_CONFIG.outdoorCsvUrl,
 
-    stallsCsvUrl: localStorage.getItem(STORAGE_KEYS.STALLS_CSV_URL) || '',
-    stagesCsvUrl: localStorage.getItem(STORAGE_KEYS.STAGES_CSV_URL) || '',
-    facilitiesCsvUrl: localStorage.getItem(STORAGE_KEYS.FACILITIES_CSV_URL) || ''
+    stallsCsvUrl: localStorage.getItem(STORAGE_KEYS.STALLS_CSV_URL) || DEFAULT_SYNC_CONFIG.stallsCsvUrl,
+    stagesCsvUrl: localStorage.getItem(STORAGE_KEYS.STAGES_CSV_URL) || DEFAULT_SYNC_CONFIG.stagesCsvUrl,
+    facilitiesCsvUrl: localStorage.getItem(STORAGE_KEYS.FACILITIES_CSV_URL) || DEFAULT_SYNC_CONFIG.facilitiesCsvUrl
   };
 }
 
