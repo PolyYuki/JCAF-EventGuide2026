@@ -1,0 +1,180 @@
+.container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sectionCard {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1.5px solid var(--color-border-light);
+}
+
+.sectionIconWrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-bg-subtle);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sectionTitle {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+/* Facility Grid */
+.facilityGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 500px) {
+  .facilityGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.facilityItem {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: var(--radius-md);
+  border: 1px solid #e2e8f0;
+}
+
+.facilityItemIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #dbeafe;
+  color: #1e40af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.facilityItemContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.facilityItemName {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 2px;
+}
+
+.facilityItemDesc {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}
+
+/* Access block */
+.accessRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--color-text-main);
+}
+
+.accessItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.accessItem strong {
+  min-width: 70px;
+  color: var(--color-primary);
+}
+
+/* FAQ Accordion */
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.faqItem {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.faqQuestion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #fafaf9;
+  border: none;
+  text-align: left;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  cursor: pointer;
+  gap: 8px;
+}
+
+.faqQuestion:hover {
+  background: #f4f4f2;
+}
+
+.faqAnswer {
+  padding: 12px 14px;
+  background: #ffffff;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--color-text-main);
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* JCAF Mission */
+.jcafBanner {
+  background: linear-gradient(135deg, #0f1e36 0%, #1c355e 100%);
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  border: 1.5px solid var(--color-gold);
+}
+
+.jcafBannerTitle {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.jcafBannerText {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+}
