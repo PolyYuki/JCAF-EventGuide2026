@@ -173,13 +173,37 @@
   letter-spacing: 0.05em;
 }
 
+.cardMain {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 6px 0 8px;
+}
+
+.performerLogo {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  object-fit: contain;
+  background: #f8fafc;
+  border: 1px solid var(--color-border);
+  padding: 3px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.titleBlock {
+  flex: 1;
+  min-width: 0;
+}
+
 .programTitle {
   font-family: var(--font-serif);
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--color-primary);
   line-height: 1.35;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .artistRow {
@@ -189,7 +213,7 @@
   font-size: 0.82rem;
   font-weight: 600;
   color: #475569;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .stageLocationBadge {

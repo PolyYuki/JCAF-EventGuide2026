@@ -207,49 +207,64 @@ export const StageView: React.FC<StageViewProps> = ({ stages, onShowStageOnMap }
                   </div>
                 </div>
 
-                <h3 className={styles.programTitle}>
-                  {isJa ? perf.titleJa : perf.titleEn}
-                </h3>
-
-                {(perf.artistJa || perf.artistEn) && (
-                  <div className={styles.artistRow}>
-                    <UserCheck size={14} style={{ color: 'var(--color-accent)' }} />
-                    <span>{isJa ? (perf.artistJa || perf.artistEn) : (perf.artistEn || perf.artistJa)}</span>
-                  </div>
-                )}
-
-                {perf.link && (
-                  <div style={{ marginTop: '6px' }}>
-                    <a
-                      href={perf.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-outline"
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '5px',
-                        padding: '3px 8px',
-                        fontSize: '0.72rem',
-                        borderRadius: '16px',
-                        color: 'var(--color-text)',
-                        borderColor: 'var(--color-border)',
-                        textDecoration: 'none',
-                        background: 'rgba(255, 255, 255, 0.05)'
+                <div className={styles.cardMain}>
+                  {perf.imageUrl && (
+                    <img
+                      src={perf.imageUrl}
+                      alt={perf.titleJa}
+                      className={styles.performerLogo}
+                      onError={(e) => {
+                        (e.target as HTMLElement).style.display = 'none';
                       }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {perf.link.includes('instagram.com') ? (
-                        <InstagramIcon size={12} style={{ color: '#E1306C' }} />
-                      ) : (
-                        <ExternalLink size={12} />
-                      )}
-                      <span>
-                        {perf.link.includes('instagram.com') ? 'Instagram' : (isJa ? '公式リンク' : 'Link')}
-                      </span>
-                    </a>
+                    />
+                  )}
+
+                  <div className={styles.titleBlock}>
+                    <h3 className={styles.programTitle}>
+                      {isJa ? perf.titleJa : perf.titleEn}
+                    </h3>
+
+                    {(perf.artistJa || perf.artistEn) && (
+                      <div className={styles.artistRow}>
+                        <UserCheck size={14} style={{ color: 'var(--color-accent)' }} />
+                        <span>{isJa ? (perf.artistJa || perf.artistEn) : (perf.artistEn || perf.artistJa)}</span>
+                      </div>
+                    )}
+
+                    {perf.link && (
+                      <div style={{ marginTop: '4px' }}>
+                        <a
+                          href={perf.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-outline"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            padding: '3px 8px',
+                            fontSize: '0.72rem',
+                            borderRadius: '16px',
+                            color: 'var(--color-text)',
+                            borderColor: 'var(--color-border)',
+                            textDecoration: 'none',
+                            background: 'rgba(255, 255, 255, 0.05)'
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {perf.link.includes('instagram.com') ? (
+                            <InstagramIcon size={12} style={{ color: '#E1306C' }} />
+                          ) : (
+                            <ExternalLink size={12} />
+                          )}
+                          <span>
+                            {perf.link.includes('instagram.com') ? 'Instagram' : (isJa ? '公式リンク' : 'Link')}
+                          </span>
+                        </a>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
                   <div className={styles.stageLocationBadge}>
