@@ -55,6 +55,7 @@ export interface StagePerformance {
   imageUrl?: string;
   categoryJa: string;
   categoryEn: string;
+  link?: string;
 }
 
 export type FacilityType = 'toilet' | 'info' | 'firstaid' | 'food_court' | 'trash' | 'nursing' | 'entrance';

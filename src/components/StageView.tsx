@@ -7,8 +7,30 @@ import {
   MapPin,
   ChevronDown,
   ChevronUp,
-  UserCheck
+  UserCheck,
+  ExternalLink
 } from 'lucide-react';
+
+const InstagramIcon: React.FC<{ size?: number; style?: React.CSSProperties }> = ({
+  size = 14,
+  style
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={style}
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
 
 interface StageViewProps {
   stages: StagePerformance[];
@@ -189,10 +211,45 @@ export const StageView: React.FC<StageViewProps> = ({ stages, onShowStageOnMap }
                   {isJa ? perf.titleJa : perf.titleEn}
                 </h3>
 
-                <div className={styles.artistRow}>
-                  <UserCheck size={14} style={{ color: 'var(--color-accent)' }} />
-                  <span>{isJa ? perf.artistJa : perf.artistEn}</span>
-                </div>
+                {(perf.artistJa || perf.artistEn) && (
+                  <div className={styles.artistRow}>
+                    <UserCheck size={14} style={{ color: 'var(--color-accent)' }} />
+                    <span>{isJa ? (perf.artistJa || perf.artistEn) : (perf.artistEn || perf.artistJa)}</span>
+                  </div>
+                )}
+
+                {perf.link && (
+                  <div style={{ marginTop: '6px' }}>
+                    <a
+                      href={perf.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-outline"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        padding: '3px 8px',
+                        fontSize: '0.72rem',
+                        borderRadius: '16px',
+                        color: 'var(--color-text)',
+                        borderColor: 'var(--color-border)',
+                        textDecoration: 'none',
+                        background: 'rgba(255, 255, 255, 0.05)'
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {perf.link.includes('instagram.com') ? (
+                        <InstagramIcon size={12} style={{ color: '#E1306C' }} />
+                      ) : (
+                        <ExternalLink size={12} />
+                      )}
+                      <span>
+                        {perf.link.includes('instagram.com') ? 'Instagram' : (isJa ? '公式リンク' : 'Link')}
+                      </span>
+                    </a>
+                  </div>
+                )}
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
                   <div className={styles.stageLocationBadge}>
@@ -209,20 +266,80 @@ export const StageView: React.FC<StageViewProps> = ({ stages, onShowStageOnMap }
                 {/* 展開時の詳細説明 */}
                 {isExpanded && (
                   <div className={styles.descText}>
-                    <p>{isJa ? perf.descJa : perf.descEn}</p>
-                    {onShowStageOnMap && (
-                      <button
-                        className="btn btn-outline"
-                        style={{ marginTop: '10px', width: '100%', fontSize: '0.75rem', padding: '6px' }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onShowStageOnMap(perf.stageId);
-                        }}
-                      >
-                        <MapPin size={13} />
-                        <span>{isJa ? '地図でこのステージの場所を見る' : 'View stage on map'}</span>
-                      </button>
+                    {perf.imageUrl && (
+                      <div style={{ marginBottom: '10px', textAlign: 'center' }}>
+                        <img
+                          src={perf.imageUrl}
+                          alt={perf.titleJa}
+                          style={{
+                            maxHeight: '140px',
+                            maxWidth: '100%',
+                            borderRadius: '8px',
+                            objectFit: 'contain',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid var(--color-border)'
+                          }}
+                          onError={(e) => {
+                            (e.target as HTMLElement).style.display = 'none';
+                          }}
+                        />
+                      </div>
                     )}
+
+                    {(perf.descJa || perf.descEn) ? (
+                      <p>{isJa ? perf.descJa : perf.descEn}</p>
+                    ) : (
+                      <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem' }}>
+                        {isJa ? '当日の迫力あるパフォーマンスをぜひステージでお楽しみください！' : 'Enjoy the dynamic live performance at the stage!'}
+                      </p>
+                    )}
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
+                      {perf.link && (
+                        <a
+                          href={perf.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-primary"
+                          style={{
+                            width: '100%',
+                            fontSize: '0.75rem',
+                            padding: '6px 12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '6px',
+                            textDecoration: 'none'
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {perf.link.includes('instagram.com') ? (
+                            <InstagramIcon size={14} />
+                          ) : (
+                            <ExternalLink size={14} />
+                          )}
+                          <span>
+                            {perf.link.includes('instagram.com')
+                              ? (isJa ? '出演者 / 演目のInstagramを見る' : 'View on Instagram')
+                              : (isJa ? '公式リンク・関連ページを開く' : 'Open Link')}
+                          </span>
+                        </a>
+                      )}
+
+                      {onShowStageOnMap && (
+                        <button
+                          className="btn btn-outline"
+                          style={{ width: '100%', fontSize: '0.75rem', padding: '6px' }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onShowStageOnMap(perf.stageId);
+                          }}
+                        >
+                          <MapPin size={13} />
+                          <span>{isJa ? '地図でこのステージの場所を見る' : 'View stage on map'}</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>

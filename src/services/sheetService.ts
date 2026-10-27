@@ -46,7 +46,7 @@ export const DEFAULT_SYNC_CONFIG: SyncConfig = {
   paidWorkshopCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1804696312&single=true&output=csv',
   freeWorkshopCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1233726698&single=true&output=csv',
   foodCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1944448555&single=true&output=csv',
-  stageCsvUrl: '',
+  stageCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=795207739&single=true&output=csv',
   outdoorCsvUrl: '',
   stallsCsvUrl: '',
   stagesCsvUrl: '',
@@ -465,10 +465,14 @@ function parsePerformanceRow(
   defaultStageNameJa: string,
   defaultStageNameEn: string
 ): StagePerformance | null {
-  const titleJa = getVal(row, 'titleJa', 'title', '演目', 'プログラム名', 'タイトル');
-  const titleEn = getVal(row, 'titleEn', 'title_en', '英語タイトル') || titleJa;
-  const artistJa = getVal(row, 'artistJa', 'artist', '出演者', '出演者名', '団体名', 'アーティスト');
-  const artistEn = getVal(row, 'artistEn', 'artist_en', '英語出演者') || artistJa;
+  const rawTitleJa = getVal(row, 'titleJa', 'title', '演目', 'プログラム名', 'タイトル');
+  const titleJa = rawTitleJa.replace(/\r?\n\s*/g, ' ').trim();
+  const rawTitleEn = getVal(row, 'titleEn', 'title_en', '英語タイトル');
+  const titleEn = rawTitleEn ? rawTitleEn.replace(/\r?\n\s*/g, ' ').trim() : titleJa;
+  const rawArtistJa = getVal(row, 'artistJa', 'artist', '出演者', '出演者名', '団体名', 'アーティスト');
+  const artistJa = rawArtistJa.replace(/\r?\n\s*/g, ' ').trim();
+  const rawArtistEn = getVal(row, 'artistEn', 'artist_en', '英語出演者');
+  const artistEn = rawArtistEn ? rawArtistEn.replace(/\r?\n\s*/g, ' ').trim() : artistJa;
 
   if (!titleJa && !artistJa && !getVal(row, 'startTime', '開始時刻')) {
     return null;
@@ -506,6 +510,8 @@ function parsePerformanceRow(
   const categoryEn = getVal(row, 'categoryEn', 'category_en', '英語ジャンル') || 'Performance';
   const rawImageUrl = getVal(row, 'imageUrl', 'image', '写真URL', '画像URL', '写真', '画像', 'ロゴ', 'logo');
   const imageUrl = rawImageUrl ? formatImageUrl(rawImageUrl) : undefined;
+  const rawLink = getVal(row, 'link', 'Link', 'リンク', 'url', 'URL', 'インスタ', 'instagram', 'Instagram');
+  const link = rawLink ? formatInstagramUrl(rawLink) : undefined;
   const id = getVal(row, 'id', 'ID') || `perf-${stageId}-${index + 1}`;
 
   return {
@@ -524,7 +530,8 @@ function parsePerformanceRow(
     descEn,
     imageUrl,
     categoryJa,
-    categoryEn
+    categoryEn,
+    link
   };
 }
 
