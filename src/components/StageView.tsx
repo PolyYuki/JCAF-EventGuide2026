@@ -186,7 +186,7 @@ export const StageView: React.FC<StageViewProps> = ({ stages, onShowStageOnMap }
                   <div className={styles.timeBadge}>
                     <Clock size={13} />
                     <span>
-                      {perf.startTime} - {perf.endTime}
+                      {perf.endTime ? `${perf.startTime} - ${perf.endTime}` : perf.startTime}
                     </span>
                   </div>
 

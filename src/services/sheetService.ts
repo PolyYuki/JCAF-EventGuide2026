@@ -47,7 +47,7 @@ export const DEFAULT_SYNC_CONFIG: SyncConfig = {
   freeWorkshopCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1233726698&single=true&output=csv',
   foodCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1944448555&single=true&output=csv',
   stageCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=795207739&single=true&output=csv',
-  outdoorCsvUrl: '',
+  outdoorCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=536106092&single=true&output=csv',
   stallsCsvUrl: '',
   stagesCsvUrl: '',
   facilitiesCsvUrl: ''
@@ -234,8 +234,8 @@ export function formatInstagramUrl(rawVal: string): string {
     return `https://${trimmed}`;
   }
 
-  // @username または username の場合
-  trimmed = trimmed.replace(/^@/, '').replace(/^\/+|\/+$/g, '');
+  // @username または username の場合 (全角＠も対応)
+  trimmed = trimmed.replace(/^[@＠]/, '').replace(/^\/+|\/+$/g, '');
   if (trimmed) {
     return `https://www.instagram.com/${trimmed}/`;
   }
@@ -485,7 +485,7 @@ function parsePerformanceRow(
   }
 
   const startTime = getVal(row, 'startTime', 'start', '開始時刻', '開始時間', '開始') || '10:00';
-  const endTime = getVal(row, 'endTime', 'end', '終了時刻', '終了時間', '終了') || '10:45';
+  const endTime = getVal(row, 'endTime', 'end', '終了時刻', '終了時間', '終了');
 
   // ステージ識別
   const explicitStage = getVal(row, 'stageId', 'stage', 'エリア', 'ステージ', 'ステージ名').toLowerCase();
