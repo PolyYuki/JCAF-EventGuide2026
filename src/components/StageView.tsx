@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { StagePerformance } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 import styles from './StageView.module.css';
@@ -45,16 +45,48 @@ export const StageView: React.FC<StageViewProps> = ({ stages, onShowStageOnMap }
   const [stageFilter, setStageFilter] = useState<'all' | 'stage' | 'outdoor'>('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  // 現在時刻の取得（シミュレーション用：イベント開催中の場合は実時刻、それ以外は代表時刻 "12:15" としてデモ判定も可能）
-  const now = new Date();
+  // 現在時刻のリアルタイム連動（15秒ごとに自動更新）
+  const [now, setNow] = useState<Date>(() => new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, 15000);
+    return () => clearInterval(timer);
+  }, []);
+
   const currentHour = now.getHours();
   const currentMinute = now.getMinutes();
   const currentTimeMinutes = currentHour * 60 + currentMinute;
+  const formattedCurrentTime = `${String(currentHour).padStart(2, '0')}:${String(currentMinute).padStart(2, '0')}`;
 
-  // 判定ヘルパー（"HH:MM" -> 分）
-  const parseTimeToMinutes = (timeStr: string): number => {
-    const [h, m] = timeStr.split(':').map(Number);
-    return (h || 0) * 60 + (m || 0);
+  // "HH:MM" -> 分への変換ヘルパー
+  const parseTimeToMinutes = (timeStr?: string): number | null => {
+    if (!timeStr) return null;
+    const parts = timeStr.trim().split(':');
+    if (parts.length < 2) return null;
+    const h = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10);
+    if (isNaN(h) || isNaN(m)) return null;
+    return h * 60 + m;
+  };
+
+  // 演目の開始時刻と終了時刻（分換算）を算出
+  // 終了時刻が空欄の場合は、同一エリアの次の演目開始時刻、または開始+30分
+  const getPerformanceInterval = (perf: StagePerformance, list: StagePerformance[]) => {
+    const start = parseTimeToMinutes(perf.startTime) ?? 660; // 11:00
+    let end = parseTimeToMinutes(perf.endTime);
+    if (end === null || end <= start) {
+      const nextSameArea = list
+        .filter((s) => s.stageId === perf.stageId && (parseTimeToMinutes(s.startTime) ?? 0) > start)
+        .sort((a, b) => (parseTimeToMinutes(a.startTime) ?? 0) - (parseTimeToMinutes(b.startTime) ?? 0))[0];
+      if (nextSameArea) {
+        end = parseTimeToMinutes(nextSameArea.startTime);
+      } else {
+        end = start + 30;
+      }
+    }
+    return { start, end: end ?? start + 30 };
   };
 
   // 選択日とフィルターで絞り込み
@@ -66,33 +98,32 @@ export const StageView: React.FC<StageViewProps> = ({ stages, onShowStageOnMap }
       if (stageFilter === 'outdoor') return s.stageId === 'outdoor' || s.stageId === 'culture';
       return true;
     })
-    .sort((a, b) => parseTimeToMinutes(a.startTime) - parseTimeToMinutes(b.startTime));
+    .sort((a, b) => (parseTimeToMinutes(a.startTime) ?? 0) - (parseTimeToMinutes(b.startTime) ?? 0));
 
   // ステータス判定（NOW, NEXT, UPCOMING, ENDED）
-  const getPerformanceStatus = (perf: StagePerformance, index: number) => {
-    const start = parseTimeToMinutes(perf.startTime);
-    const end = parseTimeToMinutes(perf.endTime);
+  // ステージとアウトドアパフォーマンスは別会場で同時進行するため、エリアごとに独立して判定
+  const getPerformanceStatus = (perf: StagePerformance) => {
+    const { start, end } = getPerformanceInterval(perf, stages);
 
-    // イベント時間内（10:00〜18:00）で比較
-    if (currentTimeMinutes >= 600 && currentTimeMinutes <= 1080) {
-      if (currentTimeMinutes >= start && currentTimeMinutes <= end) {
-        return 'NOW';
-      }
-      if (currentTimeMinutes < start) {
-        // 次の直近プログラムか
-        const isNext = !dayStages.some((other) => {
-          const otherStart = parseTimeToMinutes(other.startTime);
-          return otherStart > currentTimeMinutes && otherStart < start;
-        });
-        if (isNext) return 'NEXT';
-      }
-      if (currentTimeMinutes > end) {
-        return 'ENDED';
-      }
-    } else {
-      // 開催時間外のプレビュー時は Day 1 の2番目、3番目の演目をデモでハイライト
-      if (activeDay === 1 && index === 1) return 'NOW';
-      if (activeDay === 1 && index === 2) return 'NEXT';
+    // 1. 現在開催中（NOW）: 実時刻が開始時刻以上かつ終了時刻未満
+    if (currentTimeMinutes >= start && currentTimeMinutes < end) {
+      return 'NOW';
+    }
+
+    // 2. 終了済み（ENDED）: 実時刻が終了時刻以降
+    if (currentTimeMinutes >= end) {
+      return 'ENDED';
+    }
+
+    // 3. 次回プログラム（NEXT）: まだ始まっていない演目のうち、そのエリアで最も早いもの
+    const upcomingInSameArea = stages
+      .filter((s) => s.stageId === perf.stageId)
+      .map((s) => ({ perf: s, ...getPerformanceInterval(s, stages) }))
+      .filter((item) => item.start > currentTimeMinutes)
+      .sort((a, b) => a.start - b.start);
+
+    if (upcomingInSameArea.length > 0 && upcomingInSameArea[0].perf.id === perf.id) {
+      return 'NEXT';
     }
 
     return 'UPCOMING';
@@ -124,21 +155,28 @@ export const StageView: React.FC<StageViewProps> = ({ stages, onShowStageOnMap }
         <div
           style={{
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px',
+            gap: '4px',
             padding: '8px 16px',
             background: 'var(--color-bg-surface)',
-            borderRadius: 'var(--radius-full)',
+            borderRadius: 'var(--radius-lg)',
             border: '1px solid var(--color-border)',
             margin: '0 auto 14px',
-            fontSize: '0.82rem',
-            fontWeight: 700,
-            color: 'var(--color-primary)'
+            width: '100%',
+            maxWidth: '100%',
+            boxSizing: 'border-box'
           }}
         >
-          <span>📅</span>
-          <span>{isJa ? '2026年11月8日（日）11:00 AM - 4:00 PM' : 'Sunday, November 8, 2026, 11:00 AM - 4:00 PM'}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)' }}>
+            <span>📅</span>
+            <span>{isJa ? '2026年11月8日（日）11:00 AM - 4:00 PM' : 'Sunday, November 8, 2026, 11:00 AM - 4:00 PM'}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: 'var(--color-text-muted)' }}>
+            <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
+            <span>{isJa ? `現在時刻に自動連動中 (${formattedCurrentTime})` : `Live Clock Sync (${formattedCurrentTime})`}</span>
+          </div>
         </div>
       )}
 
@@ -166,11 +204,12 @@ export const StageView: React.FC<StageViewProps> = ({ stages, onShowStageOnMap }
 
       {/* タイムラインリスト */}
       <div className={styles.timeline}>
-        {dayStages.map((perf, index) => {
-          const status = getPerformanceStatus(perf, index);
+        {dayStages.map((perf) => {
+          const status = getPerformanceStatus(perf);
           const isExpanded = expandedId === perf.id;
           const isNow = status === 'NOW';
           const isNext = status === 'NEXT';
+          const isEnded = status === 'ENDED';
 
           return (
             <div key={perf.id} className={styles.timelineItem}>
@@ -179,7 +218,7 @@ export const StageView: React.FC<StageViewProps> = ({ stages, onShowStageOnMap }
               />
 
               <div
-                className={`${styles.stageCard} ${isNow ? styles.stageCardNow : ''}`}
+                className={`${styles.stageCard} ${isNow ? styles.stageCardNow : ''} ${isEnded ? styles.stageCardEnded : ''}`}
                 onClick={() => toggleExpand(perf.id)}
               >
                 <div className={styles.cardHeader}>
@@ -199,6 +238,11 @@ export const StageView: React.FC<StageViewProps> = ({ stages, onShowStageOnMap }
                     {isNext && (
                       <span className={styles.statusTagNext}>
                         ⏳ {t('stage.next')}
+                      </span>
+                    )}
+                    {isEnded && (
+                      <span className={styles.statusTagEnded}>
+                        ✓ {isJa ? '終了' : 'Ended'}
                       </span>
                     )}
                     <span className="badge-category badge-craft" style={{ fontSize: '0.65rem' }}>
