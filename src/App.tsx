@@ -116,6 +116,7 @@ const AppContent: React.FC = () => {
               if (stallId) setFocusedStallId(stallId);
               setActiveTab('stalls');
             }}
+            onNavigateToStage={() => setActiveTab('stage')}
           />
         )}
 

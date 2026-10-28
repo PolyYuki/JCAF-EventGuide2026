@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { Stall, Facility } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { getBoothCoordinates } from '../data/boothCoordinates';
 import styles from './MapView.module.css';
 import {
   ZoomIn,
@@ -13,7 +14,8 @@ import {
   ShieldAlert,
   Coffee,
   Trash2,
-  Baby
+  Baby,
+  Calendar
 } from 'lucide-react';
 
 interface MapViewProps {
@@ -23,7 +25,12 @@ interface MapViewProps {
   onSelectStall: (stall: Stall) => void;
   onClearSelectedStall?: () => void;
   onNavigateToStallList: (stallId?: string) => void;
+  onNavigateToStage?: () => void;
 }
+
+// 添付公式会場マップ画像の実寸解像度
+const MAP_WIDTH = 954;
+const MAP_HEIGHT = 1024;
 
 export const MapView: React.FC<MapViewProps> = ({
   stalls,
@@ -31,7 +38,8 @@ export const MapView: React.FC<MapViewProps> = ({
   selectedStallId,
   onSelectStall,
   onClearSelectedStall,
-  onNavigateToStallList
+  onNavigateToStallList,
+  onNavigateToStage
 }) => {
   const { lang, t } = useLanguage();
   const isJa = lang === 'ja';
@@ -46,12 +54,29 @@ export const MapView: React.FC<MapViewProps> = ({
   const dragStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const viewportRef = useRef<HTMLDivElement>(null);
 
-  // 選択中のアイテム（ストールまたは施設）
+  // 選択中のアイテム（ストール、施設、ステージ）
   const [selectedItem, setSelectedItem] = useState<{
-    type: 'stall' | 'facility';
+    type: 'stall' | 'facility' | 'stage';
     stall?: Stall;
     facility?: Facility;
+    stageInfo?: {
+      titleJa: string;
+      titleEn: string;
+      descJa: string;
+      descEn: string;
+      locationJa: string;
+      locationEn: string;
+    };
   } | null>(null);
+
+  // ブースの座標解決ヘルパー
+  const getStallCoord = (stall: Stall) => {
+    const boothCoord = getBoothCoordinates(stall.boothNumber);
+    if (boothCoord) {
+      return { x: boothCoord.x, y: boothCoord.y };
+    }
+    return { x: stall.mapX || 50, y: stall.mapY || 50 };
+  };
 
   // 外部からの selectedStallId 変更検知（ストール一覧からのジャンプ）
   useEffect(() => {
@@ -59,12 +84,13 @@ export const MapView: React.FC<MapViewProps> = ({
       const found = stalls.find((s) => s.id === selectedStallId);
       if (found) {
         setSelectedItem({ type: 'stall', stall: found });
+        const coord = getStallCoord(found);
         // マップ位置を自動センタリング＆少し拡大
         if (viewportRef.current) {
           const rect = viewportRef.current.getBoundingClientRect();
-          const targetX = (found.mapX / 100) * 1000;
-          const targetY = (found.mapY / 100) * 750;
-          const newScale = 1.4;
+          const targetX = (coord.x / 100) * MAP_WIDTH;
+          const targetY = (coord.y / 100) * MAP_HEIGHT;
+          const newScale = 1.35;
           setScale(newScale);
           setPosition({
             x: rect.width / 2 - targetX * newScale,
@@ -79,12 +105,12 @@ export const MapView: React.FC<MapViewProps> = ({
   useEffect(() => {
     if (viewportRef.current && !selectedStallId) {
       const rect = viewportRef.current.getBoundingClientRect();
-      const initialScale = Math.min(rect.width / 1000, rect.height / 750) * 0.95;
-      const validScale = Math.max(0.6, Math.min(1.0, initialScale));
+      const initialScale = Math.min(rect.width / MAP_WIDTH, rect.height / MAP_HEIGHT) * 0.95;
+      const validScale = Math.max(0.4, Math.min(1.0, initialScale));
       setScale(validScale);
       setPosition({
-        x: (rect.width - 1000 * validScale) / 2,
-        y: (rect.height - 750 * validScale) / 2
+        x: (rect.width - MAP_WIDTH * validScale) / 2,
+        y: (rect.height - MAP_HEIGHT * validScale) / 2
       });
     }
   }, []);
@@ -113,7 +139,7 @@ export const MapView: React.FC<MapViewProps> = ({
   // ズーム操作
   const handleZoom = (delta: number) => {
     setScale((prev) => {
-      const next = Math.min(Math.max(0.6, prev + delta), 2.5);
+      const next = Math.min(Math.max(0.4, prev + delta), 2.8);
       return Number(next.toFixed(2));
     });
   };
@@ -121,12 +147,12 @@ export const MapView: React.FC<MapViewProps> = ({
   const handleReset = () => {
     if (viewportRef.current) {
       const rect = viewportRef.current.getBoundingClientRect();
-      const initialScale = Math.min(rect.width / 1000, rect.height / 750) * 0.95;
-      const validScale = Math.max(0.6, Math.min(1.0, initialScale));
+      const initialScale = Math.min(rect.width / MAP_WIDTH, rect.height / MAP_HEIGHT) * 0.95;
+      const validScale = Math.max(0.4, Math.min(1.0, initialScale));
       setScale(validScale);
       setPosition({
-        x: (rect.width - 1000 * validScale) / 2,
-        y: (rect.height - 750 * validScale) / 2
+        x: (rect.width - MAP_WIDTH * validScale) / 2,
+        y: (rect.height - MAP_HEIGHT * validScale) / 2
       });
     }
   };
@@ -296,151 +322,106 @@ export const MapView: React.FC<MapViewProps> = ({
             transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`
           }}
         >
-          {/* ベース会場マップSVG（和風フェスティバル庭園マップ） */}
-          <svg
-            viewBox="0 0 1000 750"
-            width="1000"
-            height="750"
-            style={{ width: '100%', height: '100%', display: 'block' }}
+          {/* 公式会場マップ画像 */}
+          <img
+            src="/venue-map.png"
+            alt="JCAF Venue Map"
+            className={styles.mapImage}
+            draggable={false}
+          />
+
+          {/* --- メインステージ タップゾーン --- */}
+          <div
+            className={styles.pinContainer}
+            style={{ left: '52.4%', top: '40.8%' }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedItem({
+                type: 'stage',
+                stageInfo: {
+                  titleJa: 'メインホール ステージ (Stage Performance & Workshop)',
+                  titleEn: 'Main Hall Stage (Stage Performance & Workshop)',
+                  descJa: 'Collingwood Town Hall メインホール特設ステージ。和太鼓、伝統舞踊、武道演武、音楽ライブを開催！',
+                  descEn: 'Collingwood Town Hall Main Stage featuring Taiko drumming, traditional dance, martial arts and live music!',
+                  locationJa: 'Collingwood Town Hall (Main Hall)',
+                  locationEn: 'Collingwood Town Hall (Main Hall)'
+                }
+              });
+            }}
+            title={isJa ? 'タップしてステージ情報を確認' : 'Tap for Main Stage info'}
           >
-            <defs>
-              {/* 背景テクスチャ */}
-              <pattern id="tatami-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ede7db" strokeWidth="0.8" />
-              </pattern>
-              {/* 池のグラデーション */}
-              <linearGradient id="pondGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#bae6fd" />
-                <stop offset="100%" stopColor="#7dd3fc" />
-              </linearGradient>
-              {/* メインステージの屋根 */}
-              <linearGradient id="roofGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#881337" />
-                <stop offset="100%" stopColor="#4c0519" />
-              </linearGradient>
-            </defs>
+            <div
+              style={{
+                background: 'rgba(185, 28, 28, 0.9)',
+                color: '#fff',
+                padding: '3px 8px',
+                borderRadius: '6px',
+                fontSize: '0.65rem',
+                fontWeight: 800,
+                boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                border: '1.5px solid #ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '3px',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              🎤 {isJa ? 'ステージ' : 'Stage'}
+            </div>
+          </div>
 
-            {/* 会場敷地背景 */}
-            <rect width="1000" height="750" fill="#f4efe6" />
-            <rect width="1000" height="750" fill="url(#tatami-grid)" opacity="0.6" />
+          {/* --- アウトドアパフォーマンス タップゾーン --- */}
+          <div
+            className={styles.pinContainer}
+            style={{ left: '86.9%', top: '75.4%' }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedItem({
+                type: 'stage',
+                stageInfo: {
+                  titleJa: 'アウトドアパフォーマンス (Outdoor Performance)',
+                  titleEn: 'Outdoor Performance Area',
+                  descJa: 'Town Hall Reserve（公園）野外芝生エリア。開放的な屋外でのストリートパフォーマンス、太鼓、大道芸をお届け！',
+                  descEn: 'Town Hall Reserve outdoor lawn area with exciting open-air street performances, taiko and entertainment!',
+                  locationJa: 'Town Hall Reserve (Park)',
+                  locationEn: 'Town Hall Reserve (Park)'
+                }
+              });
+            }}
+            title={isJa ? 'タップしてアウトドアパフォーマンス情報を確認' : 'Tap for Outdoor Performance info'}
+          >
+            <div
+              style={{
+                background: 'rgba(2, 132, 199, 0.9)',
+                color: '#fff',
+                padding: '3px 8px',
+                borderRadius: '6px',
+                fontSize: '0.65rem',
+                fontWeight: 800,
+                boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                border: '1.5px solid #ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '3px',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              🌳 {isJa ? '屋外演目' : 'Outdoor'}
+            </div>
+          </div>
 
-            {/* 外郭・白壁と木々 */}
-            <rect x="20" y="20" width="960" height="710" rx="20" fill="#faf7f0" stroke="#d5cbb8" strokeWidth="3" />
-
-            {/* 芝生エリア・緑地 */}
-            <path
-              d="M 200 120 Q 500 80 800 120 Q 880 300 850 500 Q 750 650 450 630 Q 150 620 120 450 Q 100 250 200 120 Z"
-              fill="#e2edd9"
-              opacity="0.85"
-            />
-
-            {/* 園路・玉砂利・石畳アプローチ */}
-            {/* メインゲートからの大通り */}
-            <path
-              d="M 120 680 Q 250 520 500 480 Q 750 480 880 350"
-              fill="none"
-              stroke="#dcd2bf"
-              strokeWidth="50"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            {/* 中央サークル広場 */}
-            <circle cx="500" cy="480" r="90" fill="#e8dfce" stroke="#cfc1a8" strokeWidth="3" strokeDasharray="6 4" />
-
-            {/* 庭園の池（Shinji-ike / 心字池） */}
-            <path
-              d="M 380 520 C 440 500, 480 540, 520 530 C 580 520, 620 580, 580 620 C 530 660, 420 650, 360 600 C 330 570, 340 530, 380 520 Z"
-              fill="url(#pondGrad)"
-              stroke="#38bdf8"
-              strokeWidth="2"
-              opacity="0.9"
-            />
-            {/* 太鼓橋 */}
-            <path d="M 450 530 Q 470 515 490 530" stroke="#c23b22" strokeWidth="6" fill="none" strokeLinecap="round" />
-
-            {/* 庭園の松と桜のシンボル */}
-            <g opacity="0.7">
-              <circle cx="280" cy="160" r="14" fill="#a7f3d0" />
-              <circle cx="290" cy="150" r="10" fill="#6ee7b7" />
-              <circle cx="720" cy="180" r="16" fill="#fbcfe8" />
-              <circle cx="735" cy="170" r="12" fill="#f472b6" />
-              <circle cx="680" cy="620" r="15" fill="#a7f3d0" />
-              <circle cx="200" cy="420" r="18" fill="#a7f3d0" />
-            </g>
-
-            {/* --- 建造物エリア --- */}
-
-            {/* メインステージ「雅 (Miyabi)」 */}
-            <g transform="translate(410, 60)">
-              <rect x="0" y="0" width="180" height="95" rx="8" fill="url(#roofGrad)" stroke="#d4af37" strokeWidth="2.5" />
-              <rect x="15" y="15" width="150" height="65" rx="4" fill="#1e293b" />
-              {/* ステージ照明・舞台演出 */}
-              <circle cx="90" cy="47" r="24" fill="#f59e0b" opacity="0.25" />
-              <text x="90" y="44" fill="#ffffff" fontSize="13" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">
-                STAGE
-              </text>
-              <text x="90" y="62" fill="#d4af37" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">
-                {isJa ? 'ステージ' : 'Main Stage'}
-              </text>
-              {/* 観覧席エリアマーク */}
-              <rect x="-20" y="105" width="220" height="60" rx="6" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="4 4" />
-              <text x="90" y="138" fill="#64748b" fontSize="10" textAnchor="middle">
-                {isJa ? '観覧芝生エリア' : 'Lawn Viewing Area'}
-              </text>
-            </g>
-
-            {/* アウトドアパフォーマンス */}
-            <g transform="translate(60, 240)">
-              <rect x="0" y="0" width="160" height="80" rx="8" fill="#0369a1" stroke="#38bdf8" strokeWidth="2" />
-              <rect x="8" y="8" width="144" height="64" rx="4" fill="#0f172a" />
-              <text x="80" y="36" fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle">
-                OUTDOOR PERFORMANCE
-              </text>
-              <text x="80" y="54" fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">
-                {isJa ? 'アウトドアパフォーマンス' : 'Outdoor Area'}
-              </text>
-            </g>
-
-            {/* 正門メインエントランス */}
-            <g transform="translate(60, 640)">
-              <rect x="0" y="0" width="130" height="50" rx="6" fill="#334155" stroke="#94a3b8" strokeWidth="2" />
-              <text x="65" y="28" fill="#ffffff" fontSize="11" fontWeight="bold" textAnchor="middle">
-                {isJa ? '⛩️ 正門・入口' : '⛩️ Main Entrance'}
-              </text>
-              <text x="65" y="42" fill="#cbd5e1" fontSize="9" textAnchor="middle">
-                GATE & INFO
-              </text>
-            </g>
-
-            {/* 芝生飲食・憩い広場 */}
-            <g transform="translate(420, 380)">
-              <rect x="0" y="0" width="160" height="70" rx="10" fill="#fef3c7" opacity="0.6" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="3 3" />
-              <text x="80" y="35" fill="#92400e" fontSize="11" fontWeight="bold" textAnchor="middle">
-                🍱 {isJa ? '憩いの飲食芝生エリア' : 'Picnic & Dining Lawn'}
-              </text>
-              <text x="80" y="52" fill="#b45309" fontSize="9" textAnchor="middle">
-                {isJa ? 'ベンチ・日よけテント設置' : 'Shaded tables & seating'}
-              </text>
-            </g>
-
-            {/* エリア案内看板ラベル */}
-            <g opacity="0.65" fontFamily="sans-serif" fontSize="11" fontWeight="bold" fill="#475569">
-              <text x="320" y="275">◀ WORKSHOP AREA</text>
-              <text x="500" y="275">CRAFT & ART AREA ▶</text>
-              <text x="470" y="715">▲ FOOD & SAKE STREET ▲</text>
-            </g>
-          </svg>
-
-          {/* --- SVGオーバーレイ（出店ストールピン） --- */}
+          {/* --- 出店ブースピン --- */}
           {filteredStalls.map((stall) => {
             const isSelected = selectedItem?.stall?.id === stall.id;
+            const coord = getStallCoord(stall);
+
             return (
               <div
                 key={stall.id}
                 className={`${styles.pinContainer} ${isSelected ? styles.pinSelected : ''}`}
                 style={{
-                  left: `${stall.mapX}%`,
-                  top: `${stall.mapY}%`
+                  left: `${coord.x}%`,
+                  top: `${coord.y}%`
                 }}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -451,7 +432,7 @@ export const MapView: React.FC<MapViewProps> = ({
                 {/* 選択時のパルスリング */}
                 {isSelected && <div className={styles.pulseRing} />}
                 <div className={`${styles.stallPin} ${getPinClass(stall.category)}`}>
-                  {stall.boothNumber}
+                  {stall.boothNumber || '•'}
                 </div>
               </div>
             );
@@ -474,7 +455,6 @@ export const MapView: React.FC<MapViewProps> = ({
                     setSelectedItem({ type: 'facility', facility: fac });
                   }}
                 >
-                  {isSelected && <div className={styles.pulseRing} />}
                   <div className={styles.facilityPin}>
                     {renderFacilityIcon(fac.type)}
                   </div>
@@ -484,16 +464,16 @@ export const MapView: React.FC<MapViewProps> = ({
         </div>
       </div>
 
-      {/* --- ピンタップ時の下部ボトム詳細カード --- */}
+      {/* 選択中のアイテム詳細カード（ボトムポップアップシート） */}
       {selectedItem && (
-        <div className={styles.detailBottomCard} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.detailPopup}>
           <button
-            className={styles.closeCardBtn}
+            className={styles.closeDetailBtn}
             onClick={() => {
               setSelectedItem(null);
               if (onClearSelectedStall) onClearSelectedStall();
             }}
-            aria-label="Close card"
+            aria-label="Close details"
           >
             <X size={18} />
           </button>
@@ -536,17 +516,76 @@ export const MapView: React.FC<MapViewProps> = ({
           )}
 
           {selectedItem.type === 'facility' && selectedItem.facility && (
-            <div className={styles.detailInfo} style={{ paddingRight: '20px' }}>
-              <span className="badge-category badge-facility">
-                {isJa ? '施設・インフォ' : 'Facility Info'}
-              </span>
-              <h3 className={styles.detailTitle} style={{ marginTop: '4px' }}>
-                {isJa ? selectedItem.facility.nameJa : selectedItem.facility.nameEn}
-              </h3>
-              <p className={styles.detailDesc}>
-                {isJa ? selectedItem.facility.descJa : selectedItem.facility.descEn}
-              </p>
-            </div>
+            <>
+              <div
+                style={{
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: 'var(--radius-md)',
+                  background: '#eff6ff',
+                  color: '#2563eb',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}
+              >
+                {renderFacilityIcon(selectedItem.facility.type)}
+              </div>
+              <div className={styles.detailInfo}>
+                <h3 className={styles.detailTitle}>
+                  {isJa ? selectedItem.facility.nameJa : selectedItem.facility.nameEn}
+                </h3>
+                <p className={styles.detailDesc}>
+                  {isJa ? selectedItem.facility.descJa : selectedItem.facility.descEn}
+                </p>
+              </div>
+            </>
+          )}
+
+          {selectedItem.type === 'stage' && selectedItem.stageInfo && (
+            <>
+              <div
+                style={{
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: 'var(--radius-md)',
+                  background: '#fef2f2',
+                  color: '#b91c1c',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  fontSize: '1.2rem'
+                }}
+              >
+                🎭
+              </div>
+              <div className={styles.detailInfo}>
+                <span className={styles.detailBoothBadge}>
+                  📍 {isJa ? selectedItem.stageInfo.locationJa : selectedItem.stageInfo.locationEn}
+                </span>
+                <h3 className={styles.detailTitle}>
+                  {isJa ? selectedItem.stageInfo.titleJa : selectedItem.stageInfo.titleEn}
+                </h3>
+                <p className={styles.detailDesc}>
+                  {isJa ? selectedItem.stageInfo.descJa : selectedItem.stageInfo.descEn}
+                </p>
+              </div>
+
+              {onNavigateToStage && (
+                <div className={styles.detailActions}>
+                  <button
+                    className="btn btn-primary"
+                    style={{ padding: '6px 14px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}
+                    onClick={onNavigateToStage}
+                  >
+                    <Calendar size={13} style={{ marginRight: '4px' }} />
+                    {isJa ? '演目一覧' : 'Timetable'}
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

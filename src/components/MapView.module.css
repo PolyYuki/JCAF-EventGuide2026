@@ -118,10 +118,20 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 1000px;
-  height: 750px;
+  width: 954px;
+  height: 1024px;
   transform-origin: 0 0;
   transition: transform 0.05s linear;
+}
+
+.mapImage {
+  width: 954px;
+  height: 1024px;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  background-color: #ffffff;
 }
 
 /* Pin Styles */
@@ -134,13 +144,24 @@
 }
 
 .pinContainer:hover {
-  transform: translate(-50%, -65%) scale(1.15);
+  transform: translate(-50%, -50%) scale(1.2);
   z-index: 30;
 }
 
 .pinSelected {
-  transform: translate(-50%, -70%) scale(1.25) !important;
+  transform: translate(-50%, -50%) scale(1.35) !important;
   z-index: 35 !important;
+}
+
+.stageZonePin {
+  cursor: pointer;
+  z-index: 15;
+  transition: all 0.2s ease;
+}
+
+.stageZonePin:hover {
+  filter: brightness(1.1);
+  transform: scale(1.05);
 }
 
 .pulseRing {

@@ -1,6 +1,7 @@
 import Papa from 'papaparse';
 import type { Stall, StagePerformance, Facility, StallCategory, PerformanceArea } from '../types';
 import { initialFacilities, initialStalls, initialStages } from '../data/mockData';
+import { getBoothCoordinates } from '../data/boothCoordinates';
 
 const STORAGE_KEYS = {
   // 個別7シートURL
@@ -318,8 +319,11 @@ function parseStallRow(
   const descriptionJa = getVal(row, 'descriptionJa', 'description', 'descJa', '紹介文', '説明', '詳細');
   const descriptionEn = getVal(row, 'descriptionEn', 'description_en', 'descEn', '英語紹介文') || descriptionJa;
 
-  const mapX = Number(row.mapX ?? row.map_x ?? row.X ?? row.x ?? 50) || 50;
-  const mapY = Number(row.mapY ?? row.map_y ?? row.Y ?? row.y ?? 50) || 50;
+  const boothCoord = getBoothCoordinates(boothNumber);
+  const rawMapX = Number(row.mapX ?? row.map_x ?? row.X ?? row.x);
+  const rawMapY = Number(row.mapY ?? row.map_y ?? row.Y ?? row.y);
+  const mapX = !isNaN(rawMapX) && rawMapX > 0 ? rawMapX : (boothCoord ? boothCoord.x : 50);
+  const mapY = !isNaN(rawMapY) && rawMapY > 0 ? rawMapY : (boothCoord ? boothCoord.y : 50);
 
   const rawTagsJa = getVal(row, 'tagsJa', 'tags', 'タグ', 'キーワード');
   const rawTagsEn = getVal(row, 'tagsEn', 'tags_en', '英語タグ');
@@ -373,8 +377,8 @@ function parseStallRow(
     'locationJa', 'location', '出店場所', '場所', 'エリア', '会場',
     '出店エリア', 'ブースエリア', 'ブース場所', 'area', 'Area', 'location_ja'
   );
-  const locationJa = rawLocationJa || undefined;
-  const locationEn = getVal(row, 'locationEn', 'location_en', '英語出店場所', '英語場所') || locationJa;
+  const locationJa = rawLocationJa || (boothCoord ? boothCoord.locationJa : undefined);
+  const locationEn = getVal(row, 'locationEn', 'location_en', '英語出店場所', '英語場所') || (boothCoord ? boothCoord.locationEn : locationJa);
 
   const id = getVal(row, 'id', 'ID') || `stall-${category}-${index + 1}`;
 

@@ -1,4 +1,5 @@
 import type { Stall, StagePerformance, Facility, EventInfo, FaqItem } from '../types';
+import { getBoothCoordinates } from './boothCoordinates';
 
 export const initialEventInfo: EventInfo = {
   nameJa: '日本文化芸術祭 (JCAF)',
@@ -24,88 +25,88 @@ export const initialEventInfo: EventInfo = {
 
 export const initialFacilities: Facility[] = [
   {
-    id: 'f-gate',
+    id: 'f-gate-main',
     type: 'entrance',
-    nameJa: '正門メインエントランス',
-    nameEn: 'Main Entrance Gate',
-    descJa: '入場口・再入場口・リーフレット配布',
-    descEn: 'Main entrance, re-entry & event guides',
-    mapX: 12,
-    mapY: 88
+    nameJa: '正門メインエントランス (Hoddle St)',
+    nameEn: 'Main Entrance Gate (Hoddle St)',
+    descJa: '正面入口・総合案内・入場受付',
+    descEn: 'Main entrance gate & visitor entry',
+    mapX: 94.3,
+    mapY: 29.8
+  },
+  {
+    id: 'f-gate-back',
+    type: 'entrance',
+    nameJa: '裏門バックエントランス (Eddy Ct)',
+    nameEn: 'Back Entrance (Eddy Ct)',
+    descJa: '西側通路・通用口',
+    descEn: 'West side access & entrance',
+    mapX: 6.3,
+    mapY: 31.7
   },
   {
     id: 'f-info',
     type: 'info',
-    nameJa: '総合インフォメーション・案内所',
-    nameEn: 'General Information & Lost & Found',
-    descJa: '落とし物受付、迷子受付、多言語スタッフ常駐、車椅子貸出',
-    descEn: 'Lost & found, lost children, bilingual staff, wheelchair rental',
-    mapX: 24,
-    mapY: 82
+    nameJa: '総合インフォメーション / ドリンク販売',
+    nameEn: 'Information & Drink Sale',
+    descJa: '案内所・ドリンク販売・ラッキードロー抽選',
+    descEn: 'Event info, beverage sales & lucky draw',
+    mapX: 65.5,
+    mapY: 26.9
+  },
+  {
+    id: 'f-reception',
+    type: 'info',
+    nameJa: '総合受付 (Reception)',
+    nameEn: 'Reception',
+    descJa: '関係者・来場者受付カウンター',
+    descEn: 'Reception desk',
+    mapX: 85.3,
+    mapY: 30.7
   },
   {
     id: 'f-aid',
     type: 'firstaid',
-    nameJa: '救護室・AED',
+    nameJa: '救護所・AED (Emergency First Aid Station)',
     nameEn: 'First Aid & AED Station',
-    descJa: '看護師常駐。体調不良時はお気軽にご相談ください。',
-    descEn: 'Registered nurse on site. Feel free to rest if unwell.',
-    mapX: 86,
-    mapY: 82
+    descJa: '公園（Town Hall Reserve）東側。体調不良時はお気軽にご相談ください。',
+    descEn: 'First aid station located at Town Hall Reserve east.',
+    mapX: 90.2,
+    mapY: 62.8
   },
   {
-    id: 'f-wc1',
+    id: 'f-wc-hall',
     type: 'toilet',
-    nameJa: 'トイレ（多目的・車椅子対応）西側',
-    nameEn: 'Restroom (Accessible) West',
-    descJa: '水洗トイレ・誰でもトイレ・オムツ交換台あり',
-    descEn: 'Accessible restrooms, baby-changing tables available',
-    mapX: 15,
-    mapY: 48
+    nameJa: 'トイレ（Main Hall 東側）',
+    nameEn: 'Restroom (Main Hall East)',
+    descJa: 'メインホール横 水洗トイレ',
+    descEn: 'Restroom beside Main Hall',
+    mapX: 67.3,
+    mapY: 41.5
   },
   {
-    id: 'f-wc2',
+    id: 'f-wc-kitchen',
     type: 'toilet',
-    nameJa: 'トイレ 東側',
-    nameEn: 'Restroom East',
-    descJa: '一般水洗トイレ（男女別）',
-    descEn: 'General restrooms (Men / Women)',
-    mapX: 84,
-    mapY: 48
+    nameJa: 'トイレ（Town Hall Kitchen横）',
+    nameEn: 'Restroom (Beside Kitchen)',
+    descJa: 'タウンホール西側 水洗トイレ',
+    descEn: 'Restroom in Town Hall west',
+    mapX: 30.0,
+    mapY: 37.5
   },
   {
-    id: 'f-nursing',
-    type: 'nursing',
-    nameJa: '授乳室・ベビールーム',
-    nameEn: 'Nursing & Baby Care Room',
-    descJa: '給湯器、個室授乳スペース、オムツ用ゴミ箱完備',
-    descEn: 'Private nursing cubicles, hot water for formula, diaper bins',
-    mapX: 25,
-    mapY: 66
-  },
-  {
-    id: 'f-dining',
-    type: 'food_court',
-    nameJa: '芝生飲食・休憩エリア',
-    nameEn: 'Garden Dining & Rest Lawn',
-    descJa: '野外テーブル・ベンチ・日よけテントスペース',
-    descEn: 'Outdoor tables, benches & shaded rest tents',
-    mapX: 50,
-    mapY: 55
-  },
-  {
-    id: 'f-trash',
-    type: 'trash',
-    nameJa: 'エコステーション（分別ゴミ回収）',
-    nameEn: 'Eco Station (Waste & Recycling)',
-    descJa: '燃えるゴミ・ペットボトル・空き缶の分別回収にご協力ください。',
-    descEn: 'Please help us sort burnable trash, bottles and cans.',
-    mapX: 42,
-    mapY: 82
+    id: 'f-wc-courtyard',
+    type: 'toilet',
+    nameJa: 'トイレ（中庭・Djerring Centre横）',
+    nameEn: 'Restroom (Courtyard West)',
+    descJa: '屋外中庭エリア 水洗トイレ',
+    descEn: 'Restroom at Courtyard west',
+    mapX: 12.4,
+    mapY: 84.0
   }
 ];
 
-export const initialStalls: Stall[] = [
+const rawInitialStalls: Stall[] = [
   // --- フード & ドリンク ---
   {
     id: 's-01',
@@ -436,8 +437,90 @@ export const initialStalls: Stall[] = [
     highlightEn: 'Open drum circle for everyone',
     locationJa: '公園（芝生広場）',
     locationEn: 'Park (Lawn Ground)'
+  },
+  // --- キッズアクティビティ ---
+  {
+    id: 's-k01',
+    boothNumber: 'K01',
+    nameJa: 'こども和遊び・折り紙体験処',
+    nameEn: 'Kids Origami & Japanese Games',
+    category: 'kids',
+    categoryJa: 'キッズアクティビティ',
+    categoryEn: 'Kids Activity',
+    shortDescJa: 'けん玉、コマ回し、大型折り紙で遊ぼう！',
+    shortDescEn: 'Traditional Japanese toys, Kendama and giant origami fun!',
+    descriptionJa: '子どもから大人まで楽しめる日本の伝統的な遊び場。折り紙で作る兜や鶴、昔ながらのけん玉や福笑い、ヨーヨー釣りなどを体験できます。',
+    descriptionEn: 'Exciting hands-on zone for kids and families. Enjoy Kendama, spinning tops, giant origami folding, and festive games.',
+    mapX: 48.5,
+    mapY: 76.4,
+    tagsJa: ['キッズ', '折り紙', '伝統遊び', 'ファミリー'],
+    tagsEn: ['Kids', 'Origami', 'Family', 'Games'],
+    priceRange: '無料〜 (Free / Gold Coin)',
+    highlightJa: '大きな兜の折り紙体験',
+    highlightEn: 'Giant Samurai Helmet Origami',
+    locationJa: 'Town Hall Reserve (Park)',
+    locationEn: 'Town Hall Reserve (Park)'
+  },
+  {
+    id: 's-k02',
+    boothNumber: 'K02',
+    nameJa: 'JCAF キッズ忍者道場',
+    nameEn: 'JCAF Kids Ninja Dojo',
+    category: 'kids',
+    categoryJa: 'キッズアクティビティ',
+    categoryEn: 'Kids Activity',
+    shortDescJa: '忍者になりきって手裏剣投げに挑戦！',
+    shortDescEn: 'Ninja training challenge & safe shuriken throwing!',
+    descriptionJa: 'ゴム製・的当て用の安全な手裏剣を使った忍者修行体験コーナー。見事的を射抜いたお子様には特製忍者ステッカーをプレゼント！',
+    descriptionEn: 'Fun ninja obstacle and target practice with safe soft shurikens. Receive an official JCAF Ninja Apprentice badge upon completion!',
+    mapX: 48.5,
+    mapY: 81.2,
+    tagsJa: ['忍者', '手裏剣', 'キッズ', '体験'],
+    tagsEn: ['Ninja', 'Shuriken', 'Kids', 'Workshop'],
+    priceRange: '無料 (Free)',
+    highlightJa: '子ども向け手裏剣投げ体験',
+    highlightEn: 'Safe Shuriken Target Challenge',
+    locationJa: 'Town Hall Reserve (Park)',
+    locationEn: 'Town Hall Reserve (Park)'
+  },
+  // --- アート展示 ---
+  {
+    id: 's-a01',
+    boothNumber: 'A1',
+    nameJa: '墨絵・現代書道作品展',
+    nameEn: 'Contemporary Sumi-e & Calligraphy Exhibition',
+    category: 'art',
+    categoryJa: 'アート展示',
+    categoryEn: 'Art Exhibition',
+    shortDescJa: '豪州と日本のアーティストによる墨アート合同展示',
+    shortDescEn: 'Collaborative ink art by Japanese and Australian artists',
+    descriptionJa: '伝統的な水墨画の技法と現代グラフィックアートが融合した作品を展示。墨の濃淡と余白の美をお楽しみください。一部作品は販売も行っております。',
+    descriptionEn: 'Inspiring exhibition celebrating the elegance of black ink and negative space, featuring pieces from both local Melbourne and Japanese masters.',
+    mapX: 71.7,
+    mapY: 20.8,
+    tagsJa: ['墨絵', '書道', '現代アート', 'ギャラリー'],
+    tagsEn: ['Sumi-e', 'Calligraphy', 'Art', 'Exhibition'],
+    priceRange: '観覧無料 (Free Admission)',
+    highlightJa: '日豪アーティストによる共同大作',
+    highlightEn: 'Special Joint Masterpiece Display',
+    locationJa: 'Collingwood Town Hall (Art Room)',
+    locationEn: 'Collingwood Town Hall (Art Room)'
   }
 ];
+
+export const initialStalls: Stall[] = rawInitialStalls.map((s) => {
+  const coord = getBoothCoordinates(s.boothNumber);
+  if (coord) {
+    return {
+      ...s,
+      mapX: coord.x,
+      mapY: coord.y,
+      locationJa: s.locationJa || coord.locationJa,
+      locationEn: s.locationEn || coord.locationEn
+    };
+  }
+  return s;
+});
 
 export const initialStages: StagePerformance[] = [
   {
