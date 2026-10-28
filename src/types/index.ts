@@ -2,7 +2,7 @@ export type Language = 'ja' | 'en';
 
 export type StallCategory =
   | 'market'          // マーケット
-  | 'sponsor'         // スポンサーブース
+  | 'sponsor'         // スポンサー
   | 'paid_workshop'   // 有料ワークショップ
   | 'free_workshop'   // 無料ワークショップ
   | 'food'            // フード
@@ -34,6 +34,7 @@ export interface Stall {
   highlightEn?: string;
   locationJa?: string; // 出店場所 (例: Collingwood Town Hall, 公園, Djerring Centre)
   locationEn?: string;
+  sponsorTier?: string; // スポンサー種別 (ゴールド、シルバー、ブロンズ、In-Kind、サポーター等)
 }
 
 export type PerformanceArea = 'stage' | 'outdoor' | 'main' | 'culture';

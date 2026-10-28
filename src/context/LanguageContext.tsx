@@ -43,7 +43,7 @@ const translations: Record<string, { ja: string; en: string }> = {
   'stalls.search_placeholder': { ja: 'ブース名、キーワード、内容、タグで検索...', en: 'Search by booth name, craft, food, or keyword...' },
   'stalls.category_all': { ja: 'すべて', en: 'All' },
   'stalls.category_market': { ja: 'マーケット', en: 'Market' },
-  'stalls.category_sponsor': { ja: 'スポンサーブース', en: 'Sponsor Booths' },
+  'stalls.category_sponsor': { ja: 'スポンサー', en: 'Sponsors' },
   'stalls.category_paid_workshop': { ja: '有料ワークショップ', en: 'Paid Workshop' },
   'stalls.category_free_workshop': { ja: '無料ワークショップ', en: 'Free Workshop' },
   'stalls.category_food': { ja: 'フード', en: 'Food' },

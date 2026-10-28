@@ -134,8 +134,11 @@ export const MapView: React.FC<MapViewProps> = ({
     }
   };
 
-  // フィルタリング
+  // フィルタリング (ブース番号がないスポンサーは出店しないためマップピンから除外)
   const filteredStalls = stalls.filter((stall) => {
+    if (stall.category === 'sponsor' && !stall.boothNumber) {
+      return false;
+    }
     if (filterCategory === 'all') return true;
     if (filterCategory === 'facility') return false;
     return stall.category === filterCategory;

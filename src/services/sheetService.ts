@@ -268,11 +268,13 @@ function parseStallRow(
   categoryLabelJa: string,
   categoryLabelEn: string
 ): Stall | null {
-  const boothNumber = getVal(row, 'boothNumber', 'booth', 'ブース番号', 'ブース', 'No') || `B-${index + 1}`;
+  const rawBoothNumber = getVal(row, 'boothNumber', 'booth', 'ブース番号', 'ブース', 'No');
+  // スポンサーシートでブース番号がないものは出店しないため空文字を維持
+  const boothNumber = rawBoothNumber || (defaultCategory === 'sponsor' ? '' : `B-${index + 1}`);
   const nameJa = getVal(row, 'nameJa', 'name', '出店名', '店名', 'ブース名', '名前', 'タイトル');
   const nameEn = getVal(row, 'nameEn', 'name_en', '英語名') || nameJa;
 
-  if (!nameJa && !getVal(row, 'boothNumber', 'booth', 'ブース番号')) {
+  if (!nameJa && !rawBoothNumber) {
     return null;
   }
 
@@ -323,7 +325,8 @@ function parseStallRow(
   const imageUrl = rawImageUrl ? formatImageUrl(rawImageUrl) : undefined;
 
   const priceRange = getVal(row, 'priceRange', 'price', '価格帯', '価格', '料金') || undefined;
-  const highlightJa = getVal(row, 'highlightJa', 'highlight', '見どころ', 'こだわり', 'おすすめ') || undefined;
+  const sponsorTier = getVal(row, 'sponsorTier', 'スポンサー種別', '種別', '協賛種別') || undefined;
+  const highlightJa = getVal(row, 'highlightJa', 'highlight', '見どころ', 'こだわり', 'おすすめ') || sponsorTier || undefined;
   const highlightEn = getVal(row, 'highlightEn', 'highlight_en', '英語見どころ') || highlightJa;
 
   const rawInstagram = getVal(
@@ -332,14 +335,24 @@ function parseStallRow(
     'instagramUrl', 'instagram_url', 'インスタグラム', 'SNS', 'SNS URL', 'sns',
     'IG', 'ig', 'Instagramアカウント', 'インスタアカウント'
   );
-  const instagram = rawInstagram ? formatInstagramUrl(rawInstagram) : undefined;
+  let instagram = rawInstagram ? formatInstagramUrl(rawInstagram) : undefined;
 
   const rawWebsite = getVal(
     row,
     'website', 'hp', 'HP', 'ウェブサイト', '公式サイト', 'Webサイト',
     'url', 'URL', 'ホームページ', 'websiteUrl', 'website_url'
   );
-  const website = rawWebsite ? formatWebsiteUrl(rawWebsite) : undefined;
+  let website = rawWebsite ? formatWebsiteUrl(rawWebsite) : undefined;
+
+  // Link列があれば判定してinstagramまたはwebsiteに割り当て
+  const rawLink = getVal(row, 'Link', 'link', 'リンク');
+  if (rawLink && !instagram && !website) {
+    if (rawLink.includes('instagram.com') || rawLink.startsWith('@') || rawLink.startsWith('＠')) {
+      instagram = formatInstagramUrl(rawLink);
+    } else {
+      website = formatWebsiteUrl(rawLink);
+    }
+  }
 
   const rawLocationJa = getVal(
     row,
@@ -374,7 +387,8 @@ function parseStallRow(
     instagram,
     website,
     locationJa,
-    locationEn
+    locationEn,
+    sponsorTier
   };
 }
 
@@ -394,7 +408,7 @@ export async function loadStallsData(): Promise<{ data: Stall[]; isFromRemote: b
   // 取得対象シートの定義
   const allTargets: StallTarget[] = [
     { url: convertToCsvExportUrl(config.marketCsvUrl), category: 'market', labelJa: 'マーケット', labelEn: 'Market' },
-    { url: convertToCsvExportUrl(config.sponsorCsvUrl), category: 'sponsor', labelJa: 'スポンサーブース', labelEn: 'Sponsor Booths' },
+    { url: convertToCsvExportUrl(config.sponsorCsvUrl), category: 'sponsor', labelJa: 'スポンサー', labelEn: 'Sponsors' },
     { url: convertToCsvExportUrl(config.paidWorkshopCsvUrl), category: 'paid_workshop', labelJa: '有料ワークショップ', labelEn: 'Paid Workshop' },
     { url: convertToCsvExportUrl(config.freeWorkshopCsvUrl), category: 'free_workshop', labelJa: '無料ワークショップ', labelEn: 'Free Workshop' },
     { url: convertToCsvExportUrl(config.foodCsvUrl), category: 'food', labelJa: 'フード', labelEn: 'Food' },

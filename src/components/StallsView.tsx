@@ -242,6 +242,8 @@ export const StallsView: React.FC<StallsViewProps> = ({
         <div className={styles.stallGrid}>
           {filteredStalls.map((stall) => {
             const isFav = isStallFavorite(stall.id);
+            const isPureSponsor = stall.category === 'sponsor' && !stall.boothNumber;
+
             return (
               <div
                 key={stall.id}
@@ -277,17 +279,26 @@ export const StallsView: React.FC<StallsViewProps> = ({
                   <div className={styles.cardContent}>
                     <div className={styles.cardHeaderRow}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                        <span className={styles.boothNumber}>{stall.boothNumber}</span>
-                        {(stall.locationJa || stall.locationEn) && (
+                        {stall.boothNumber && (
+                          <span className={styles.boothNumber}>{stall.boothNumber}</span>
+                        )}
+                        {!isPureSponsor && (stall.locationJa || stall.locationEn) && (
                           <span className={styles.locationBadge}>
                             <MapPin size={10} style={{ display: 'inline', marginRight: '2px' }} />
                             {isJa ? stall.locationJa : stall.locationEn}
                           </span>
                         )}
                       </div>
-                      <span className={getBadgeClass(stall.category)}>
-                        {isJa ? stall.categoryJa : stall.categoryEn}
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+                        {stall.sponsorTier && (
+                          <span className="badge-category badge-gold" style={{ fontSize: '0.68rem', padding: '2px 6px' }}>
+                            {stall.sponsorTier}
+                          </span>
+                        )}
+                        <span className={getBadgeClass(stall.category)}>
+                          {isJa ? stall.categoryJa : stall.categoryEn}
+                        </span>
+                      </div>
                     </div>
 
                     <h3 className={styles.cardTitle}>
@@ -346,13 +357,39 @@ export const StallsView: React.FC<StallsViewProps> = ({
                       <Heart size={16} fill={isFav ? 'currentColor' : 'none'} />
                     </button>
 
-                    <button
-                      className={styles.btnShowMap}
-                      onClick={() => onShowOnMap(stall.id)}
-                    >
-                      <MapPin size={13} />
-                      <span>{t('stalls.view_map')}</span>
-                    </button>
+                    {isPureSponsor ? (
+                      stall.website ? (
+                        <a
+                          href={stall.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.btnShowMap}
+                          style={{ textDecoration: 'none' }}
+                        >
+                          <Globe size={13} />
+                          <span>{isJa ? '公式ページ' : 'Website'}</span>
+                        </a>
+                      ) : stall.instagram ? (
+                        <a
+                          href={stall.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.btnShowMap}
+                          style={{ textDecoration: 'none' }}
+                        >
+                          <InstagramIcon size={13} />
+                          <span>Instagram</span>
+                        </a>
+                      ) : null
+                    ) : (
+                      <button
+                        className={styles.btnShowMap}
+                        onClick={() => onShowOnMap(stall.id)}
+                      >
+                        <MapPin size={13} />
+                        <span>{t('stalls.view_map')}</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -362,168 +399,196 @@ export const StallsView: React.FC<StallsViewProps> = ({
       )}
 
       {/* 詳細モーダル (Bottom Sheet) */}
-      {inspectStall && (
-        <div className="modal-overlay" onClick={() => setInspectStall(null)}>
-          <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
-            <div className="sheet-handle" />
-            <div className="sheet-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                <span className={styles.boothNumber}>{inspectStall.boothNumber}</span>
-                {(inspectStall.locationJa || inspectStall.locationEn) && (
-                  <span className={styles.locationBadge}>
-                    <MapPin size={10} style={{ display: 'inline', marginRight: '2px' }} />
-                    {isJa ? inspectStall.locationJa : inspectStall.locationEn}
+      {inspectStall && (() => {
+        const isPureInspectSponsor = inspectStall.category === 'sponsor' && !inspectStall.boothNumber;
+
+        return (
+          <div className="modal-overlay" onClick={() => setInspectStall(null)}>
+            <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
+              <div className="sheet-handle" />
+              <div className="sheet-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  {inspectStall.boothNumber && (
+                    <span className={styles.boothNumber}>{inspectStall.boothNumber}</span>
+                  )}
+                  {!isPureInspectSponsor && (inspectStall.locationJa || inspectStall.locationEn) && (
+                    <span className={styles.locationBadge}>
+                      <MapPin size={10} style={{ display: 'inline', marginRight: '2px' }} />
+                      {isJa ? inspectStall.locationJa : inspectStall.locationEn}
+                    </span>
+                  )}
+                  {inspectStall.sponsorTier && (
+                    <span className="badge-category badge-gold" style={{ fontSize: '0.72rem' }}>
+                      {inspectStall.sponsorTier}
+                    </span>
+                  )}
+                  <span className={getBadgeClass(inspectStall.category)}>
+                    {isJa ? inspectStall.categoryJa : inspectStall.categoryEn}
                   </span>
+                </div>
+                <button
+                  className="icon-btn"
+                  style={{ background: '#f1f5f9', color: '#64748b', border: 'none' }}
+                  onClick={() => setInspectStall(null)}
+                  aria-label="Close"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="sheet-body">
+                {inspectStall.imageUrl && (
+                  <div className={styles.modalImageWrapper}>
+                    <img
+                      src={inspectStall.imageUrl}
+                      alt={isJa ? inspectStall.nameJa : inspectStall.nameEn}
+                      className={styles.modalImage}
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        if (target.src.includes('drive.google.com/thumbnail')) {
+                          const idMatch = target.src.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+                          if (idMatch && idMatch[1]) {
+                            target.src = `https://lh3.googleusercontent.com/d/${idMatch[1]}`;
+                            return;
+                          }
+                        } else if (target.src.includes('lh3.googleusercontent.com/d/')) {
+                          const id = target.src.split('/d/')[1];
+                          if (id) {
+                            target.src = `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+                            return;
+                          }
+                        }
+                        (e.currentTarget.parentElement || e.currentTarget).style.display = 'none';
+                      }}
+                    />
+                  </div>
                 )}
-                <span className={getBadgeClass(inspectStall.category)}>
-                  {isJa ? inspectStall.categoryJa : inspectStall.categoryEn}
-                </span>
-              </div>
-              <button
-                className="icon-btn"
-                style={{ background: '#f1f5f9', color: '#64748b', border: 'none' }}
-                onClick={() => setInspectStall(null)}
-                aria-label="Close"
-              >
-                <X size={18} />
-              </button>
-            </div>
 
-            <div className="sheet-body">
-              {inspectStall.imageUrl && (
-                <div className={styles.modalImageWrapper}>
-                  <img
-                    src={inspectStall.imageUrl}
-                    alt={isJa ? inspectStall.nameJa : inspectStall.nameEn}
-                    className={styles.modalImage}
-                    onError={(e) => {
-                      const target = e.currentTarget;
-                      if (target.src.includes('drive.google.com/thumbnail')) {
-                        const idMatch = target.src.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-                        if (idMatch && idMatch[1]) {
-                          target.src = `https://lh3.googleusercontent.com/d/${idMatch[1]}`;
-                          return;
-                        }
-                      } else if (target.src.includes('lh3.googleusercontent.com/d/')) {
-                        const id = target.src.split('/d/')[1];
-                        if (id) {
-                          target.src = `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
-                          return;
-                        }
-                      }
-                      (e.currentTarget.parentElement || e.currentTarget).style.display = 'none';
-                    }}
-                  />
-                </div>
-              )}
+                <h2 className="sheet-title" style={{ fontSize: '1.25rem', marginBottom: '8px' }}>
+                  {isJa ? inspectStall.nameJa : inspectStall.nameEn}
+                </h2>
 
-              <h2 className="sheet-title" style={{ fontSize: '1.25rem', marginBottom: '8px' }}>
-                {isJa ? inspectStall.nameJa : inspectStall.nameEn}
-              </h2>
-
-              {/* こだわりハイライト */}
-              {(inspectStall.highlightJa || inspectStall.highlightEn) && (
-                <div className={styles.modalHighlightBox}>
-                  ✨ {isJa ? inspectStall.highlightJa : inspectStall.highlightEn}
-                </div>
-              )}
-
-              {/* 出店場所 */}
-              {(inspectStall.locationJa || inspectStall.locationEn) && (
-                <div className={styles.modalSection}>
-                  <div className={styles.modalSectionTitle}>
-                    {isJa ? '出店場所' : 'Location'}
+                {/* こだわりハイライト */}
+                {!isPureInspectSponsor && (inspectStall.highlightJa || inspectStall.highlightEn) && (
+                  <div className={styles.modalHighlightBox}>
+                    ✨ {isJa ? inspectStall.highlightJa : inspectStall.highlightEn}
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.92rem', fontWeight: 700, color: 'var(--color-primary)' }}>
-                    <MapPin size={15} style={{ color: 'var(--color-accent)' }} />
-                    <span>{isJa ? inspectStall.locationJa : inspectStall.locationEn}</span>
-                  </div>
-                </div>
-              )}
+                )}
 
-              <div className={styles.modalSection}>
-                <div className={styles.modalSectionTitle}>
-                  {isJa ? '出店紹介' : 'About this Stall'}
-                </div>
-                <p style={{ fontSize: '0.9rem', lineHeight: '1.6', color: 'var(--color-text-main)' }}>
-                  {isJa ? inspectStall.descriptionJa : inspectStall.descriptionEn}
-                </p>
-              </div>
-
-              {/* Instagram & 公式サイト SNSリンクセクション */}
-              {(inspectStall.instagram || inspectStall.website) && (
-                <div className={styles.modalSection}>
-                  <div className={styles.modalSectionTitle}>
-                    {isJa ? '公式リンク・SNS' : 'Links & Social'}
+                {/* 出店場所 */}
+                {!isPureInspectSponsor && (inspectStall.locationJa || inspectStall.locationEn) && (
+                  <div className={styles.modalSection}>
+                    <div className={styles.modalSectionTitle}>
+                      {isJa ? '出店場所' : 'Location'}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.92rem', fontWeight: 700, color: 'var(--color-primary)' }}>
+                      <MapPin size={15} style={{ color: 'var(--color-accent)' }} />
+                      <span>{isJa ? inspectStall.locationJa : inspectStall.locationEn}</span>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                    {inspectStall.instagram && (
+                )}
+
+                {(inspectStall.descriptionJa || inspectStall.descriptionEn) && (
+                  <div className={styles.modalSection}>
+                    <div className={styles.modalSectionTitle}>
+                      {isPureInspectSponsor ? (isJa ? '紹介' : 'About') : (isJa ? '出店紹介' : 'About this Stall')}
+                    </div>
+                    <p style={{ fontSize: '0.9rem', lineHeight: '1.6', color: 'var(--color-text-main)' }}>
+                      {isJa ? inspectStall.descriptionJa : inspectStall.descriptionEn}
+                    </p>
+                  </div>
+                )}
+
+                {/* Instagram & 公式サイト SNSリンクセクション */}
+                {(inspectStall.instagram || inspectStall.website) && (
+                  <div className={styles.modalSection}>
+                    <div className={styles.modalSectionTitle}>
+                      {isJa ? '公式リンク・SNS' : 'Links & Social'}
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                      {inspectStall.instagram && (
+                        <a
+                          href={inspectStall.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.instagramBtn}
+                        >
+                          <InstagramIcon size={16} />
+                          <span>Instagram</span>
+                          <ExternalLink size={12} style={{ opacity: 0.8 }} />
+                        </a>
+                      )}
+                      {inspectStall.website && (
+                        <a
+                          href={inspectStall.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.websiteBtn}
+                        >
+                          <Globe size={16} />
+                          <span>{isJa ? '公式サイト' : 'Website'}</span>
+                          <ExternalLink size={12} style={{ opacity: 0.8 }} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* モーダル下部のアクションボタン */}
+                <div style={{ display: 'flex', gap: '10px', marginTop: '24px' }}>
+                  {isPureInspectSponsor ? (
+                    (inspectStall.website || inspectStall.instagram) ? (
                       <a
-                        href={inspectStall.instagram}
+                        href={inspectStall.website || inspectStall.instagram}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={styles.instagramBtn}
+                        className="btn btn-primary"
+                        style={{ flex: 1, padding: '12px', textDecoration: 'none', justifyContent: 'center' }}
                       >
-                        <InstagramIcon size={16} />
-                        <span>Instagram</span>
-                        <ExternalLink size={12} style={{ opacity: 0.8 }} />
+                        <ExternalLink size={16} />
+                        <span>{isJa ? '公式ページを開く' : 'Visit Website'}</span>
                       </a>
-                    )}
-                    {inspectStall.website && (
-                      <a
-                        href={inspectStall.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.websiteBtn}
-                      >
-                        <Globe size={16} />
-                        <span>{isJa ? '公式サイト' : 'Website'}</span>
-                        <ExternalLink size={12} style={{ opacity: 0.8 }} />
-                      </a>
-                    )}
-                  </div>
+                    ) : null
+                  ) : (
+                    <button
+                      className="btn btn-primary"
+                      style={{ flex: 1, padding: '12px' }}
+                      onClick={() => {
+                        const id = inspectStall.id;
+                        setInspectStall(null);
+                        onShowOnMap(id);
+                      }}
+                    >
+                      <MapPin size={16} />
+                      <span>{t('stalls.view_map')}</span>
+                    </button>
+                  )}
+
+                  <button
+                    className={`btn ${isStallFavorite(inspectStall.id) ? 'btn-accent' : 'btn-outline'}`}
+                    style={{ padding: '12px 18px' }}
+                    onClick={() => toggleFavoriteStall(inspectStall.id)}
+                  >
+                    <Heart
+                      size={18}
+                      fill={isStallFavorite(inspectStall.id) ? 'currentColor' : 'none'}
+                    />
+                  </button>
+
+                  <button
+                    className="btn btn-outline"
+                    style={{ padding: '12px 16px' }}
+                    onClick={() => handleShare(inspectStall)}
+                    title="Share"
+                  >
+                    <Share2 size={18} />
+                  </button>
                 </div>
-              )}
-
-              {/* モーダル下部のアクションボタン */}
-              <div style={{ display: 'flex', gap: '10px', marginTop: '24px' }}>
-                <button
-                  className="btn btn-primary"
-                  style={{ flex: 1, padding: '12px' }}
-                  onClick={() => {
-                    const id = inspectStall.id;
-                    setInspectStall(null);
-                    onShowOnMap(id);
-                  }}
-                >
-                  <MapPin size={16} />
-                  <span>{t('stalls.view_map')}</span>
-                </button>
-
-                <button
-                  className={`btn ${isStallFavorite(inspectStall.id) ? 'btn-accent' : 'btn-outline'}`}
-                  style={{ padding: '12px 18px' }}
-                  onClick={() => toggleFavoriteStall(inspectStall.id)}
-                >
-                  <Heart
-                    size={18}
-                    fill={isStallFavorite(inspectStall.id) ? 'currentColor' : 'none'}
-                  />
-                </button>
-
-                <button
-                  className="btn btn-outline"
-                  style={{ padding: '12px 16px' }}
-                  onClick={() => handleShare(inspectStall)}
-                  title="Share"
-                >
-                  <Share2 size={18} />
-                </button>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 };

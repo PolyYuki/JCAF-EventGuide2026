@@ -216,14 +216,14 @@ export const SheetSettingsModal: React.FC<SheetSettingsModalProps> = ({
                   />
                 </div>
 
-                {/* 2. スポンサーブース */}
+                {/* 2. スポンサー */}
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#4338ca', marginBottom: '4px' }}>
-                    2. 🏢 {isJa ? 'スポンサーブース シートURL' : 'Sponsor Booths Sheet URL'}
+                    2. 🏢 {isJa ? 'スポンサー シートURL' : 'Sponsors Sheet URL'}
                   </label>
                   <input
                     type="text"
-                    placeholder="https://docs.google.com/spreadsheets/d/... (スポンサーブース)"
+                    placeholder="https://docs.google.com/spreadsheets/d/... (スポンサー)"
                     value={config.sponsorCsvUrl}
                     onChange={(e) => setConfig({ ...config, sponsorCsvUrl: e.target.value })}
                     style={{ width: '100%', padding: '8px 10px', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', fontSize: '0.78rem' }}
