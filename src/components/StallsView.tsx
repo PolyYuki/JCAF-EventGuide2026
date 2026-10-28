@@ -37,12 +37,14 @@ interface StallsViewProps {
   stalls: Stall[];
   initialSelectedStallId?: string | null;
   onShowOnMap: (stallId: string) => void;
+  onCloseDetail?: () => void;
 }
 
 export const StallsView: React.FC<StallsViewProps> = ({
   stalls,
   initialSelectedStallId,
-  onShowOnMap
+  onShowOnMap,
+  onCloseDetail
 }) => {
   const { lang, t } = useLanguage();
   const isJa = lang === 'ja';
@@ -93,6 +95,13 @@ export const StallsView: React.FC<StallsViewProps> = ({
       );
     });
   }, [stalls, searchQuery, selectedCategory]);
+
+  const handleCloseModal = () => {
+    setInspectStall(null);
+    if (onCloseDetail) {
+      onCloseDetail();
+    }
+  };
 
   const handleShare = (stall: Stall) => {
     const text = `${isJa ? stall.nameJa : stall.nameEn} - JCAF Digital Guide`;
@@ -387,7 +396,7 @@ export const StallsView: React.FC<StallsViewProps> = ({
         const isPureInspectSponsor = inspectStall.category === 'sponsor' && !inspectStall.boothNumber;
 
         return (
-          <div className="modal-overlay" onClick={() => setInspectStall(null)}>
+          <div className="modal-overlay" onClick={handleCloseModal}>
             <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
               <div className="sheet-handle" />
               <div className="sheet-header">
@@ -413,7 +422,7 @@ export const StallsView: React.FC<StallsViewProps> = ({
                 <button
                   className="icon-btn"
                   style={{ background: '#f1f5f9', color: '#64748b', border: 'none' }}
-                  onClick={() => setInspectStall(null)}
+                  onClick={handleCloseModal}
                   aria-label="Close"
                 >
                   <X size={18} />

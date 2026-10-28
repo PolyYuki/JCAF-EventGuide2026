@@ -46,6 +46,7 @@ const AppContent: React.FC = () => {
 
   // マップと一覧間の連携ステート
   const [focusedStallId, setFocusedStallId] = useState<string | null>(null);
+  const [openedFromMap, setOpenedFromMap] = useState<boolean>(false);
 
   // モーダルステート
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -98,6 +99,7 @@ const AppContent: React.FC = () => {
         eventInfo={eventInfo}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onSelectTab={(tab) => {
+          setOpenedFromMap(false);
           setActiveTab(tab);
           setFocusedStallId(null);
         }}
@@ -114,6 +116,7 @@ const AppContent: React.FC = () => {
             onClearSelectedStall={() => setFocusedStallId(null)}
             onNavigateToStallList={(stallId) => {
               if (stallId) setFocusedStallId(stallId);
+              setOpenedFromMap(true);
               setActiveTab('stalls');
             }}
             onNavigateToStage={() => setActiveTab('stage')}
@@ -124,7 +127,16 @@ const AppContent: React.FC = () => {
           <StallsView
             stalls={stalls}
             initialSelectedStallId={focusedStallId}
-            onShowOnMap={handleShowOnMap}
+            onShowOnMap={(stallId) => {
+              setOpenedFromMap(false);
+              handleShowOnMap(stallId);
+            }}
+            onCloseDetail={() => {
+              if (openedFromMap) {
+                setOpenedFromMap(false);
+                setActiveTab('map');
+              }
+            }}
           />
         )}
 
@@ -149,6 +161,10 @@ const AppContent: React.FC = () => {
       <BottomNav
         activeTab={activeTab}
         onSelectTab={(tab) => {
+          setOpenedFromMap(false);
+          if (tab === 'stalls') {
+            setFocusedStallId(null);
+          }
           setActiveTab(tab);
         }}
       />

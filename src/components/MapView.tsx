@@ -348,6 +348,32 @@ export const MapView: React.FC<MapViewProps> = ({
     }
   };
 
+  const getPinTheme = (category: Stall['category']): { bg: string; color: string } => {
+    switch (category) {
+      case 'sponsor':
+        return { bg: '#004aad', color: '#ffffff' };
+      case 'market':
+      case 'craft':
+      case 'goods':
+        return { bg: '#ffbd59', color: '#1e293b' };
+      case 'paid_workshop':
+      case 'workshop':
+        return { bg: '#f08283', color: '#ffffff' };
+      case 'free_workshop':
+        return { bg: '#5ce1e6', color: '#1e293b' };
+      case 'food':
+        return { bg: '#7ed957', color: '#1e293b' };
+      case 'kids':
+      case 'kids_activity':
+        return { bg: '#ffde59', color: '#1e293b' };
+      case 'art':
+      case 'art_exhibition':
+        return { bg: '#e2a9f1', color: '#1e293b' };
+      default:
+        return { bg: '#ffbd59', color: '#1e293b' };
+    }
+  };
+
   return (
     <div className={styles.mapContainer}>
       {/* ツールバー（カテゴリフィルター） */}
@@ -609,42 +635,59 @@ export const MapView: React.FC<MapViewProps> = ({
             <X size={18} />
           </button>
 
-          {selectedItem.type === 'stall' && selectedItem.stall && (
-            <>
-              {selectedItem.stall.imageUrl && (
-                <img
-                  src={selectedItem.stall.imageUrl}
-                  alt={isJa ? selectedItem.stall.nameJa : selectedItem.stall.nameEn}
-                  className={styles.detailThumbnail}
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = 'none';
-                  }}
-                />
-              )}
-              <div className={styles.detailInfo}>
-                <span className={styles.detailBoothBadge}>
-                  {selectedItem.stall.boothNumber} · {isJa ? selectedItem.stall.categoryJa : selectedItem.stall.categoryEn}
-                  {(selectedItem.stall.locationJa || selectedItem.stall.locationEn) && ` · 📍${isJa ? selectedItem.stall.locationJa : selectedItem.stall.locationEn}`}
-                </span>
-                <h3 className={styles.detailTitle}>
-                  {isJa ? selectedItem.stall.nameJa : selectedItem.stall.nameEn}
-                </h3>
-                <p className={styles.detailDesc}>
-                  {isJa ? selectedItem.stall.shortDescJa : selectedItem.stall.shortDescEn}
-                </p>
-              </div>
+          {selectedItem.type === 'stall' && selectedItem.stall && (() => {
+            const pinTheme = getPinTheme(selectedItem.stall.category);
+            return (
+              <>
+                {selectedItem.stall.imageUrl && (
+                  <img
+                    src={selectedItem.stall.imageUrl}
+                    alt={isJa ? selectedItem.stall.nameJa : selectedItem.stall.nameEn}
+                    className={styles.detailThumbnail}
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = 'none';
+                    }}
+                  />
+                )}
+                <div className={styles.detailInfo}>
+                  <span
+                    className={styles.detailBoothBadge}
+                    style={{
+                      backgroundColor: pinTheme.bg,
+                      color: pinTheme.color,
+                      border: '1px solid rgba(0, 0, 0, 0.1)'
+                    }}
+                  >
+                    {selectedItem.stall.boothNumber} · {isJa ? selectedItem.stall.categoryJa : selectedItem.stall.categoryEn}
+                    {(selectedItem.stall.locationJa || selectedItem.stall.locationEn) && ` · 📍${isJa ? selectedItem.stall.locationJa : selectedItem.stall.locationEn}`}
+                  </span>
+                  <h3 className={styles.detailTitle}>
+                    {isJa ? selectedItem.stall.nameJa : selectedItem.stall.nameEn}
+                  </h3>
+                  <p className={styles.detailDesc}>
+                    {isJa ? selectedItem.stall.shortDescJa : selectedItem.stall.shortDescEn}
+                  </p>
+                </div>
 
-              <div className={styles.detailActions}>
-                <button
-                  className="btn btn-primary"
-                  style={{ padding: '6px 14px', fontSize: '0.78rem' }}
-                  onClick={() => onNavigateToStallList(selectedItem.stall?.id)}
-                >
-                  {t('stalls.details')} <ArrowRight size={13} />
-                </button>
-              </div>
-            </>
-          )}
+                <div className={styles.detailActions}>
+                  <button
+                    className="btn"
+                    style={{
+                      padding: '6px 14px',
+                      fontSize: '0.78rem',
+                      backgroundColor: pinTheme.bg,
+                      color: pinTheme.color,
+                      border: '1px solid rgba(0, 0, 0, 0.12)',
+                      boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)'
+                    }}
+                    onClick={() => onNavigateToStallList(selectedItem.stall?.id)}
+                  >
+                    {t('stalls.details')} <ArrowRight size={13} />
+                  </button>
+                </div>
+              </>
+            );
+          })()}
 
           {selectedItem.type === 'facility' && selectedItem.facility && (
             <>
@@ -653,8 +696,8 @@ export const MapView: React.FC<MapViewProps> = ({
                   width: '42px',
                   height: '42px',
                   borderRadius: 'var(--radius-md)',
-                  background: '#eff6ff',
-                  color: '#2563eb',
+                  background: '#0284c7',
+                  color: '#ffffff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -664,6 +707,16 @@ export const MapView: React.FC<MapViewProps> = ({
                 {renderFacilityIcon(selectedItem.facility.type)}
               </div>
               <div className={styles.detailInfo}>
+                <span
+                  className={styles.detailBoothBadge}
+                  style={{
+                    backgroundColor: '#0284c7',
+                    color: '#ffffff',
+                    border: '1px solid rgba(0, 0, 0, 0.1)'
+                  }}
+                >
+                  {isJa ? '施設案内' : 'Facility'}
+                </span>
                 <h3 className={styles.detailTitle}>
                   {isJa ? selectedItem.facility.nameJa : selectedItem.facility.nameEn}
                 </h3>
@@ -681,8 +734,9 @@ export const MapView: React.FC<MapViewProps> = ({
                   width: '42px',
                   height: '42px',
                   borderRadius: 'var(--radius-md)',
-                  background: '#fef2f2',
-                  color: '#b91c1c',
+                  background: '#e9cc97',
+                  color: '#1e293b',
+                  border: '1px solid rgba(0, 0, 0, 0.1)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -693,7 +747,14 @@ export const MapView: React.FC<MapViewProps> = ({
                 🎭
               </div>
               <div className={styles.detailInfo}>
-                <span className={styles.detailBoothBadge}>
+                <span
+                  className={styles.detailBoothBadge}
+                  style={{
+                    backgroundColor: '#e9cc97',
+                    color: '#1e293b',
+                    border: '1px solid rgba(0, 0, 0, 0.1)'
+                  }}
+                >
                   📍 {isJa ? selectedItem.stageInfo.locationJa : selectedItem.stageInfo.locationEn}
                 </span>
                 <h3 className={styles.detailTitle}>
@@ -707,8 +768,16 @@ export const MapView: React.FC<MapViewProps> = ({
               {onNavigateToStage && (
                 <div className={styles.detailActions}>
                   <button
-                    className="btn btn-primary"
-                    style={{ padding: '6px 14px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}
+                    className="btn"
+                    style={{
+                      padding: '6px 14px',
+                      fontSize: '0.78rem',
+                      whiteSpace: 'nowrap',
+                      backgroundColor: '#e9cc97',
+                      color: '#1e293b',
+                      border: '1px solid rgba(0, 0, 0, 0.12)',
+                      boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)'
+                    }}
                     onClick={onNavigateToStage}
                   >
                     <Calendar size={13} style={{ marginRight: '4px' }} />
