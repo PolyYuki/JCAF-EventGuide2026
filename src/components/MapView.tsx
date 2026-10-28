@@ -361,7 +361,7 @@ export const MapView: React.FC<MapViewProps> = ({
               <text x="90" y="44" fill="#ffffff" fontSize="13" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">
                 STAGE
               </text>
-              <text x="90" y="62" fill="#d4af37" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="serif">
+              <text x="90" y="62" fill="#d4af37" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">
                 {isJa ? 'ステージ' : 'Main Stage'}
               </text>
               {/* 観覧席エリアマーク */}
@@ -378,7 +378,7 @@ export const MapView: React.FC<MapViewProps> = ({
               <text x="80" y="36" fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle">
                 OUTDOOR PERFORMANCE
               </text>
-              <text x="80" y="54" fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="serif">
+              <text x="80" y="54" fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">
                 {isJa ? 'アウトドアパフォーマンス' : 'Outdoor Area'}
               </text>
             </g>

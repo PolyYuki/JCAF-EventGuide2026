@@ -31,7 +31,7 @@
 
   /* Typography */
   --font-sans: 'Outfit', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-serif: 'Shippori Mincho', 'Yu Mincho', serif;
+  --font-serif: var(--font-sans);
 
   /* Shadows - 暖かみのある軽やかなシャドウ */
   --shadow-sm: 0 1px 3px rgba(180, 83, 9, 0.05);
@@ -203,7 +203,7 @@ html, body {
 }
 
 .header-title {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.03em;
@@ -509,7 +509,7 @@ html, body {
 }
 
 .sheet-title {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-size: 1.15rem;
   font-weight: 700;
   color: #1e293b;
