@@ -131,9 +131,9 @@ html, body {
 }
 
 .header-logo-wrapper {
-  width: 44px;
   height: 44px;
-  border-radius: 8px;
+  width: 52px;
+  border-radius: 6px;
   background: #ffffff;
   border: 1px solid rgba(197, 155, 39, 0.4);
   display: flex;
@@ -142,13 +142,13 @@ html, body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   flex-shrink: 0;
   overflow: hidden;
-  padding: 2px;
+  padding: 0;
 }
 
 .header-emblem {
-  width: 44px;
   height: 44px;
-  border-radius: 8px;
+  width: 52px;
+  border-radius: 6px;
   background: #ffffff;
   border: 1px solid rgba(197, 155, 39, 0.4);
   display: flex;
@@ -157,7 +157,7 @@ html, body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   flex-shrink: 0;
   overflow: hidden;
-  padding: 2px;
+  padding: 0;
 }
 
 .header-title-box {
