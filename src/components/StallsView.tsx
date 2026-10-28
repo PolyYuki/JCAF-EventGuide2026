@@ -122,6 +122,12 @@ export const StallsView: React.FC<StallsViewProps> = ({
         return 'badge-category badge-free-workshop';
       case 'food':
         return 'badge-category badge-food';
+      case 'kids':
+      case 'kids_activity':
+        return 'badge-category badge-kids';
+      case 'art':
+      case 'art_exhibition':
+        return 'badge-category badge-art';
       default:
         return 'badge-category';
     }
@@ -188,6 +194,18 @@ export const StallsView: React.FC<StallsViewProps> = ({
             onClick={() => setSelectedCategory('food')}
           >
             🍱 {t('stalls.category_food')}
+          </button>
+          <button
+            className={`${styles.pill} ${selectedCategory === 'kids' ? styles.pillActive : ''}`}
+            onClick={() => setSelectedCategory('kids')}
+          >
+            🎈 {t('stalls.category_kids')}
+          </button>
+          <button
+            className={`${styles.pill} ${selectedCategory === 'art' ? styles.pillActive : ''}`}
+            onClick={() => setSelectedCategory('art')}
+          >
+            🖼️ {t('stalls.category_art')}
           </button>
         </div>
 

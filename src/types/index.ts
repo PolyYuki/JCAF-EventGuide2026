@@ -6,6 +6,10 @@ export type StallCategory =
   | 'paid_workshop'   // 有料ワークショップ
   | 'free_workshop'   // 無料ワークショップ
   | 'food'            // フード
+  | 'kids'            // キッズアクティビティ
+  | 'art'             // アート展示
+  | 'kids_activity'   // 後方互換・エイリアス
+  | 'art_exhibition'  // 後方互換・エイリアス
   | 'craft'           // 後方互換
   | 'workshop'        // 後方互換
   | 'goods';          // 後方互換

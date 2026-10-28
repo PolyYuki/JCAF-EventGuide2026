@@ -9,6 +9,8 @@ const STORAGE_KEYS = {
   PAID_WORKSHOP_CSV_URL: 'jcaf_paid_workshop_csv_url',
   FREE_WORKSHOP_CSV_URL: 'jcaf_free_workshop_csv_url',
   FOOD_CSV_URL: 'jcaf_food_csv_url',
+  KIDS_CSV_URL: 'jcaf_kids_csv_url',
+  ART_CSV_URL: 'jcaf_art_csv_url',
   STAGE_CSV_URL: 'jcaf_stage_csv_url',
   OUTDOOR_CSV_URL: 'jcaf_outdoor_csv_url',
 
@@ -31,6 +33,8 @@ export interface SyncConfig {
   paidWorkshopCsvUrl: string;
   freeWorkshopCsvUrl: string;
   foodCsvUrl: string;
+  kidsCsvUrl: string;
+  artCsvUrl: string;
   stageCsvUrl: string;
   outdoorCsvUrl: string;
 
@@ -46,6 +50,8 @@ export const DEFAULT_SYNC_CONFIG: SyncConfig = {
   paidWorkshopCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1804696312&single=true&output=csv',
   freeWorkshopCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1233726698&single=true&output=csv',
   foodCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1944448555&single=true&output=csv',
+  kidsCsvUrl: '',
+  artCsvUrl: '',
   stageCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=795207739&single=true&output=csv',
   outdoorCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=536106092&single=true&output=csv',
   stallsCsvUrl: '',
@@ -60,6 +66,8 @@ export function getSyncConfig(): SyncConfig {
     paidWorkshopCsvUrl: localStorage.getItem(STORAGE_KEYS.PAID_WORKSHOP_CSV_URL) || DEFAULT_SYNC_CONFIG.paidWorkshopCsvUrl,
     freeWorkshopCsvUrl: localStorage.getItem(STORAGE_KEYS.FREE_WORKSHOP_CSV_URL) || DEFAULT_SYNC_CONFIG.freeWorkshopCsvUrl,
     foodCsvUrl: localStorage.getItem(STORAGE_KEYS.FOOD_CSV_URL) || DEFAULT_SYNC_CONFIG.foodCsvUrl,
+    kidsCsvUrl: localStorage.getItem(STORAGE_KEYS.KIDS_CSV_URL) || DEFAULT_SYNC_CONFIG.kidsCsvUrl,
+    artCsvUrl: localStorage.getItem(STORAGE_KEYS.ART_CSV_URL) || DEFAULT_SYNC_CONFIG.artCsvUrl,
     stageCsvUrl: localStorage.getItem(STORAGE_KEYS.STAGE_CSV_URL) || DEFAULT_SYNC_CONFIG.stageCsvUrl,
     outdoorCsvUrl: localStorage.getItem(STORAGE_KEYS.OUTDOOR_CSV_URL) || DEFAULT_SYNC_CONFIG.outdoorCsvUrl,
 
@@ -74,8 +82,10 @@ export function saveSyncConfig(config: SyncConfig): void {
   localStorage.setItem(STORAGE_KEYS.SPONSOR_CSV_URL, config.sponsorCsvUrl.trim());
   localStorage.setItem(STORAGE_KEYS.PAID_WORKSHOP_CSV_URL, config.paidWorkshopCsvUrl.trim());
   localStorage.setItem(STORAGE_KEYS.FREE_WORKSHOP_CSV_URL, config.freeWorkshopCsvUrl.trim());
-  localStorage.setItem(STORAGE_KEYS.FOOD_CSV_URL, config.foodCsvUrl.trim());
-  localStorage.setItem(STORAGE_KEYS.STAGE_CSV_URL, config.stageCsvUrl.trim());
+  localStorage.setItem(STORAGE_KEYS.FOOD_CSV_URL, (config.foodCsvUrl || '').trim());
+  localStorage.setItem(STORAGE_KEYS.KIDS_CSV_URL, (config.kidsCsvUrl || '').trim());
+  localStorage.setItem(STORAGE_KEYS.ART_CSV_URL, (config.artCsvUrl || '').trim());
+  localStorage.setItem(STORAGE_KEYS.STAGE_CSV_URL, (config.stageCsvUrl || '').trim());
   localStorage.setItem(STORAGE_KEYS.OUTDOOR_CSV_URL, config.outdoorCsvUrl.trim());
 
   localStorage.setItem(STORAGE_KEYS.STALLS_CSV_URL, config.stallsCsvUrl.trim());
@@ -292,6 +302,10 @@ function parseStallRow(
       category = 'free_workshop';
     } else if (explicitCategory.includes('food') || explicitCategory.includes('フード') || explicitCategory.includes('飲食')) {
       category = 'food';
+    } else if (explicitCategory.includes('kid') || explicitCategory.includes('キッズ') || explicitCategory.includes('子ども') || explicitCategory.includes('子供')) {
+      category = 'kids';
+    } else if (explicitCategory.includes('art') || explicitCategory.includes('アート') || explicitCategory.includes('展示') || explicitCategory.includes('exhibition')) {
+      category = 'art';
     }
   }
 
@@ -412,6 +426,8 @@ export async function loadStallsData(): Promise<{ data: Stall[]; isFromRemote: b
     { url: convertToCsvExportUrl(config.paidWorkshopCsvUrl), category: 'paid_workshop', labelJa: '有料ワークショップ', labelEn: 'Paid Workshop' },
     { url: convertToCsvExportUrl(config.freeWorkshopCsvUrl), category: 'free_workshop', labelJa: '無料ワークショップ', labelEn: 'Free Workshop' },
     { url: convertToCsvExportUrl(config.foodCsvUrl), category: 'food', labelJa: 'フード', labelEn: 'Food' },
+    { url: convertToCsvExportUrl(config.kidsCsvUrl), category: 'kids', labelJa: 'キッズアクティビティ', labelEn: 'Kids Activity' },
+    { url: convertToCsvExportUrl(config.artCsvUrl), category: 'art', labelJa: 'アート展示', labelEn: 'Art Exhibition' },
     // 従来の総合シート
     { url: convertToCsvExportUrl(config.stallsCsvUrl), category: 'market', labelJa: 'ブース', labelEn: 'Booth' }
   ];

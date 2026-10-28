@@ -22,6 +22,8 @@
   --cat-paid-workshop: #d97706;
   --cat-free-workshop: #059669;
   --cat-food: #e11d48;
+  --cat-kids: #db2777;
+  --cat-art: #7c3aed;
   --cat-stage: #b91c1c;
   --cat-outdoor: #0284c7;
   --cat-craft: #0d9488;
@@ -381,6 +383,16 @@ html, body {
 .badge-food {
   background: #ffe4e6;
   color: #be123c;
+}
+
+.badge-kids {
+  background: #fce7f3;
+  color: #be185d;
+}
+
+.badge-art {
+  background: #ede9fe;
+  color: #6d28d9;
 }
 
 .badge-market,

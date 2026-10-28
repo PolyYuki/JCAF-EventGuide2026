@@ -198,6 +198,8 @@
 .pinPaidWorkshop { background-color: var(--cat-paid-workshop); border-top-color: var(--cat-paid-workshop); }
 .pinFreeWorkshop { background-color: var(--cat-free-workshop); border-top-color: var(--cat-free-workshop); }
 .pinFood { background-color: var(--cat-food); border-top-color: var(--cat-food); }
+.pinKids { background-color: var(--cat-kids); border-top-color: var(--cat-kids); }
+.pinArt { background-color: var(--cat-art); border-top-color: var(--cat-art); }
 .pinCraft { background-color: var(--cat-craft); border-top-color: var(--cat-craft); }
 .pinWorkshop { background-color: var(--cat-workshop); border-top-color: var(--cat-workshop); }
 .pinGoods { background-color: var(--cat-goods); border-top-color: var(--cat-goods); }

@@ -58,6 +58,8 @@ export const SheetSettingsModal: React.FC<SheetSettingsModalProps> = ({
       paidWorkshopCsvUrl: '',
       freeWorkshopCsvUrl: '',
       foodCsvUrl: '',
+      kidsCsvUrl: '',
+      artCsvUrl: '',
       stageCsvUrl: '',
       outdoorCsvUrl: '',
       stallsCsvUrl: '',
@@ -164,7 +166,7 @@ export const SheetSettingsModal: React.FC<SheetSettingsModalProps> = ({
               }}
               onClick={() => setActiveTab('stalls')}
             >
-              🛍️ {isJa ? '出店・ブース (5種)' : 'Booths (5)'}
+              🛍️ {isJa ? '出店・ブース (7種)' : 'Booths (7)'}
             </button>
             <button
               style={{
@@ -268,6 +270,34 @@ export const SheetSettingsModal: React.FC<SheetSettingsModalProps> = ({
                     placeholder="https://docs.google.com/spreadsheets/d/... (フード)"
                     value={config.foodCsvUrl}
                     onChange={(e) => setConfig({ ...config, foodCsvUrl: e.target.value })}
+                    style={{ width: '100%', padding: '8px 10px', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', fontSize: '0.78rem' }}
+                  />
+                </div>
+
+                {/* 6. キッズアクティビティ */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#db2777', marginBottom: '4px' }}>
+                    6. 🎈 {isJa ? 'キッズアクティビティ シートURL' : 'Kids Activity Sheet URL'}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="https://docs.google.com/spreadsheets/d/... (キッズアクティビティ)"
+                    value={config.kidsCsvUrl}
+                    onChange={(e) => setConfig({ ...config, kidsCsvUrl: e.target.value })}
+                    style={{ width: '100%', padding: '8px 10px', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', fontSize: '0.78rem' }}
+                  />
+                </div>
+
+                {/* 7. アート展示 */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#7c3aed', marginBottom: '4px' }}>
+                    7. 🖼️ {isJa ? 'アート展示 シートURL' : 'Art Exhibition Sheet URL'}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="https://docs.google.com/spreadsheets/d/... (アート展示)"
+                    value={config.artCsvUrl}
+                    onChange={(e) => setConfig({ ...config, artCsvUrl: e.target.value })}
                     style={{ width: '100%', padding: '8px 10px', borderRadius: 'var(--radius-md)', border: '1.5px solid var(--color-border)', fontSize: '0.78rem' }}
                   />
                 </div>

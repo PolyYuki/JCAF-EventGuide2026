@@ -180,6 +180,12 @@ export const MapView: React.FC<MapViewProps> = ({
         return styles.pinFreeWorkshop;
       case 'food':
         return styles.pinFood;
+      case 'kids':
+      case 'kids_activity':
+        return styles.pinKids;
+      case 'art':
+      case 'art_exhibition':
+        return styles.pinArt;
       default:
         return styles.pinMarket || styles.pinCraft;
     }
@@ -225,6 +231,18 @@ export const MapView: React.FC<MapViewProps> = ({
             onClick={() => setFilterCategory('food')}
           >
             🍱 {t('map.filter_food')}
+          </button>
+          <button
+            className={`${styles.filterChip} ${filterCategory === 'kids' ? styles.filterChipActive : ''}`}
+            onClick={() => setFilterCategory('kids')}
+          >
+            🎈 {t('map.filter_kids')}
+          </button>
+          <button
+            className={`${styles.filterChip} ${filterCategory === 'art' ? styles.filterChipActive : ''}`}
+            onClick={() => setFilterCategory('art')}
+          >
+            🖼️ {t('map.filter_art')}
           </button>
           <button
             className={`${styles.filterChip} ${filterCategory === 'facility' ? styles.filterChipActive : ''}`}
