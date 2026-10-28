@@ -51,7 +51,7 @@ export const DEFAULT_SYNC_CONFIG: SyncConfig = {
   paidWorkshopCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1804696312&single=true&output=csv',
   freeWorkshopCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1233726698&single=true&output=csv',
   foodCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1944448555&single=true&output=csv',
-  kidsCsvUrl: '',
+  kidsCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=476561829&single=true&output=csv',
   artCsvUrl: '',
   stageCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=795207739&single=true&output=csv',
   outdoorCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=536106092&single=true&output=csv',
@@ -67,8 +67,8 @@ export function getSyncConfig(): SyncConfig {
     paidWorkshopCsvUrl: localStorage.getItem(STORAGE_KEYS.PAID_WORKSHOP_CSV_URL) || DEFAULT_SYNC_CONFIG.paidWorkshopCsvUrl,
     freeWorkshopCsvUrl: localStorage.getItem(STORAGE_KEYS.FREE_WORKSHOP_CSV_URL) || DEFAULT_SYNC_CONFIG.freeWorkshopCsvUrl,
     foodCsvUrl: localStorage.getItem(STORAGE_KEYS.FOOD_CSV_URL) || DEFAULT_SYNC_CONFIG.foodCsvUrl,
-    kidsCsvUrl: localStorage.getItem(STORAGE_KEYS.KIDS_CSV_URL) || DEFAULT_SYNC_CONFIG.kidsCsvUrl,
-    artCsvUrl: localStorage.getItem(STORAGE_KEYS.ART_CSV_URL) || DEFAULT_SYNC_CONFIG.artCsvUrl,
+    kidsCsvUrl: (localStorage.getItem(STORAGE_KEYS.KIDS_CSV_URL) || '').trim() || DEFAULT_SYNC_CONFIG.kidsCsvUrl,
+    artCsvUrl: (localStorage.getItem(STORAGE_KEYS.ART_CSV_URL) || '').trim() || DEFAULT_SYNC_CONFIG.artCsvUrl,
     stageCsvUrl: localStorage.getItem(STORAGE_KEYS.STAGE_CSV_URL) || DEFAULT_SYNC_CONFIG.stageCsvUrl,
     outdoorCsvUrl: localStorage.getItem(STORAGE_KEYS.OUTDOOR_CSV_URL) || DEFAULT_SYNC_CONFIG.outdoorCsvUrl,
 
@@ -467,7 +467,11 @@ export async function loadStallsData(): Promise<{ data: Stall[]; isFromRemote: b
       const cached = localStorage.getItem(STORAGE_KEYS.CACHED_STALLS);
       if (cached) {
         try {
-          return { data: JSON.parse(cached), isFromRemote: false, error: errorMessage };
+          const parsed = JSON.parse(cached);
+          // キャッシュにkidsが含まれているかチェック
+          if (Array.isArray(parsed) && parsed.some(s => s.category === 'kids')) {
+            return { data: parsed, isFromRemote: false, error: errorMessage };
+          }
         } catch {
           // ignore
         }
@@ -480,7 +484,10 @@ export async function loadStallsData(): Promise<{ data: Stall[]; isFromRemote: b
   const cached = localStorage.getItem(STORAGE_KEYS.CACHED_STALLS);
   if (cached) {
     try {
-      return { data: JSON.parse(cached), isFromRemote: false };
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.some(s => s.category === 'kids')) {
+        return { data: parsed, isFromRemote: false };
+      }
     } catch {
       // ignore
     }
