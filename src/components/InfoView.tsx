@@ -79,7 +79,7 @@ export const InfoView: React.FC<InfoViewProps> = ({
             borderRadius: 'var(--radius-lg)',
             boxShadow: 'var(--shadow-sm)',
             border: '1px solid var(--color-border)',
-            marginBottom: '16px'
+            marginBottom: '14px'
           }}
         >
           <img
@@ -104,6 +104,47 @@ export const InfoView: React.FC<InfoViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* 日豪友好協力50周年 記念事業バナー */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #ffffff 0%, #fdfcf7 100%)',
+          border: '1.5px solid #d4af37',
+          borderRadius: 'var(--radius-lg)',
+          padding: '14px 18px',
+          boxShadow: '0 2px 10px rgba(197, 155, 39, 0.12)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '8px',
+          marginBottom: '16px'
+        }}
+      >
+        <img
+          src="/australia-japan-50th.jpg"
+          alt="AUSTRALIA - JAPAN 50 years of Friendship and Cooperation 日本オーストラリア友好協力50周年"
+          style={{
+            width: '100%',
+            maxWidth: '360px',
+            height: 'auto',
+            objectFit: 'contain',
+            display: 'block'
+          }}
+        />
+        <div
+          style={{
+            fontSize: '0.78rem',
+            color: 'var(--color-primary)',
+            fontWeight: 700,
+            textAlign: 'center',
+            letterSpacing: '0.02em'
+          }}
+        >
+          {isJa
+            ? '本フェスティバルは「日本オーストラリア友好協力50周年」記念事業です'
+            : 'Celebration of 50 Years of Australia-Japan Friendship & Cooperation'}
+        </div>
+      </div>
 
       {/* イベント概要 & 開催情報 */}
       <div className={styles.sectionCard}>
