@@ -54,6 +54,15 @@ export const MapView: React.FC<MapViewProps> = ({
   const dragStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const viewportRef = useRef<HTMLDivElement>(null);
 
+  // マルチタッチ（ピンチズーム）追跡用Ref
+  const activePointersRef = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const pinchStartRef = useRef<{
+    distance: number;
+    scale: number;
+    center: { x: number; y: number };
+    position: { x: number; y: number };
+  } | null>(null);
+
   // 選択中のアイテム（ストール、施設、ステージ）
   const [selectedItem, setSelectedItem] = useState<{
     type: 'stall' | 'facility' | 'stage';
@@ -115,26 +124,148 @@ export const MapView: React.FC<MapViewProps> = ({
     }
   }, []);
 
-  // パン操作（マウス・タッチ共通）
-  const handlePointerDown = (e: React.PointerEvent) => {
-    setIsDragging(true);
-    dragStartRef.current = {
-      x: e.clientX - position.x,
-      y: e.clientY - position.y
+  // 2点間のユークリッド距離
+  const getDistance = (p1: { x: number; y: number }, p2: { x: number; y: number }) => {
+    return Math.hypot(p2.x - p1.x, p2.y - p1.y);
+  };
+
+  // 2点間の中心座標
+  const getCenter = (p1: { x: number; y: number }, p2: { x: number; y: number }) => {
+    return {
+      x: (p1.x + p2.x) / 2,
+      y: (p1.y + p2.y) / 2
     };
   };
 
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging) return;
-    setPosition({
-      x: e.clientX - dragStartRef.current.x,
-      y: e.clientY - dragStartRef.current.y
-    });
+  // パン & ピンチ操作（マルチタッチ対応）
+  const handlePointerDown = (e: React.PointerEvent) => {
+    try {
+      (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    } catch {
+      // ignore
+    }
+    activePointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (activePointersRef.current.size === 1) {
+      // 1本指: ドラッグ開始
+      setIsDragging(true);
+      dragStartRef.current = {
+        x: e.clientX - position.x,
+        y: e.clientY - position.y
+      };
+      pinchStartRef.current = null;
+    } else if (activePointersRef.current.size === 2) {
+      // 2本指: ピンチズーム開始
+      setIsDragging(false);
+      const pointers = Array.from(activePointersRef.current.values());
+      const dist = getDistance(pointers[0], pointers[1]);
+      const center = getCenter(pointers[0], pointers[1]);
+      pinchStartRef.current = {
+        distance: Math.max(dist, 1),
+        scale: scale,
+        center: center,
+        position: { ...position }
+      };
+    }
   };
 
-  const handlePointerUp = () => {
-    setIsDragging(false);
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!activePointersRef.current.has(e.pointerId)) return;
+    activePointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (activePointersRef.current.size === 2 && pinchStartRef.current) {
+      // 2本指ピンチズーム処理
+      const pointers = Array.from(activePointersRef.current.values());
+      const currentDist = getDistance(pointers[0], pointers[1]);
+      const currentCenter = getCenter(pointers[0], pointers[1]);
+
+      const scaleFactor = currentDist / pinchStartRef.current.distance;
+      const newScale = Math.min(Math.max(0.4, pinchStartRef.current.scale * scaleFactor), 3.0);
+
+      if (viewportRef.current) {
+        const rect = viewportRef.current.getBoundingClientRect();
+        // ピンチ開始時の中心点のビューポート相対座標
+        const startCenterX = pinchStartRef.current.center.x - rect.left;
+        const startCenterY = pinchStartRef.current.center.y - rect.top;
+
+        // ピンチ開始時のキャンバス上の点
+        const canvasX = (startCenterX - pinchStartRef.current.position.x) / pinchStartRef.current.scale;
+        const canvasY = (startCenterY - pinchStartRef.current.position.y) / pinchStartRef.current.scale;
+
+        // 現在の中心点のビューポート相対座標
+        const currCenterX = currentCenter.x - rect.left;
+        const currCenterY = currentCenter.y - rect.top;
+
+        // 新しい position（ピンチ中心を維持した拡大縮小＋指の移動に追従）
+        const newPosX = currCenterX - canvasX * newScale;
+        const newPosY = currCenterY - canvasY * newScale;
+
+        setScale(Number(newScale.toFixed(3)));
+        setPosition({ x: newPosX, y: newPosY });
+      }
+    } else if (activePointersRef.current.size === 1 && isDragging) {
+      // 1本指ドラッグ処理
+      setPosition({
+        x: e.clientX - dragStartRef.current.x,
+        y: e.clientY - dragStartRef.current.y
+      });
+    }
   };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    try {
+      (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
+    } catch {
+      // ignore
+    }
+    activePointersRef.current.delete(e.pointerId);
+
+    if (activePointersRef.current.size === 1) {
+      // 2本指から1本指に戻った場合、残った指でドラッグを再開
+      setIsDragging(true);
+      pinchStartRef.current = null;
+      const remainingPointer = Array.from(activePointersRef.current.values())[0];
+      dragStartRef.current = {
+        x: remainingPointer.x - position.x,
+        y: remainingPointer.y - position.y
+      };
+    } else if (activePointersRef.current.size === 0) {
+      setIsDragging(false);
+      pinchStartRef.current = null;
+    }
+  };
+
+  // マウスホイール / トラックパッド ズーム処理
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const rect = viewport.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
+      setScale((prevScale) => {
+        const newScale = Math.min(Math.max(0.4, prevScale * zoomFactor), 3.0);
+        setPosition((prevPos) => {
+          const canvasX = (mouseX - prevPos.x) / prevScale;
+          const canvasY = (mouseY - prevPos.y) / prevScale;
+          return {
+            x: mouseX - canvasX * newScale,
+            y: mouseY - canvasY * newScale
+          };
+        });
+        return Number(newScale.toFixed(3));
+      });
+    };
+
+    viewport.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      viewport.removeEventListener('wheel', onWheel);
+    };
+  }, []);
 
   // ズーム操作
   const handleZoom = (delta: number) => {
