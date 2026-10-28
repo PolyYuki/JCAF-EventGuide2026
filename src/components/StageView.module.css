@@ -34,7 +34,7 @@
 
 .dayBtnActive {
   background: #ffffff;
-  color: var(--color-primary);
+  color: #1e293b;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
@@ -223,7 +223,7 @@
   font-family: var(--font-serif);
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--color-primary);
+  color: #1e293b;
   line-height: 1.35;
   margin-bottom: 4px;
 }

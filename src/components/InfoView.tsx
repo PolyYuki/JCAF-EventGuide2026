@@ -98,7 +98,7 @@ export const InfoView: React.FC<InfoViewProps> = ({
             }}
           />
           <div>
-            <h2 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-serif)', fontWeight: 800, color: 'var(--color-primary)', margin: '0 0 6px' }}>
+            <h2 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-serif)', fontWeight: 800, color: '#1e293b', margin: '0 0 6px' }}>
               {isJa ? eventInfo.nameJa : eventInfo.nameEn}
             </h2>
             <p style={{ fontSize: '0.8rem', color: '#64748b', lineHeight: '1.45' }}>
@@ -137,7 +137,7 @@ export const InfoView: React.FC<InfoViewProps> = ({
         <div
           style={{
             fontSize: '0.78rem',
-            color: 'var(--color-primary)',
+            color: '#334155',
             fontWeight: 700,
             textAlign: 'center',
             letterSpacing: '0.02em'
@@ -170,7 +170,7 @@ export const InfoView: React.FC<InfoViewProps> = ({
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ fontSize: '1.2rem' }}>🏮</span>
-            <span style={{ fontSize: '0.98rem', fontWeight: 800, color: '#d81e35', fontFamily: 'var(--font-serif)' }}>
+            <span style={{ fontSize: '0.98rem', fontWeight: 800, color: '#1e293b', fontFamily: 'var(--font-serif)' }}>
               {isJa ? 'JCAF 公式イベントポスター' : 'Official Festival Poster'}
             </span>
           </div>
@@ -203,7 +203,7 @@ export const InfoView: React.FC<InfoViewProps> = ({
         <div className={styles.accessRow}>
           <div className={styles.accessItem}>
             <strong>{isJa ? '日程' : 'Dates'}:</strong>
-            <span style={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+            <span style={{ fontWeight: 700, color: '#1e293b' }}>
               {isJa ? eventInfo.datesJa : eventInfo.datesEn}
             </span>
           </div>

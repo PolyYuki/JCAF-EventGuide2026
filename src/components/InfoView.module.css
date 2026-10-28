@@ -30,8 +30,8 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--color-bg-subtle);
-  color: var(--color-primary);
+  background: #f1f5f9;
+  color: #1e293b;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,7 +42,7 @@
   font-family: var(--font-serif);
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--color-primary);
+  color: #1e293b;
   margin: 0;
 }
 
@@ -88,7 +88,7 @@
 .facilityItemName {
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--color-primary);
+  color: #1e293b;
   margin-bottom: 2px;
 }
 
@@ -115,7 +115,7 @@
 
 .accessItem strong {
   min-width: 70px;
-  color: var(--color-primary);
+  color: #1e293b;
 }
 
 /* FAQ Accordion */
@@ -143,7 +143,7 @@
   text-align: left;
   font-size: 0.88rem;
   font-weight: 600;
-  color: var(--color-primary);
+  color: #1e293b;
   cursor: pointer;
   gap: 8px;
 }

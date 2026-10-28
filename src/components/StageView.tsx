@@ -169,7 +169,7 @@ export const StageView: React.FC<StageViewProps> = ({ stages, onShowStageOnMap }
             boxSizing: 'border-box'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 700, color: '#1e293b' }}>
             <span>📅</span>
             <span>{isJa ? '2026年11月8日（日）11:00 AM - 4:00 PM' : 'Sunday, November 8, 2026, 11:00 AM - 4:00 PM'}</span>
           </div>
