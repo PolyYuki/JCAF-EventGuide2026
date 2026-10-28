@@ -16,19 +16,19 @@
   --color-border: #f1e5d4;        /* 優しいウォームベージュボーダー */
   --color-border-light: #fdf4e6;
 
-  /* Category Colors - ポスターと調和する明るく楽しいカラー */
-  --cat-market: #0d9488;
-  --cat-sponsor: #2563eb;
-  --cat-paid-workshop: #d97706;
-  --cat-free-workshop: #059669;
-  --cat-food: #e11d48;
-  --cat-kids: #db2777;
-  --cat-art: #7c3aed;
-  --cat-stage: #b91c1c;
-  --cat-outdoor: #0284c7;
-  --cat-craft: #0d9488;
-  --cat-workshop: #d97706;
-  --cat-goods: #7c3aed;
+  /* Category Colors - マップ右下の凡例カラーに完全一致 */
+  --cat-sponsor: #004aad;
+  --cat-market: #ffbd59;
+  --cat-paid-workshop: #f08283;
+  --cat-free-workshop: #5ce1e6;
+  --cat-food: #7ed957;
+  --cat-kids: #ffde59;
+  --cat-art: #e2a9f1;
+  --cat-stage: #e9cc97;
+  --cat-outdoor: #e9cc97;
+  --cat-craft: #ffbd59;
+  --cat-workshop: #f08283;
+  --cat-goods: #ffbd59;
   --cat-facility: #0284c7;
 
   /* Typography */

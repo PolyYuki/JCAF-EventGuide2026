@@ -483,13 +483,13 @@ export const MapView: React.FC<MapViewProps> = ({
           >
             <div
               style={{
-                background: 'rgba(185, 28, 28, 0.9)',
-                color: '#fff',
+                background: '#e9cc97',
+                color: '#1e293b',
                 padding: '3px 8px',
-                borderRadius: '6px',
+                borderRadius: '4px',
                 fontSize: '0.65rem',
                 fontWeight: 800,
-                boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
                 border: '1.5px solid #ffffff',
                 display: 'flex',
                 alignItems: 'center',
@@ -523,13 +523,13 @@ export const MapView: React.FC<MapViewProps> = ({
           >
             <div
               style={{
-                background: 'rgba(2, 132, 199, 0.9)',
-                color: '#fff',
+                background: '#e9cc97',
+                color: '#1e293b',
                 padding: '3px 8px',
-                borderRadius: '6px',
+                borderRadius: '4px',
                 fontSize: '0.65rem',
                 fontWeight: 800,
-                boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
                 border: '1.5px solid #ffffff',
                 display: 'flex',
                 alignItems: 'center',

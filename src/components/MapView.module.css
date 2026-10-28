@@ -168,74 +168,95 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 28px;
   transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: rgba(194, 59, 34, 0.4);
+  border-radius: 6px;
+  background: rgba(216, 30, 53, 0.45);
   animation: pulse 1.5s infinite;
   pointer-events: none;
 }
 
 @keyframes pulse {
   0% {
-    transform: translate(-50%, -50%) scale(0.6);
+    transform: translate(-50%, -50%) scale(0.7);
     opacity: 0.9;
   }
   100% {
-    transform: translate(-50%, -50%) scale(2.2);
+    transform: translate(-50%, -50%) scale(1.8);
     opacity: 0;
   }
 }
 
+/* 四角形ピン */
 .stallPin {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+  min-width: 28px;
+  height: 20px;
+  padding: 1px 4px;
+  border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.65rem;
   font-weight: 800;
-  color: #fff;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-  border: 2px solid #ffffff;
+  letter-spacing: -0.02em;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.28);
+  border: 1.5px solid #ffffff;
   position: relative;
+  white-space: nowrap;
 }
 
-.stallPin::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-width: 5px 4px 0 4px;
-  border-style: solid;
-  border-color: inherit transparent transparent transparent;
+/* マップ右下の凡例カテゴリ色に完全一致 */
+.pinSponsor {
+  background-color: #004aad;
+  color: #ffffff;
 }
 
-.pinMarket { background-color: var(--cat-market); border-top-color: var(--cat-market); }
-.pinSponsor { background-color: var(--cat-sponsor); border-top-color: var(--cat-sponsor); }
-.pinPaidWorkshop { background-color: var(--cat-paid-workshop); border-top-color: var(--cat-paid-workshop); }
-.pinFreeWorkshop { background-color: var(--cat-free-workshop); border-top-color: var(--cat-free-workshop); }
-.pinFood { background-color: var(--cat-food); border-top-color: var(--cat-food); }
-.pinKids { background-color: var(--cat-kids); border-top-color: var(--cat-kids); }
-.pinArt { background-color: var(--cat-art); border-top-color: var(--cat-art); }
-.pinCraft { background-color: var(--cat-craft); border-top-color: var(--cat-craft); }
-.pinWorkshop { background-color: var(--cat-workshop); border-top-color: var(--cat-workshop); }
-.pinGoods { background-color: var(--cat-goods); border-top-color: var(--cat-goods); }
+.pinMarket,
+.pinCraft,
+.pinGoods {
+  background-color: #ffbd59;
+  color: #1e293b;
+}
 
+.pinPaidWorkshop,
+.pinWorkshop {
+  background-color: #f08283;
+  color: #ffffff;
+}
+
+.pinFreeWorkshop {
+  background-color: #5ce1e6;
+  color: #1e293b;
+}
+
+.pinFood {
+  background-color: #7ed957;
+  color: #1e293b;
+}
+
+.pinKids {
+  background-color: #ffde59;
+  color: #1e293b;
+}
+
+.pinArt {
+  background-color: #e2a9f1;
+  color: #1e293b;
+}
+
+/* 施設ピンも四角形に統一 */
 .facilityPin {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background-color: #2563eb;
-  border: 2px solid #ffffff;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background-color: #0284c7;
+  border: 1.5px solid #ffffff;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
 }
 
 .detailBottomCard {
