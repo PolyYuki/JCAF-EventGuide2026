@@ -68,35 +68,25 @@ export const Header: React.FC<HeaderProps> = ({
           tabIndex={0}
           title="Top / Map"
         >
-          <div className="header-logos-group">
-            <div className="header-logo-wrapper" title="JCAF">
-              {eventInfo.logoUrl ? (
-                <img
-                  src={eventInfo.logoUrl}
-                  alt="JCAF Logo"
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-                />
-              ) : (
-                <svg viewBox="0 0 40 40" width="28" height="28" fill="none">
-                  <rect width="40" height="40" rx="8" stroke="#d4af37" strokeWidth="1.5" />
-                  <path
-                    d="M12 25 C14 15, 26 15, 28 25"
-                    stroke="#ffffff"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="20" cy="14" r="3.5" fill="#ffffff" />
-                </svg>
-              )}
-            </div>
-
-            <div className="header-sublogo-wrapper" title="Australia - Japan 50 years of Friendship and Cooperation">
+          <div className="header-logo-wrapper" title="JCAF">
+            {eventInfo.logoUrl ? (
               <img
-                src="/australia-japan-50th.jpg"
-                alt="Australia-Japan 50th Anniversary Logo"
+                src={eventInfo.logoUrl}
+                alt="JCAF Logo"
                 style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
               />
-            </div>
+            ) : (
+              <svg viewBox="0 0 40 40" width="28" height="28" fill="none">
+                <rect width="40" height="40" rx="8" stroke="#d4af37" strokeWidth="1.5" />
+                <path
+                  d="M12 25 C14 15, 26 15, 28 25"
+                  stroke="#ffffff"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                />
+                <circle cx="20" cy="14" r="3.5" fill="#ffffff" />
+              </svg>
+            )}
           </div>
           <div className="header-title-box">
             <h1 className="header-title">
@@ -109,6 +99,15 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         <div className="header-actions">
+          {/* 日豪友好協力50周年ロゴ */}
+          <div className="header-sublogo-wrapper" title="Australia - Japan 50 years of Friendship and Cooperation">
+            <img
+              src="/australia-japan-50th.jpg"
+              alt="Australia-Japan 50th Anniversary Logo"
+              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+            />
+          </div>
+
           {/* 日英切替ボタン */}
           <button
             onClick={toggleLang}
