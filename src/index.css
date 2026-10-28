@@ -1,42 +1,43 @@
-/* JCAF Digital Event Guide - Japanese Modern Design Tokens */
+/* JCAF Digital Event Guide - Festive Bright Theme (Based on Official Poster) */
 :root {
-  /* Color Palette */
-  --color-primary: #0f1e36;       /* 深藍 (Fukaki-ai - Deep Navy) */
-  --color-primary-light: #1e355b;
-  --color-accent: #c23b22;        /* 茜・紅 (Akane Crimson) */
-  --color-accent-hover: #dc2626;
-  --color-gold: #c59b27;          /* 黄金・金砂子 (Kinpun Gold) */
-  --color-gold-light: #f59e0b;
-  --color-bg-paper: #f8f6f0;      /* 和紙・鳥の子色 (Warm Paper) */
+  /* Color Palette - ポスターに合わせた明るく祝祭感あふれる和モダン配色 */
+  --color-primary: #d81e35;       /* 祝祭レッド (日の丸・提灯・リボンの鮮烈な赤) */
+  --color-primary-dark: #b51528;
+  --color-primary-light: #ea3a50;
+  --color-accent: #0284c7;        /* 富士山・波の爽やかなスカイブルー */
+  --color-accent-hover: #0369a1;
+  --color-gold: #f59e0b;          /* 提灯・光のサンシャインゴールド */
+  --color-gold-light: #fde047;
+  --color-bg-paper: #fbf9f4;      /* 明るく温かい和紙アイボリー */
   --color-bg-surface: #ffffff;
-  --color-bg-subtle: #f1ede4;
-  --color-text-main: #1f2937;     /* 墨 (Sumi Charcoal) */
+  --color-bg-subtle: #fef7ed;     /* ほんのり温かいクリーム */
+  --color-text-main: #1e293b;     /* 読みやすい墨ブラック */
   --color-text-muted: #64748b;
-  --color-border: #e2dcd2;
-  --color-border-light: #f0ebe1;
+  --color-border: #f1e5d4;        /* 優しいウォームベージュボーダー */
+  --color-border-light: #fdf4e6;
 
-  /* Category Colors */
+  /* Category Colors - ポスターと調和する明るく楽しいカラー */
   --cat-market: #0d9488;
-  --cat-sponsor: #4338ca;
+  --cat-sponsor: #2563eb;
   --cat-paid-workshop: #d97706;
   --cat-free-workshop: #059669;
   --cat-food: #e11d48;
-  --cat-stage: #881337;
+  --cat-stage: #b91c1c;
   --cat-outdoor: #0284c7;
   --cat-craft: #0d9488;
   --cat-workshop: #d97706;
   --cat-goods: #7c3aed;
-  --cat-facility: #2563eb;
+  --cat-facility: #0284c7;
 
   /* Typography */
   --font-sans: 'Outfit', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-serif: 'Shippori Mincho', 'Yu Mincho', serif;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(15, 30, 54, 0.05);
-  --shadow-md: 0 4px 12px rgba(15, 30, 54, 0.08);
-  --shadow-lg: 0 10px 25px -3px rgba(15, 30, 54, 0.12);
-  --shadow-floating: 0 16px 36px rgba(15, 30, 54, 0.18);
+  /* Shadows - 暖かみのある軽やかなシャドウ */
+  --shadow-sm: 0 1px 3px rgba(180, 83, 9, 0.05);
+  --shadow-md: 0 4px 14px rgba(180, 83, 9, 0.08);
+  --shadow-lg: 0 10px 25px -3px rgba(180, 83, 9, 0.12);
+  --shadow-floating: 0 16px 36px rgba(180, 83, 9, 0.16);
 
   /* Radius */
   --radius-sm: 6px;
@@ -98,7 +99,7 @@ html, body {
   padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 16px) + 20px);
 }
 
-/* Header Styles */
+/* Header Styles - ポスターの日の丸・リボンに合わせた祝祭レッド */
 .app-header {
   position: sticky;
   top: 0;
@@ -106,11 +107,10 @@ html, body {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  background: rgba(15, 30, 54, 0.96);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: linear-gradient(135deg, #d81e35 0%, #b91528 100%);
+  box-shadow: 0 4px 16px rgba(185, 21, 40, 0.22);
   color: #fff;
-  border-bottom: 2px solid var(--color-gold);
+  border-bottom: 2.5px solid #fde047; /* ポスターの暖かな光ゴールド */
   padding: 10px 12px;
   display: flex;
   align-items: center;
@@ -235,25 +235,26 @@ html, body {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(197, 155, 39, 0.4);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.45);
   color: #fff;
   font-size: 0.75rem;
-  font-weight: 600;
-  padding: 6px 10px;
+  font-weight: 700;
+  padding: 6px 11px;
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
 }
 
 .lang-switch-btn:hover {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: var(--color-gold);
+  background: rgba(255, 255, 255, 0.32);
+  border-color: #fff;
 }
 
 .icon-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   color: #fff;
   width: 34px;
   height: 34px;
@@ -267,50 +268,36 @@ html, body {
 }
 
 .icon-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.3);
 }
 
-.badge-count {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background-color: var(--color-accent);
-  color: white;
-  font-size: 0.65rem;
-  font-weight: 700;
-  width: 17px;
-  height: 17px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1.5px solid var(--color-primary);
-}
-
-/* Event Banner Ticker */
+/* Event Banner Ticker - 提灯の明かりのような明るいイエローゴールド */
 .event-ticker {
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
-  background: linear-gradient(90deg, #182a4a 0%, #223e6b 100%);
-  color: #f1f5f9;
-  padding: 6px 12px;
+  background: linear-gradient(90deg, #fef3c7 0%, #fef9c3 100%);
+  color: #78350f;
+  padding: 7px 12px;
   font-size: 0.75rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid #fde68a;
+  box-shadow: 0 1px 3px rgba(180, 83, 9, 0.08);
 }
 
 .ticker-tag {
-  background: var(--color-accent);
+  background: #d81e35;
   color: #fff;
   font-size: 0.65rem;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 3px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
   flex-shrink: 0;
   letter-spacing: 0.05em;
+  box-shadow: 0 1px 3px rgba(216, 30, 53, 0.3);
 }
 
 .bottom-nav {
@@ -327,11 +314,11 @@ html, body {
   pointer-events: auto;
   width: 100%;
   max-width: var(--max-content-width);
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid var(--color-border);
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  border-top: 2px solid #fde68a; /* 提灯イエローの細いアクセントライン */
+  box-shadow: 0 -4px 20px rgba(180, 83, 9, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -346,9 +333,9 @@ html, body {
   gap: 3px;
   background: none;
   border: none;
-  color: var(--color-text-muted);
+  color: #64748b;
   font-size: 0.72rem;
-  font-weight: 500;
+  font-weight: 600;
   padding: 6px 12px;
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -357,12 +344,12 @@ html, body {
 }
 
 .nav-item.active {
-  color: var(--color-primary);
-  font-weight: 700;
+  color: #d81e35;
+  font-weight: 800;
 }
 
 .nav-item.active .nav-icon-wrapper {
-  color: var(--color-accent);
+  color: #d81e35;
   transform: translateY(-2px);
 }
 

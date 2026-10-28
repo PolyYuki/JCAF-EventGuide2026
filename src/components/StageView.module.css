@@ -124,9 +124,9 @@
 }
 
 .stageCardNow {
-  border: 1.5px solid var(--color-accent);
-  background: linear-gradient(180deg, #fff9f8 0%, #ffffff 100%);
-  box-shadow: 0 4px 16px rgba(194, 59, 34, 0.12);
+  border: 2px solid #d81e35;
+  background: linear-gradient(180deg, #fffcfb 0%, #ffffff 100%);
+  box-shadow: 0 4px 16px rgba(216, 30, 53, 0.15);
 }
 
 .cardHeader {
@@ -144,20 +144,22 @@
   gap: 4px;
   font-size: 0.82rem;
   font-weight: 700;
-  color: var(--color-primary);
-  background: #f1f5f9;
+  color: #b91528;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
   padding: 3px 8px;
   border-radius: var(--radius-sm);
 }
 
 .statusTagNow {
-  background: var(--color-accent);
+  background: #d81e35;
   color: #fff;
   font-size: 0.65rem;
   font-weight: 800;
   padding: 2px 8px;
   border-radius: var(--radius-full);
   letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px rgba(216, 30, 53, 0.3);
   animation: pulseTag 1.8s infinite;
 }
 
@@ -175,6 +177,7 @@
   padding: 2px 8px;
   border-radius: var(--radius-full);
   letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
 }
 
 .statusTagEnded {

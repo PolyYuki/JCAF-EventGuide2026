@@ -15,7 +15,9 @@ import {
   Info,
   Coffee,
   Trash2,
-  Baby
+  Baby,
+  ZoomIn,
+  X
 } from 'lucide-react';
 
 interface InfoViewProps {
@@ -35,6 +37,7 @@ export const InfoView: React.FC<InfoViewProps> = ({
   const isJa = lang === 'ja';
 
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [isPosterModalOpen, setIsPosterModalOpen] = useState(false);
 
   const toggleFaq = (index: number) => {
     setOpenFaqIndex((prev) => (prev === index ? null : index));
@@ -143,6 +146,46 @@ export const InfoView: React.FC<InfoViewProps> = ({
           {isJa
             ? '本フェスティバルは「日本オーストラリア友好協力50周年」記念事業です'
             : 'Celebration of 50 Years of Australia-Japan Friendship & Cooperation'}
+        </div>
+      </div>
+
+      {/* JCAF公式ポスターカード */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #ffffff 0%, #fffcf5 100%)',
+          border: '2px solid #fde047',
+          borderRadius: 'var(--radius-lg)',
+          padding: '16px',
+          boxShadow: '0 4px 16px rgba(180, 83, 9, 0.09)',
+          marginBottom: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '12px',
+          cursor: 'pointer'
+        }}
+        onClick={() => setIsPosterModalOpen(true)}
+        title={isJa ? 'タップしてポスターを拡大' : 'Tap to enlarge poster'}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '1.2rem' }}>🏮</span>
+            <span style={{ fontSize: '0.98rem', fontWeight: 800, color: '#d81e35', fontFamily: 'var(--font-serif)' }}>
+              {isJa ? 'JCAF 公式イベントポスター' : 'Official Festival Poster'}
+            </span>
+          </div>
+          <span style={{ fontSize: '0.75rem', color: '#b45309', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <ZoomIn size={14} />
+            {isJa ? 'タップで拡大' : 'Enlarge'}
+          </span>
+        </div>
+
+        <div style={{ position: 'relative', width: '100%', maxWidth: '300px', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 4px 14px rgba(0,0,0,0.12)' }}>
+          <img
+            src="/poster.png"
+            alt="JCAF Official Poster"
+            style={{ width: '100%', height: 'auto', display: 'block' }}
+          />
         </div>
       </div>
 
@@ -311,6 +354,58 @@ export const InfoView: React.FC<InfoViewProps> = ({
             : 'The Japan Culture and Art Festival Committee (JCAF Committee) is a dedicated volunteer team led by Japan Culture and Art Foundation Inc (JCAF Inc), a non-profit organisation established to promote and foster Japanese culture and arts in Melbourne. We aim to create cheerful, fun, and inclusive events and community spaces where everyone can participate and connect.'}
         </p>
       </div>
+
+      {/* ポスター拡大モーダル */}
+      {isPosterModalOpen && (
+        <div
+          className="modal-overlay"
+          style={{ padding: '16px', alignItems: 'center', zIndex: 200 }}
+          onClick={() => setIsPosterModalOpen(false)}
+        >
+          <div
+            style={{
+              position: 'relative',
+              maxWidth: '94vw',
+              maxHeight: '90vh',
+              background: '#ffffff',
+              borderRadius: '16px',
+              padding: '8px',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.4)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="icon-btn"
+              style={{
+                position: 'absolute',
+                top: '14px',
+                right: '14px',
+                background: 'rgba(0, 0, 0, 0.65)',
+                color: '#fff',
+                border: 'none',
+                zIndex: 10,
+                width: '36px',
+                height: '36px'
+              }}
+              onClick={() => setIsPosterModalOpen(false)}
+              aria-label="Close"
+            >
+              <X size={20} />
+            </button>
+            <div style={{ overflowY: 'auto', maxHeight: '86vh', WebkitOverflowScrolling: 'touch' }}>
+              <img
+                src="/poster.png"
+                alt="JCAF Official Poster Full"
+                style={{ width: '100%', maxWidth: '520px', height: 'auto', display: 'block', borderRadius: '8px' }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

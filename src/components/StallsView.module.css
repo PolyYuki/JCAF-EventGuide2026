@@ -183,8 +183,9 @@
   display: inline-block;
   font-size: 0.7rem;
   font-weight: 800;
-  color: var(--color-primary);
-  background: #f1f5f9;
+  color: #b91528;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
   padding: 1px 7px;
   border-radius: var(--radius-sm);
 }
@@ -205,7 +206,7 @@
   font-family: var(--font-serif);
   font-size: 1rem;
   font-weight: 700;
-  color: var(--color-primary);
+  color: #1e293b;
   margin: 4px 0 2px;
   line-height: 1.3;
 }
