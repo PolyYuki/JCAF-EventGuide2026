@@ -68,16 +68,16 @@ export const Header: React.FC<HeaderProps> = ({
           tabIndex={0}
           title="Top / Map"
         >
-          <div className="header-emblem" style={{ overflow: 'hidden', padding: '2px', background: '#ffffff' }}>
+          <div className="header-logo-wrapper">
             {eventInfo.logoUrl ? (
               <img
                 src={eventInfo.logoUrl}
                 alt="JCAF Logo"
-                style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '50%' }}
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
             ) : (
-              <svg viewBox="0 0 40 40" width="24" height="24" fill="none">
-                <circle cx="20" cy="20" r="18" stroke="#d4af37" strokeWidth="1.5" />
+              <svg viewBox="0 0 40 40" width="28" height="28" fill="none">
+                <rect width="40" height="40" rx="8" stroke="#d4af37" strokeWidth="1.5" />
                 <path
                   d="M12 25 C14 15, 26 15, 28 25"
                   stroke="#ffffff"
