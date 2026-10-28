@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { useFavorites } from '../context/FavoritesContext';
 import type { EventInfo } from '../types';
-import { Bookmark, Settings, Globe, Volume2 } from 'lucide-react';
+import { Settings, Globe, Volume2 } from 'lucide-react';
 
 /**
  * ローカル環境（localhost / 開発モード）または管理者モードであるかを判定
@@ -41,19 +40,16 @@ function isLocalOrAdmin(): boolean {
 
 interface HeaderProps {
   eventInfo: EventInfo;
-  onOpenFavorites: () => void;
   onOpenSettings: () => void;
   onSelectTab: (tab: 'map' | 'stalls' | 'stage' | 'info') => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   eventInfo,
-  onOpenFavorites,
   onOpenSettings,
   onSelectTab
 }) => {
   const { lang, toggleLang, t } = useLanguage();
-  const { favoriteStallIds } = useFavorites();
 
   const isJa = lang === 'ja';
   const showAdminSettings = useMemo(() => isLocalOrAdmin(), []);
@@ -117,19 +113,6 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Globe size={14} />
             <span>{isJa ? 'EN' : '日本語'}</span>
-          </button>
-
-          {/* ブックマークボタン */}
-          <button
-            onClick={onOpenFavorites}
-            className="icon-btn"
-            title={t('header.bookmark')}
-            aria-label="Saved favorites"
-          >
-            <Bookmark size={18} />
-            {favoriteStallIds.length > 0 && (
-              <span className="badge-count">{favoriteStallIds.length}</span>
-            )}
           </button>
 
           {/* スプレッドシート設定 (ローカル環境または管理者モード時のみ表示) */}

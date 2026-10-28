@@ -1,13 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import type { Stall, StallCategory } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import { useFavorites } from '../context/FavoritesContext';
 import styles from './StallsView.module.css';
 import {
   Search,
   X,
   MapPin,
-  Heart,
   Share2,
   Store,
   Globe,
@@ -47,12 +45,10 @@ export const StallsView: React.FC<StallsViewProps> = ({
   onShowOnMap
 }) => {
   const { lang, t } = useLanguage();
-  const { isStallFavorite, toggleFavoriteStall } = useFavorites();
   const isJa = lang === 'ja';
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [onlyFavorites, setOnlyFavorites] = useState(false);
 
   // 詳細モーダルで開いているストール
   const [inspectStall, setInspectStall] = useState<Stall | null>(() => {
@@ -65,11 +61,6 @@ export const StallsView: React.FC<StallsViewProps> = ({
   // フィルタリング処理
   const filteredStalls = useMemo(() => {
     return stalls.filter((stall) => {
-      // お気に入りフィルタ
-      if (onlyFavorites && !isStallFavorite(stall.id)) {
-        return false;
-      }
-
       // カテゴリフィルタ
       if (selectedCategory !== 'all' && stall.category !== selectedCategory) {
         return false;
@@ -101,7 +92,7 @@ export const StallsView: React.FC<StallsViewProps> = ({
         matchTagsEn
       );
     });
-  }, [stalls, searchQuery, selectedCategory, onlyFavorites, isStallFavorite]);
+  }, [stalls, searchQuery, selectedCategory]);
 
   const handleShare = (stall: Stall) => {
     const text = `${isJa ? stall.nameJa : stall.nameEn} - JCAF Digital Guide`;
@@ -200,20 +191,13 @@ export const StallsView: React.FC<StallsViewProps> = ({
           </button>
         </div>
 
-        {/* 状態表示とお気に入りトグル */}
+        {/* 状態表示 */}
         <div className={styles.statusRow}>
           <span>
             {t('stalls.count_prefix')}
             <strong>{filteredStalls.length}</strong>
             {t('stalls.count_suffix')}
           </span>
-          <button
-            className={`${styles.favFilterBtn} ${onlyFavorites ? styles.favFilterBtnActive : ''}`}
-            onClick={() => setOnlyFavorites(!onlyFavorites)}
-          >
-            <Heart size={14} fill={onlyFavorites ? 'currentColor' : 'none'} />
-            <span>{t('stalls.favorites_only')}</span>
-          </button>
         </div>
       </div>
 
@@ -224,14 +208,13 @@ export const StallsView: React.FC<StallsViewProps> = ({
           <p style={{ fontWeight: 600, color: 'var(--color-primary)' }}>
             {t('stalls.no_results')}
           </p>
-          {(searchQuery || selectedCategory !== 'all' || onlyFavorites) && (
+          {(searchQuery || selectedCategory !== 'all') && (
             <button
               className="btn btn-outline"
               style={{ marginTop: '12px', fontSize: '0.8rem' }}
               onClick={() => {
                 setSearchQuery('');
                 setSelectedCategory('all');
-                setOnlyFavorites(false);
               }}
             >
               {t('stalls.clear_search')}
@@ -241,7 +224,6 @@ export const StallsView: React.FC<StallsViewProps> = ({
       ) : (
         <div className={styles.stallGrid}>
           {filteredStalls.map((stall) => {
-            const isFav = isStallFavorite(stall.id);
             const isPureSponsor = stall.category === 'sponsor' && !stall.boothNumber;
 
             return (
@@ -341,22 +323,6 @@ export const StallsView: React.FC<StallsViewProps> = ({
                   </div>
 
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                    <button
-                      className="icon-btn"
-                      style={{
-                        background: isFav ? '#fee2e2' : '#f1f5f9',
-                        color: isFav ? 'var(--color-accent)' : '#64748b',
-                        border: 'none',
-                        width: '32px',
-                        height: '32px'
-                      }}
-                      onClick={() => toggleFavoriteStall(stall.id)}
-                      title="Bookmark"
-                      aria-label="Bookmark"
-                    >
-                      <Heart size={16} fill={isFav ? 'currentColor' : 'none'} />
-                    </button>
-
                     {isPureSponsor ? (
                       stall.website ? (
                         <a
@@ -565,19 +531,8 @@ export const StallsView: React.FC<StallsViewProps> = ({
                   )}
 
                   <button
-                    className={`btn ${isStallFavorite(inspectStall.id) ? 'btn-accent' : 'btn-outline'}`}
-                    style={{ padding: '12px 18px' }}
-                    onClick={() => toggleFavoriteStall(inspectStall.id)}
-                  >
-                    <Heart
-                      size={18}
-                      fill={isStallFavorite(inspectStall.id) ? 'currentColor' : 'none'}
-                    />
-                  </button>
-
-                  <button
                     className="btn btn-outline"
-                    style={{ padding: '12px 16px' }}
+                    style={{ padding: '12px 18px' }}
                     onClick={() => handleShare(inspectStall)}
                     title="Share"
                   >

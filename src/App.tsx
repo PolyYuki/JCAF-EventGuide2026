@@ -3,7 +3,6 @@ import type { ActiveTab, Stall, StagePerformance, Facility, EventInfo } from './
 import { initialEventInfo, initialFaqs, initialStalls, initialStages, initialFacilities } from './data/mockData';
 import { loadStallsData, loadStagesData, loadFacilitiesData } from './services/sheetService';
 import { LanguageProvider } from './context/LanguageContext';
-import { FavoritesProvider } from './context/FavoritesContext';
 import { Header } from './components/Header';
 import { BottomNav } from './components/BottomNav';
 import { MapView } from './components/MapView';
@@ -11,7 +10,6 @@ import { StallsView } from './components/StallsView';
 import { StageView } from './components/StageView';
 import { InfoView } from './components/InfoView';
 import { SheetSettingsModal } from './components/SheetSettingsModal';
-import { FavoritesModal } from './components/FavoritesModal';
 
 const AppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('map');
@@ -51,7 +49,6 @@ const AppContent: React.FC = () => {
 
   // モーダルステート
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
 
   // データ同期処理
   const syncData = useCallback(async () => {
@@ -99,7 +96,6 @@ const AppContent: React.FC = () => {
       {/* プレミアム和モダンヘッダー */}
       <Header
         eventInfo={eventInfo}
-        onOpenFavorites={() => setIsFavoritesOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onSelectTab={(tab) => {
           setActiveTab(tab);
@@ -163,18 +159,6 @@ const AppContent: React.FC = () => {
         onSync={syncData}
         isRemoteLoaded={isRemoteLoaded}
       />
-
-      {/* お気に入り一覧モーダル */}
-      <FavoritesModal
-        isOpen={isFavoritesOpen}
-        onClose={() => setIsFavoritesOpen(false)}
-        stalls={stalls}
-        onShowOnMap={handleShowOnMap}
-        onInspectStall={(id) => {
-          setFocusedStallId(id);
-          setActiveTab('stalls');
-        }}
-      />
     </div>
   );
 };
@@ -182,9 +166,7 @@ const AppContent: React.FC = () => {
 export default function App() {
   return (
     <LanguageProvider>
-      <FavoritesProvider>
-        <AppContent />
-      </FavoritesProvider>
+      <AppContent />
     </LanguageProvider>
   );
 }

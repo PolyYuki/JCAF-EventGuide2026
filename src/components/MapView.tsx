@@ -1,14 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { Stall, Facility } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import { useFavorites } from '../context/FavoritesContext';
 import styles from './MapView.module.css';
 import {
   ZoomIn,
   ZoomOut,
   RotateCcw,
   Navigation,
-  Heart,
   ArrowRight,
   X,
   Info,
@@ -36,7 +34,6 @@ export const MapView: React.FC<MapViewProps> = ({
   onNavigateToStallList
 }) => {
   const { lang, t } = useLanguage();
-  const { isStallFavorite, toggleFavoriteStall } = useFavorites();
   const isJa = lang === 'ja';
 
   // フィルター
@@ -511,21 +508,10 @@ export const MapView: React.FC<MapViewProps> = ({
               <div className={styles.detailActions}>
                 <button
                   className="btn btn-primary"
-                  style={{ padding: '6px 12px', fontSize: '0.75rem' }}
+                  style={{ padding: '6px 14px', fontSize: '0.78rem' }}
                   onClick={() => onNavigateToStallList(selectedItem.stall?.id)}
                 >
                   {t('stalls.details')} <ArrowRight size={13} />
-                </button>
-                <button
-                  className={`btn ${isStallFavorite(selectedItem.stall.id) ? 'btn-accent' : 'btn-outline'}`}
-                  style={{ padding: '6px 8px', fontSize: '0.75rem' }}
-                  onClick={() => toggleFavoriteStall(selectedItem.stall!.id)}
-                  title="Bookmark"
-                >
-                  <Heart
-                    size={14}
-                    fill={isStallFavorite(selectedItem.stall.id) ? 'currentColor' : 'none'}
-                  />
                 </button>
               </div>
             </>
