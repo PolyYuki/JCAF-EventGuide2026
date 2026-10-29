@@ -206,14 +206,20 @@ html, body {
 
 .header-title {
   font-family: var(--font-sans);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 700;
-  letter-spacing: 0.03em;
-  line-height: 1.2;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
   color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@media (max-width: 480px) {
+  .header-title {
+    font-size: 0.82rem;
+  }
 }
 
 .header-subtitle {

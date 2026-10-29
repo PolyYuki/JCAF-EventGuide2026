@@ -86,7 +86,17 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
           <div className="header-title-box">
             <h1 className="header-title">
-              {isJa ? eventInfo.nameJa : eventInfo.nameEn}
+              {isJa ? (
+                eventInfo.nameJa
+              ) : eventInfo.nameEn.startsWith('Japan Culture & Art ') ? (
+                <>
+                  Japan Culture &amp; Art
+                  <br />
+                  {eventInfo.nameEn.replace('Japan Culture & Art ', '')}
+                </>
+              ) : (
+                eventInfo.nameEn
+              )}
             </h1>
             <span className="header-subtitle">
               {isJa ? 'デジタルイベントガイド' : 'Digital Event Guide'}
