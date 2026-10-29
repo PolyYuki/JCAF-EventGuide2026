@@ -332,16 +332,25 @@ function parseStallRow(
   const tagsJa = rawTagsJa ? rawTagsJa.split(/[,、/]/).map(t => t.trim()).filter(Boolean) : [];
   const tagsEn = rawTagsEn ? rawTagsEn.split(/[,、/]/).map(t => t.trim()).filter(Boolean) : tagsJa;
 
-  const rawImageUrl =
+  const rawLogoUrl =
     getVal(
       row,
-      'imageUrl', 'image', '画像URL', '写真URL', '写真', '画像',
       'ロゴ', 'ロゴURL', 'logo', 'logoUrl', 'logo_url', 'Logo', 'LOGO',
       'ロゴデータ', 'ロゴデータのリンク', 'ロゴのリンク', 'ロゴリンク', 'ロゴデータリンク',
-      '画像リンク', '画像のリンク', '写真リンク', '写真のリンク', '出店者ロゴ', '店舗ロゴ',
-      'Logo Link', 'Logo URL', 'Logo Image', 'Icon', 'icon', 'アイコン'
-    ) || getValContaining(row, 'ロゴ', 'logo', '画像', '写真', 'image');
-  const imageUrl = rawImageUrl ? formatImageUrl(rawImageUrl) : undefined;
+      '出店者ロゴ', '店舗ロゴ', 'Logo Link', 'Logo URL', 'Logo Image', 'Icon', 'icon', 'アイコン'
+    ) || getValContaining(row, 'ロゴ', 'logo', 'icon', 'アイコン');
+
+  const rawPhotoUrl =
+    getVal(
+      row,
+      '写真', '写真URL', '写真のリンク', '写真リンク', '写真データ', '写真データのリンク',
+      '画像', '画像URL', '画像のリンク', '画像リンク',
+      'photoUrl', 'photo', 'Photo', 'PHOTO', 'imageUrl', 'image', 'Image', 'IMAGE',
+      '商品写真', '作品写真', 'ブース写真'
+    ) || getValContaining(row, '写真', 'photo', '画像', 'image');
+
+  const imageUrl = rawLogoUrl ? formatImageUrl(rawLogoUrl) : (rawPhotoUrl ? formatImageUrl(rawPhotoUrl) : undefined);
+  const photoUrl = rawPhotoUrl ? formatImageUrl(rawPhotoUrl) : undefined;
 
   const priceRange = getVal(row, 'priceRange', 'price', '価格帯', '価格', '料金') || undefined;
   const sponsorTier = getVal(row, 'sponsorTier', 'スポンサー種別', '種別', '協賛種別') || undefined;
@@ -400,6 +409,7 @@ function parseStallRow(
     tagsJa,
     tagsEn,
     imageUrl,
+    photoUrl,
     priceRange,
     highlightJa,
     highlightEn,
@@ -550,8 +560,25 @@ function parsePerformanceRow(
 
   const categoryJa = getVal(row, 'categoryJa', 'category', 'ジャンル', 'カテゴリー') || 'パフォーマンス';
   const categoryEn = getVal(row, 'categoryEn', 'category_en', '英語ジャンル') || 'Performance';
-  const rawImageUrl = getVal(row, 'imageUrl', 'image', '写真URL', '画像URL', '写真', '画像', 'ロゴ', 'logo');
-  const imageUrl = rawImageUrl ? formatImageUrl(rawImageUrl) : undefined;
+
+  const rawLogoUrl =
+    getVal(
+      row,
+      'logoUrl', 'logo', 'ロゴ', 'ロゴURL', 'ロゴデータ', 'ロゴデータのリンク',
+      'ロゴのリンク', 'ロゴリンク', 'Logo', 'LOGO', '出演者ロゴ', '団体ロゴ'
+    ) || getValContaining(row, 'ロゴ', 'logo');
+
+  const rawPhotoUrl =
+    getVal(
+      row,
+      'photoUrl', 'photo', '写真', '写真URL', '写真のリンク', '写真リンク',
+      '写真データ', '写真データのリンク', '画像', '画像URL', '画像のリンク', '画像リンク',
+      'imageUrl', 'image', 'Photo', 'PHOTO', 'Image', 'IMAGE', '演目写真', 'ステージ写真'
+    ) || getValContaining(row, '写真', 'photo', '画像', 'image');
+
+  const imageUrl = rawLogoUrl ? formatImageUrl(rawLogoUrl) : (rawPhotoUrl ? formatImageUrl(rawPhotoUrl) : undefined);
+  const photoUrl = rawPhotoUrl ? formatImageUrl(rawPhotoUrl) : undefined;
+
   const rawLink = getVal(row, 'link', 'Link', 'リンク', 'url', 'URL', 'インスタ', 'instagram', 'Instagram');
   const link = rawLink ? formatInstagramUrl(rawLink) : undefined;
   const id = getVal(row, 'id', 'ID') || `perf-${stageId}-${index + 1}`;
@@ -571,6 +598,7 @@ function parsePerformanceRow(
     descJa,
     descEn,
     imageUrl,
+    photoUrl,
     categoryJa,
     categoryEn,
     link

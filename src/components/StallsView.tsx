@@ -430,10 +430,10 @@ export const StallsView: React.FC<StallsViewProps> = ({
               </div>
 
               <div className="sheet-body">
-                {inspectStall.imageUrl && (
+                {(inspectStall.photoUrl || inspectStall.imageUrl) && (
                   <div className={styles.modalImageWrapper}>
                     <img
-                      src={inspectStall.imageUrl}
+                      src={inspectStall.photoUrl || inspectStall.imageUrl}
                       alt={isJa ? inspectStall.nameJa : inspectStall.nameEn}
                       className={styles.modalImage}
                       onError={(e) => {

@@ -266,7 +266,22 @@ export const StageView: React.FC<StageViewProps> = ({
                       src={perf.imageUrl}
                       alt={perf.titleJa}
                       className={styles.performerLogo}
+                      loading="lazy"
                       onError={(e) => {
+                        const target = e.currentTarget;
+                        if (target.src.includes('drive.google.com/thumbnail')) {
+                          const idMatch = target.src.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+                          if (idMatch && idMatch[1]) {
+                            target.src = `https://lh3.googleusercontent.com/d/${idMatch[1]}`;
+                            return;
+                          }
+                        } else if (target.src.includes('lh3.googleusercontent.com/d/')) {
+                          const id = target.src.split('/d/')[1];
+                          if (id) {
+                            target.src = `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+                            return;
+                          }
+                        }
                         (e.target as HTMLElement).style.display = 'none';
                       }}
                     />
@@ -332,27 +347,46 @@ export const StageView: React.FC<StageViewProps> = ({
                 </div>
 
                 {/* 展開時の詳細説明 */}
-                {isExpanded && (
-                  <div className={styles.descText}>
-                    {perf.imageUrl && (
-                      <div style={{ marginBottom: '10px', textAlign: 'center' }}>
-                        <img
-                          src={perf.imageUrl}
-                          alt={perf.titleJa}
-                          style={{
-                            maxHeight: '140px',
-                            maxWidth: '100%',
-                            borderRadius: '8px',
-                            objectFit: 'contain',
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid var(--color-border)'
-                          }}
-                          onError={(e) => {
-                            (e.target as HTMLElement).style.display = 'none';
-                          }}
-                        />
-                      </div>
-                    )}
+                {isExpanded && (() => {
+                  const detailPhoto = perf.photoUrl || perf.imageUrl;
+                  return (
+                    <div className={styles.descText}>
+                      {detailPhoto && (
+                        <div style={{ marginBottom: '12px', textAlign: 'center' }}>
+                          <img
+                            src={detailPhoto}
+                            alt={isJa ? perf.titleJa : perf.titleEn}
+                            loading="lazy"
+                            style={{
+                              maxHeight: '240px',
+                              width: '100%',
+                              borderRadius: '10px',
+                              objectFit: 'contain',
+                              background: '#f8fafc',
+                              border: '1px solid var(--color-border)',
+                              display: 'block',
+                              margin: '0 auto'
+                            }}
+                            onError={(e) => {
+                              const target = e.currentTarget;
+                              if (target.src.includes('drive.google.com/thumbnail')) {
+                                const idMatch = target.src.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+                                if (idMatch && idMatch[1]) {
+                                  target.src = `https://lh3.googleusercontent.com/d/${idMatch[1]}`;
+                                  return;
+                                }
+                              } else if (target.src.includes('lh3.googleusercontent.com/d/')) {
+                                const id = target.src.split('/d/')[1];
+                                if (id) {
+                                  target.src = `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+                                  return;
+                                }
+                              }
+                              (e.currentTarget.parentElement || e.currentTarget).style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      )}
 
                     {(perf.descJa || perf.descEn) ? (
                       <p>{isJa ? perf.descJa : perf.descEn}</p>
@@ -409,7 +443,8 @@ export const StageView: React.FC<StageViewProps> = ({
                       )}
                     </div>
                   </div>
-                )}
+                  );
+                })()}
               </div>
             </div>
           );

@@ -31,6 +31,7 @@ export interface Stall {
   tagsJa: string[];
   tagsEn: string[];
   imageUrl?: string;
+  photoUrl?: string;
   instagram?: string;
   website?: string;
   priceRange?: string;
@@ -58,6 +59,7 @@ export interface StagePerformance {
   descJa: string;
   descEn: string;
   imageUrl?: string;
+  photoUrl?: string;
   categoryJa: string;
   categoryEn: string;
   link?: string;
