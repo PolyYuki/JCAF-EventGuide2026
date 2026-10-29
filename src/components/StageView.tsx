@@ -34,16 +34,25 @@ const InstagramIcon: React.FC<{ size?: number; style?: React.CSSProperties }> = 
 
 interface StageViewProps {
   stages: StagePerformance[];
+  initialStageFilter?: 'all' | 'stage' | 'outdoor';
   onShowStageOnMap?: (stageId: string) => void;
 }
 
-export const StageView: React.FC<StageViewProps> = ({ stages, onShowStageOnMap }) => {
+export const StageView: React.FC<StageViewProps> = ({
+  stages,
+  initialStageFilter = 'all',
+  onShowStageOnMap
+}) => {
   const { lang, t } = useLanguage();
   const isJa = lang === 'ja';
 
   const [activeDay, setActiveDay] = useState<number>(1);
-  const [stageFilter, setStageFilter] = useState<'all' | 'stage' | 'outdoor'>('all');
+  const [stageFilter, setStageFilter] = useState<'all' | 'stage' | 'outdoor'>(initialStageFilter);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setStageFilter(initialStageFilter);
+  }, [initialStageFilter]);
 
   // 現在時刻のリアルタイム連動（15秒ごとに自動更新）
   const [now, setNow] = useState<Date>(() => new Date());

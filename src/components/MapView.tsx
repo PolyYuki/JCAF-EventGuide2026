@@ -25,7 +25,7 @@ interface MapViewProps {
   onSelectStall: (stall: Stall) => void;
   onClearSelectedStall?: () => void;
   onNavigateToStallList: (stallId?: string) => void;
-  onNavigateToStage?: () => void;
+  onNavigateToStage?: (stageArea?: 'stage' | 'outdoor') => void;
 }
 
 // 添付公式会場マップ画像の実寸解像度
@@ -69,6 +69,7 @@ export const MapView: React.FC<MapViewProps> = ({
     stall?: Stall;
     facility?: Facility;
     stageInfo?: {
+      area: 'stage' | 'outdoor';
       titleJa: string;
       titleEn: string;
       descJa: string;
@@ -496,6 +497,7 @@ export const MapView: React.FC<MapViewProps> = ({
               setSelectedItem({
                 type: 'stage',
                 stageInfo: {
+                  area: 'stage',
                   titleJa: 'メインホール ステージ (Stage Performance & Workshop)',
                   titleEn: 'Main Hall Stage (Stage Performance & Workshop)',
                   descJa: 'Collingwood Town Hall メインホール特設ステージ。和太鼓、伝統舞踊、武道演武、音楽ライブを開催！',
@@ -536,6 +538,7 @@ export const MapView: React.FC<MapViewProps> = ({
               setSelectedItem({
                 type: 'stage',
                 stageInfo: {
+                  area: 'outdoor',
                   titleJa: 'アウトドアパフォーマンス (Outdoor Performance)',
                   titleEn: 'Outdoor Performance Area',
                   descJa: 'Town Hall Reserve（公園）野外芝生エリア。開放的な屋外でのストリートパフォーマンス、太鼓、大道芸をお届け！',
@@ -778,7 +781,7 @@ export const MapView: React.FC<MapViewProps> = ({
                       border: '1px solid rgba(0, 0, 0, 0.12)',
                       boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)'
                     }}
-                    onClick={onNavigateToStage}
+                    onClick={() => onNavigateToStage(selectedItem.stageInfo?.area)}
                   >
                     <Calendar size={13} style={{ marginRight: '4px' }} />
                     {isJa ? '演目一覧' : 'Timetable'}

@@ -47,6 +47,7 @@ const AppContent: React.FC = () => {
   // マップと一覧間の連携ステート
   const [focusedStallId, setFocusedStallId] = useState<string | null>(null);
   const [openedFromMap, setOpenedFromMap] = useState<boolean>(false);
+  const [focusedStageArea, setFocusedStageArea] = useState<'all' | 'stage' | 'outdoor'>('all');
 
   // モーダルステート
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -119,7 +120,10 @@ const AppContent: React.FC = () => {
               setOpenedFromMap(true);
               setActiveTab('stalls');
             }}
-            onNavigateToStage={() => setActiveTab('stage')}
+            onNavigateToStage={(stageArea) => {
+              setFocusedStageArea(stageArea || 'all');
+              setActiveTab('stage');
+            }}
           />
         )}
 
@@ -143,6 +147,7 @@ const AppContent: React.FC = () => {
         {activeTab === 'stage' && (
           <StageView
             stages={stages}
+            initialStageFilter={focusedStageArea}
             onShowStageOnMap={handleShowStageOnMap}
           />
         )}
@@ -164,6 +169,9 @@ const AppContent: React.FC = () => {
           setOpenedFromMap(false);
           if (tab === 'stalls') {
             setFocusedStallId(null);
+          }
+          if (tab === 'stage') {
+            setFocusedStageArea('all');
           }
           setActiveTab(tab);
         }}
