@@ -124,6 +124,7 @@ export function convertToCsvExportUrl(inputUrl: string, gid?: string): string {
 async function fetchAndParseCsv<T>(url: string): Promise<T[]> {
   const response = await fetch(url, {
     method: 'GET',
+    cache: 'no-store',
     headers: {
       'Accept': 'text/csv,text/plain,*/*'
     }
@@ -320,8 +321,8 @@ function parseStallRow(
   const descriptionEn = getVal(row, 'descriptionEn', 'description_en', 'descEn', '英語紹介文') || descriptionJa;
 
   const boothCoord = getBoothCoordinates(boothNumber);
-  const rawMapX = Number(getVal(row, 'mapX', 'map_x', 'X', 'x', 'マップX', 'X座標'));
-  const rawMapY = Number(getVal(row, 'mapY', 'map_y', 'Y', 'y', 'マップY', 'Y座標'));
+  const rawMapX = Number(getVal(row, 'mapX', 'map_x', 'X', 'x', 'Ｘ', 'マップX', 'マップＸ', 'X座標', 'Ｘ座標'));
+  const rawMapY = Number(getVal(row, 'mapY', 'map_y', 'Y', 'y', 'Ｙ', 'マップY', 'マップＹ', 'Y座標', 'Ｙ座標'));
   const mapX = !isNaN(rawMapX) && rawMapX > 0 ? rawMapX : (boothCoord ? boothCoord.x : 50);
   const mapY = !isNaN(rawMapY) && rawMapY > 0 ? rawMapY : (boothCoord ? boothCoord.y : 50);
 
@@ -675,8 +676,8 @@ export async function loadFacilitiesData(): Promise<{ data: Facility[]; isFromRe
           const descJa = getVal(row, 'descJa', 'desc', 'descriptionJa', 'description', '説明', '詳細', '案内', '場所');
           const descEn = getVal(row, 'descEn', 'desc_en', 'descriptionEn', '英語説明', '英語詳細') || descJa;
 
-          const rawX = Number(getVal(row, 'mapX', 'map_x', 'X', 'x', 'マップX', 'X座標'));
-          const rawY = Number(getVal(row, 'mapY', 'map_y', 'Y', 'y', 'マップY', 'Y座標'));
+          const rawX = Number(getVal(row, 'mapX', 'map_x', 'X', 'x', 'Ｘ', 'マップX', 'マップＸ', 'X座標', 'Ｘ座標'));
+          const rawY = Number(getVal(row, 'mapY', 'map_y', 'Y', 'y', 'Ｙ', 'マップY', 'マップＹ', 'Y座標', 'Ｙ座標'));
 
           return {
             id: getVal(row, 'id', 'ID') || `fac-${index + 1}`,

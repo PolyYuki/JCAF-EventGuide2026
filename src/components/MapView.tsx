@@ -116,8 +116,11 @@ export const MapView: React.FC<MapViewProps> = ({
     };
   } | null>(null);
 
-  // ブースの座標解決ヘルパー
+  // ブースの座標解決ヘルパー（スプレッドシートのマップX/Yを最優先、未設定時はブース番号座標にフォールバック）
   const getStallCoord = (stall: Stall) => {
+    if (typeof stall.mapX === 'number' && typeof stall.mapY === 'number' && (stall.mapX !== 50 || stall.mapY !== 50)) {
+      return { x: stall.mapX, y: stall.mapY };
+    }
     const boothCoord = getBoothCoordinates(stall.boothNumber);
     if (boothCoord) {
       return { x: boothCoord.x, y: boothCoord.y };
@@ -660,7 +663,7 @@ export const MapView: React.FC<MapViewProps> = ({
         >
           {/* 公式会場マップ画像 */}
           <img
-            src="/venue-map.png"
+            src="/venue-map.png?v=2"
             alt="JCAF Venue Map"
             className={styles.mapImage}
             draggable={false}
