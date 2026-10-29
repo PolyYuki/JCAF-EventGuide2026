@@ -46,6 +46,7 @@ const AppContent: React.FC = () => {
 
   // マップと一覧間の連携ステート
   const [focusedStallId, setFocusedStallId] = useState<string | null>(null);
+  const [focusedFacilityId, setFocusedFacilityId] = useState<string | null>(null);
   const [openedFromMap, setOpenedFromMap] = useState<boolean>(false);
   const [focusedStageArea, setFocusedStageArea] = useState<'all' | 'stage' | 'outdoor'>('all');
 
@@ -79,6 +80,7 @@ const AppContent: React.FC = () => {
 
   // 出店者一覧から「地図で見る」をクリックした時
   const handleShowOnMap = (stallId: string) => {
+    setFocusedFacilityId(null);
     setFocusedStallId(stallId);
     setActiveTab('map');
   };
@@ -89,7 +91,9 @@ const AppContent: React.FC = () => {
   };
 
   // 施設から「地図で見る」をクリックした時
-  const handleShowFacilityOnMap = (_facilityId: string) => {
+  const handleShowFacilityOnMap = (facilityId: string) => {
+    setFocusedStallId(null);
+    setFocusedFacilityId(facilityId);
     setActiveTab('map');
   };
 
@@ -103,6 +107,7 @@ const AppContent: React.FC = () => {
           setOpenedFromMap(false);
           setActiveTab(tab);
           setFocusedStallId(null);
+          setFocusedFacilityId(null);
         }}
       />
 
@@ -113,8 +118,15 @@ const AppContent: React.FC = () => {
             stalls={stalls}
             facilities={facilities}
             selectedStallId={focusedStallId}
-            onSelectStall={(stall) => setFocusedStallId(stall.id)}
-            onClearSelectedStall={() => setFocusedStallId(null)}
+            selectedFacilityId={focusedFacilityId}
+            onSelectStall={(stall) => {
+              setFocusedFacilityId(null);
+              setFocusedStallId(stall.id);
+            }}
+            onClearSelectedStall={() => {
+              setFocusedStallId(null);
+              setFocusedFacilityId(null);
+            }}
             onNavigateToStallList={(stallId) => {
               if (stallId) setFocusedStallId(stallId);
               setOpenedFromMap(true);

@@ -46,6 +46,7 @@ interface MapViewProps {
   stalls: Stall[];
   facilities: Facility[];
   selectedStallId?: string | null;
+  selectedFacilityId?: string | null;
   onSelectStall: (stall: Stall) => void;
   onClearSelectedStall?: () => void;
   onNavigateToStallList: (stallId?: string) => void;
@@ -60,6 +61,7 @@ export const MapView: React.FC<MapViewProps> = ({
   stalls,
   facilities,
   selectedStallId,
+  selectedFacilityId,
   onSelectStall,
   onClearSelectedStall,
   onNavigateToStallList,
@@ -151,9 +153,31 @@ export const MapView: React.FC<MapViewProps> = ({
     }
   }, [selectedStallId, stalls]);
 
+  // 外部からの selectedFacilityId 変更検知（来場案内の施設リストからのジャンプ）
+  useEffect(() => {
+    if (selectedFacilityId) {
+      const found = facilities.find((f) => f.id === selectedFacilityId);
+      if (found) {
+        setSelectedItem({ type: 'facility', facility: found });
+        // マップ位置を自動センタリング＆少し拡大
+        if (viewportRef.current) {
+          const rect = viewportRef.current.getBoundingClientRect();
+          const targetX = (found.mapX / 100) * MAP_WIDTH;
+          const targetY = (found.mapY / 100) * MAP_HEIGHT;
+          const newScale = 1.35;
+          setScale(newScale);
+          setPosition({
+            x: rect.width / 2 - targetX * newScale,
+            y: rect.height / 2 - targetY * newScale
+          });
+        }
+      }
+    }
+  }, [selectedFacilityId, facilities]);
+
   // 初期センタリング
   useEffect(() => {
-    if (viewportRef.current && !selectedStallId) {
+    if (viewportRef.current && !selectedStallId && !selectedFacilityId) {
       const rect = viewportRef.current.getBoundingClientRect();
       const initialScale = Math.min(rect.width / MAP_WIDTH, rect.height / MAP_HEIGHT) * 0.95;
       const validScale = Math.max(0.4, Math.min(1.0, initialScale));
@@ -798,6 +822,7 @@ export const MapView: React.FC<MapViewProps> = ({
                     setSelectedItem({ type: 'facility', facility: fac });
                   }}
                 >
+                  {isSelected && <div className={styles.pulseRing} />}
                   <div className={styles.facilityPin}>
                     {renderFacilityIcon(fac.type)}
                   </div>

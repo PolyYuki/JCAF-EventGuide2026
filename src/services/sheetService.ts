@@ -640,6 +640,178 @@ export async function loadStagesData(): Promise<{ data: StagePerformance[]; isFr
 }
 
 /**
+ * 施設名の日本語→英語自動変換フォールバック（スプレッドシートに英語列がない場合用）
+ */
+function translateFacilityNameEn(nameJa: string, type: Facility['type']): string {
+  const n = nameJa.trim();
+  if (!n) return '';
+
+  // 既存初期データとの一致チェック
+  const matched = initialFacilities.find(
+    (f) => f.nameJa === n || f.nameJa.replace(/\s+/g, '') === n.replace(/\s+/g, '')
+  );
+  if (matched) return matched.nameEn;
+
+  if (n.includes('正門') || n.includes('メインエントランス')) {
+    return n.includes('Hoddle') ? 'Main Entrance Gate (Hoddle St)' : 'Main Entrance Gate';
+  }
+  if (n.includes('裏門') || n.includes('バックエントランス')) {
+    return n.includes('Eddy') ? 'Back Entrance (Eddy Ct)' : 'Back Entrance';
+  }
+  if (n.includes('インフォメーション') && n.includes('ドリンク')) {
+    return 'Information & Drink Sale';
+  }
+  if (n.includes('総合受付') || n === '受付') {
+    return 'Reception';
+  }
+  if (n.includes('救護') || n.includes('AED') || n.includes('ファーストエイド')) {
+    return 'First Aid & AED Station';
+  }
+  if (n.includes('ベビーカー')) {
+    return 'Pram / Stroller Parking';
+  }
+  if (n.includes('授乳')) {
+    return 'Nursing & Baby Care Room';
+  }
+  if (n.includes('トイレ') || n.includes('お手洗い')) {
+    if (n.includes('Main Hall') || n.includes('メインホール')) return 'Restroom (Main Hall)';
+    if (n.includes('Kitchen') || n.includes('キッチン')) return 'Restroom (Beside Kitchen)';
+    if (n.includes('中庭') || n.includes('Courtyard') || n.includes('Djerring')) return 'Restroom (Courtyard)';
+    return 'Restroom';
+  }
+
+  // 置換による英語化
+  let translated = n
+    .replace(/（/g, ' (')
+    .replace(/）/g, ')')
+    .replace(/正門メインエントランス/g, 'Main Entrance Gate')
+    .replace(/メインエントランス/g, 'Main Entrance')
+    .replace(/裏門バックエントランス/g, 'Back Entrance')
+    .replace(/バックエントランス/g, 'Back Entrance')
+    .replace(/総合インフォメーション/g, 'Information')
+    .replace(/インフォメーション/g, 'Information')
+    .replace(/ドリンク販売/g, 'Drink Sale')
+    .replace(/総合受付/g, 'Reception')
+    .replace(/受付/g, 'Reception')
+    .replace(/救護所・AED/g, 'First Aid & AED')
+    .replace(/救護所/g, 'First Aid Station')
+    .replace(/水洗トイレ|トイレ|お手洗い/g, 'Restroom')
+    .replace(/ベビーカー置き場|ベビーカー置場/g, 'Pram Parking')
+    .replace(/授乳室/g, 'Nursing Room')
+    .replace(/ゴミ箱|ごみ箱/g, 'Waste Bins')
+    .replace(/メインホール/g, 'Main Hall')
+    .replace(/タウンホール/g, 'Town Hall')
+    .replace(/中庭/g, 'Courtyard')
+    .replace(/公園/g, 'Park')
+    .replace(/東側|西側|南側|北側/g, '')
+    .replace(/横/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!/[ぁ-んァ-ヶ一-龠]/.test(translated)) {
+    return translated;
+  }
+
+  switch (type) {
+    case 'entrance':
+      return 'Entrance Gate';
+    case 'toilet':
+      return 'Restroom';
+    case 'firstaid':
+      return 'First Aid & AED Station';
+    case 'nursing':
+      return 'Nursing Room';
+    case 'trash':
+      return 'Waste & Recycling Bins';
+    case 'food_court':
+      return 'Food & Dining Area';
+    default:
+      return 'Information';
+  }
+}
+
+/**
+ * 施設説明の日本語→英語自動変換フォールバック（スプレッドシートに英語列がない場合用）
+ */
+function translateFacilityDescEn(descJa: string, nameJa: string, type: Facility['type']): string {
+  const d = descJa.trim();
+  if (!d) return '';
+
+  const matched = initialFacilities.find(
+    (f) => f.descJa === d || f.nameJa === nameJa.trim()
+  );
+  if (matched && matched.descJa === d) return matched.descEn;
+
+  if (d.includes('正面入口') || d.includes('入場受付')) {
+    return 'Main entrance gate & visitor entry';
+  }
+  if (d.includes('通用口') || d.includes('裏口') || d.includes('西側通路')) {
+    return 'Back access & entrance';
+  }
+  if (d.includes('ラッキードロー') || d.includes('ドリンク販売')) {
+    return 'Event info, beverage sales & lucky draw';
+  }
+  if (d.includes('受付カウンター') || d.includes('関係者')) {
+    return 'Reception desk';
+  }
+  if (d.includes('体調不良') || d.includes('Town Hall Reserve')) {
+    return 'First aid station located at Town Hall Reserve.';
+  }
+  if (d.includes('メインホール') && d.includes('トイレ')) {
+    return 'Restroom beside Main Hall';
+  }
+  if (d.includes('タウンホール') && d.includes('トイレ')) {
+    return 'Restroom in Town Hall';
+  }
+  if ((d.includes('中庭') || d.includes('屋外')) && d.includes('トイレ')) {
+    return 'Restroom at Courtyard';
+  }
+  if (d.includes('ベビーカー')) {
+    return 'Designated stroller / pram parking area';
+  }
+
+  let translated = d
+    .replace(/正面入口/g, 'Main entrance')
+    .replace(/総合案内/g, 'general info')
+    .replace(/入場受付/g, 'visitor entry')
+    .replace(/案内所/g, 'Information desk')
+    .replace(/ドリンク販売/g, 'beverage sales')
+    .replace(/ラッキードロー抽選|ラッキードロー/g, 'lucky draw')
+    .replace(/関係者・来場者受付カウンター|受付カウンター/g, 'Reception desk')
+    .replace(/メインホール横/g, 'Beside Main Hall')
+    .replace(/メインホール/g, 'Main Hall')
+    .replace(/タウンホール内|タウンホール/g, 'Town Hall')
+    .replace(/屋外中庭エリア|中庭エリア|中庭/g, 'Courtyard')
+    .replace(/公園/g, 'Park')
+    .replace(/水洗トイレ|トイレ|お手洗い/g, 'Restroom')
+    .replace(/東側|西側|南側|北側/g, '')
+    .replace(/・/g, ', ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!/[ぁ-んァ-ヶ一-龠]/.test(translated)) {
+    return translated;
+  }
+
+  if (matched) return matched.descEn;
+
+  switch (type) {
+    case 'entrance':
+      return 'Venue entrance & access point';
+    case 'toilet':
+      return 'Restroom facility';
+    case 'firstaid':
+      return 'First aid & emergency support station';
+    case 'nursing':
+      return 'Nursing & baby care space';
+    case 'trash':
+      return 'Waste & recycling station';
+    default:
+      return 'Festival facility & information';
+  }
+}
+
+/**
  * 施設（Facilities）データのロード
  */
 export async function loadFacilitiesData(): Promise<{ data: Facility[]; isFromRemote: boolean }> {
@@ -652,8 +824,12 @@ export async function loadFacilitiesData(): Promise<{ data: Facility[]; isFromRe
       const facilities: Facility[] = rawRows
         .map((row, index) => {
           const nameJa = getVal(row, 'nameJa', 'name', '施設名', '名前', '名称', 'タイトル');
-          const nameEn = getVal(row, 'nameEn', 'name_en', '英語名', '英語施設名') || nameJa;
-          if (!nameJa && !nameEn) return null;
+          const explicitNameEn = getVal(
+            row,
+            'nameEn', 'name_en', '英語名', '英語施設名', '施設名（英語）', '施設名(英語)',
+            '名称（英語）', '名前（英語）', 'English Name', 'Name (EN)', 'Name EN'
+          );
+          if (!nameJa && !explicitNameEn) return null;
 
           const rawType = getVal(row, 'type', '種別', '種類', 'カテゴリ', 'アイコン').toLowerCase();
           let type: Facility['type'] = 'info';
@@ -674,7 +850,15 @@ export async function loadFacilitiesData(): Promise<{ data: Facility[]; isFromRe
           }
 
           const descJa = getVal(row, 'descJa', 'desc', 'descriptionJa', 'description', '説明', '詳細', '案内', '場所');
-          const descEn = getVal(row, 'descEn', 'desc_en', 'descriptionEn', '英語説明', '英語詳細') || descJa;
+          const explicitDescEn = getVal(
+            row,
+            'descEn', 'desc_en', 'descriptionEn', 'description_en', '英語説明', '英語詳細',
+            '英語案内', '説明（英語）', '説明(英語)', '詳細（英語）', '案内（英語）',
+            '場所（英語）', 'English Description', 'Description (EN)', 'Description EN'
+          );
+
+          const nameEn = explicitNameEn || translateFacilityNameEn(nameJa, type);
+          const descEn = explicitDescEn || translateFacilityDescEn(descJa, nameJa, type);
 
           const rawX = Number(getVal(row, 'mapX', 'map_x', 'X', 'x', 'Ｘ', 'マップX', 'マップＸ', 'X座標', 'Ｘ座標'));
           const rawY = Number(getVal(row, 'mapY', 'map_y', 'Y', 'y', 'Ｙ', 'マップY', 'マップＹ', 'Y座標', 'Ｙ座標'));

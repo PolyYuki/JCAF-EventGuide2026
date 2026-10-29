@@ -342,11 +342,35 @@ export const InfoView: React.FC<InfoViewProps> = ({
 
       {/* 主催者 JCAF について */}
       <div className={styles.jcafBanner}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
           <Award size={20} style={{ color: 'var(--color-gold)' }} />
-          <h3 className={styles.jcafBannerTitle}>
+          <h3 className={styles.jcafBannerTitle} style={{ marginBottom: 0 }}>
             {isJa ? eventInfo.organizerJa : eventInfo.organizerEn}
           </h3>
+        </div>
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: 'var(--radius-md)',
+            padding: '10px 16px',
+            marginBottom: '12px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+          }}
+        >
+          <img
+            src="/jcaf-committee-logo.jpg"
+            alt="JCAF Logo"
+            style={{
+              width: '100%',
+              maxWidth: '280px',
+              height: 'auto',
+              objectFit: 'contain',
+              display: 'block'
+            }}
+          />
         </div>
         <p className={styles.jcafBannerText}>
           {isJa
