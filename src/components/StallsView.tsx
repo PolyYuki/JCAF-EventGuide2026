@@ -175,16 +175,16 @@ export const StallsView: React.FC<StallsViewProps> = ({
             {t('stalls.category_all')}
           </button>
           <button
-            className={`${styles.pill} ${selectedCategory === 'market' ? styles.pillActive : ''}`}
-            onClick={() => setSelectedCategory('market')}
-          >
-            🛍️ {t('stalls.category_market')}
-          </button>
-          <button
             className={`${styles.pill} ${selectedCategory === 'sponsor' ? styles.pillActive : ''}`}
             onClick={() => setSelectedCategory('sponsor')}
           >
             🏢 {t('stalls.category_sponsor')}
+          </button>
+          <button
+            className={`${styles.pill} ${selectedCategory === 'market' ? styles.pillActive : ''}`}
+            onClick={() => setSelectedCategory('market')}
+          >
+            🛍️ {t('stalls.category_market')}
           </button>
           <button
             className={`${styles.pill} ${selectedCategory === 'paid_workshop' ? styles.pillActive : ''}`}

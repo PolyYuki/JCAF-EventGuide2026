@@ -469,16 +469,16 @@ export const MapView: React.FC<MapViewProps> = ({
             {t('map.filter_all')}
           </button>
           <button
-            className={`${styles.filterChip} ${filterCategory === 'market' ? styles.filterChipActive : ''}`}
-            onClick={() => setFilterCategory('market')}
-          >
-            🛍️ {t('map.filter_market')}
-          </button>
-          <button
             className={`${styles.filterChip} ${filterCategory === 'sponsor' ? styles.filterChipActive : ''}`}
             onClick={() => setFilterCategory('sponsor')}
           >
             🏢 {t('map.filter_sponsor')}
+          </button>
+          <button
+            className={`${styles.filterChip} ${filterCategory === 'market' ? styles.filterChipActive : ''}`}
+            onClick={() => setFilterCategory('market')}
+          >
+            🛍️ {t('map.filter_market')}
           </button>
           <button
             className={`${styles.filterChip} ${filterCategory === 'paid_workshop' ? styles.filterChipActive : ''}`}
