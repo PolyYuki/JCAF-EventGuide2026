@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import type { Stall, Facility } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 import { getBoothCoordinates } from '../data/boothCoordinates';
@@ -15,8 +15,32 @@ import {
   Coffee,
   Trash2,
   Baby,
-  Calendar
+  Calendar,
+  Crosshair,
+  Copy,
+  Check
 } from 'lucide-react';
+
+function isLocalOrAdmin(): boolean {
+  if (typeof window === 'undefined') return false;
+  if (import.meta.env.DEV) return true;
+  const hostname = window.location.hostname;
+  if (
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname.startsWith('192.168.') ||
+    hostname.startsWith('10.') ||
+    hostname.endsWith('.local')
+  ) {
+    return true;
+  }
+  const searchParams = new URLSearchParams(window.location.search);
+  return (
+    searchParams.get('admin') === 'true' ||
+    searchParams.get('sync') === 'true' ||
+    searchParams.get('settings') === 'true'
+  );
+}
 
 interface MapViewProps {
   stalls: Stall[];
@@ -43,6 +67,19 @@ export const MapView: React.FC<MapViewProps> = ({
 }) => {
   const { lang, t } = useLanguage();
   const isJa = lang === 'ja';
+  const showAdminTools = useMemo(() => isLocalOrAdmin(), []);
+
+  // 座標測定モード（ローカル・管理画面のみ）
+  const [isCoordMeasureMode, setIsCoordMeasureMode] = useState(false);
+  const [measuredCoord, setMeasuredCoord] = useState<{ x: number; y: number } | null>(null);
+  const [copiedType, setCopiedType] = useState<'both' | 'x' | 'y' | null>(null);
+  const pointerDownClientRef = useRef<{ x: number; y: number } | null>(null);
+
+  const handleCopyCoord = (text: string, type: 'both' | 'x' | 'y') => {
+    navigator.clipboard.writeText(text);
+    setCopiedType(type);
+    setTimeout(() => setCopiedType(null), 1800);
+  };
 
   // フィルター
   const [filterCategory, setFilterCategory] = useState<string>('all');
@@ -150,6 +187,7 @@ export const MapView: React.FC<MapViewProps> = ({
     if (activePointersRef.current.size === 1) {
       // 1本指: ドラッグ開始
       setIsDragging(true);
+      pointerDownClientRef.current = { x: e.clientX, y: e.clientY };
       dragStartRef.current = {
         x: e.clientX - position.x,
         y: e.clientY - position.y
@@ -158,6 +196,7 @@ export const MapView: React.FC<MapViewProps> = ({
     } else if (activePointersRef.current.size === 2) {
       // 2本指: ピンチズーム開始
       setIsDragging(false);
+      pointerDownClientRef.current = null;
       const pointers = Array.from(activePointersRef.current.values());
       const dist = getDistance(pointers[0], pointers[1]);
       const center = getCenter(pointers[0], pointers[1]);
@@ -231,6 +270,22 @@ export const MapView: React.FC<MapViewProps> = ({
         y: remainingPointer.y - position.y
       };
     } else if (activePointersRef.current.size === 0) {
+      // 座標測定モード時、ドラッグではなくクリック（移動距離6px未満）であれば座標を計算
+      if (isCoordMeasureMode && pointerDownClientRef.current && viewportRef.current) {
+        const moveDist = Math.hypot(
+          e.clientX - pointerDownClientRef.current.x,
+          e.clientY - pointerDownClientRef.current.y
+        );
+        if (moveDist < 6) {
+          const rect = viewportRef.current.getBoundingClientRect();
+          const canvasX = (e.clientX - rect.left - position.x) / scale;
+          const canvasY = (e.clientY - rect.top - position.y) / scale;
+          const pctX = Number(Math.max(0, Math.min(100, (canvasX / MAP_WIDTH) * 100)).toFixed(1));
+          const pctY = Number(Math.max(0, Math.min(100, (canvasY / MAP_HEIGHT) * 100)).toFixed(1));
+          setMeasuredCoord({ x: pctX, y: pctY });
+        }
+      }
+      pointerDownClientRef.current = null;
       setIsDragging(false);
       pinchStartRef.current = null;
     }
@@ -463,7 +518,130 @@ export const MapView: React.FC<MapViewProps> = ({
         >
           <RotateCcw size={16} />
         </button>
+        {showAdminTools && (
+          <button
+            className={styles.controlBtn}
+            style={
+              isCoordMeasureMode
+                ? {
+                    background: '#d81e35',
+                    color: '#ffffff',
+                    borderColor: '#d81e35',
+                    boxShadow: '0 4px 12px rgba(216, 30, 53, 0.35)'
+                  }
+                : undefined
+            }
+            onClick={() => {
+              setIsCoordMeasureMode((prev) => {
+                const next = !prev;
+                if (!next) setMeasuredCoord(null);
+                return next;
+              });
+            }}
+            title={isJa ? '座標測定モード（クリック地点のマップX/Yを取得）' : 'Coordinate Picker Mode'}
+            aria-label="Coordinate picker mode"
+          >
+            <Crosshair size={18} />
+          </button>
+        )}
       </div>
+
+      {/* 管理者用：座標測定パネル */}
+      {showAdminTools && isCoordMeasureMode && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '54px',
+            left: '8px',
+            right: '8px',
+            zIndex: 35,
+            background: 'rgba(15, 23, 42, 0.92)',
+            backdropFilter: 'blur(8px)',
+            color: '#ffffff',
+            borderRadius: '10px',
+            padding: '8px 12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '8px',
+            fontSize: '0.76rem',
+            boxShadow: '0 6px 20px rgba(0,0,0,0.25)',
+            border: '1px solid rgba(253, 224, 71, 0.5)'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <span style={{ color: '#fde047', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <Crosshair size={14} />
+              {isJa ? '座標測定モード' : 'Coord Picker'}
+            </span>
+            {measuredCoord ? (
+              <span style={{ fontWeight: 700, fontFamily: 'monospace', fontSize: '0.84rem', background: 'rgba(255,255,255,0.12)', padding: '2px 8px', borderRadius: '4px' }}>
+                マップX: <strong style={{ color: '#38bdf8' }}>{measuredCoord.x}</strong> / マップY: <strong style={{ color: '#38bdf8' }}>{measuredCoord.y}</strong>
+              </span>
+            ) : (
+              <span style={{ color: '#cbd5e1' }}>
+                {isJa ? 'マップ上の任意の場所をクリックしてください' : 'Click anywhere on the map'}
+              </span>
+            )}
+          </div>
+
+          {measuredCoord && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => handleCopyCoord(`${measuredCoord.x}\t${measuredCoord.y}`, 'both')}
+                style={{
+                  background: '#fde047',
+                  color: '#1e293b',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '4px 9px',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+                title="スプレッドシートの隣り合うX・Y列にそのまま貼り付けできます"
+              >
+                {copiedType === 'both' ? <Check size={12} /> : <Copy size={12} />}
+                {copiedType === 'both' ? 'コピー済' : 'X・Y両方コピー (シート貼付用)'}
+              </button>
+              <button
+                onClick={() => handleCopyCoord(String(measuredCoord.x), 'x')}
+                style={{
+                  background: 'rgba(255,255,255,0.16)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  borderRadius: '6px',
+                  padding: '4px 8px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                {copiedType === 'x' ? '✓ Xコピー済' : `X (${measuredCoord.x})`}
+              </button>
+              <button
+                onClick={() => handleCopyCoord(String(measuredCoord.y), 'y')}
+                style={{
+                  background: 'rgba(255,255,255,0.16)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  borderRadius: '6px',
+                  padding: '4px 8px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                {copiedType === 'y' ? '✓ Yコピー済' : `Y (${measuredCoord.y})`}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ビューポート（ドラッグ操作エリア） */}
       <div
@@ -584,6 +762,7 @@ export const MapView: React.FC<MapViewProps> = ({
                   top: `${coord.y}%`
                 }}
                 onClick={(e) => {
+                  if (isCoordMeasureMode) return;
                   e.stopPropagation();
                   setSelectedItem({ type: 'stall', stall });
                   onSelectStall(stall);
@@ -611,6 +790,7 @@ export const MapView: React.FC<MapViewProps> = ({
                     top: `${fac.mapY}%`
                   }}
                   onClick={(e) => {
+                    if (isCoordMeasureMode) return;
                     e.stopPropagation();
                     setSelectedItem({ type: 'facility', facility: fac });
                   }}
@@ -621,6 +801,36 @@ export const MapView: React.FC<MapViewProps> = ({
                 </div>
               );
             })}
+
+          {/* --- 座標測定モード時のターゲットマーカー --- */}
+          {showAdminTools && isCoordMeasureMode && measuredCoord && (
+            <div
+              className={styles.pinContainer}
+              style={{
+                left: `${measuredCoord.x}%`,
+                top: `${measuredCoord.y}%`,
+                zIndex: 50,
+                pointerEvents: 'none'
+              }}
+            >
+              <div
+                style={{
+                  width: '26px',
+                  height: '26px',
+                  borderRadius: '50%',
+                  background: 'rgba(216, 30, 53, 0.9)',
+                  border: '2.5px solid #fde047',
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.4)'
+                }}
+              >
+                <Crosshair size={15} />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

@@ -320,8 +320,8 @@ function parseStallRow(
   const descriptionEn = getVal(row, 'descriptionEn', 'description_en', 'descEn', '英語紹介文') || descriptionJa;
 
   const boothCoord = getBoothCoordinates(boothNumber);
-  const rawMapX = Number(row.mapX ?? row.map_x ?? row.X ?? row.x);
-  const rawMapY = Number(row.mapY ?? row.map_y ?? row.Y ?? row.y);
+  const rawMapX = Number(getVal(row, 'mapX', 'map_x', 'X', 'x', 'マップX', 'X座標'));
+  const rawMapY = Number(getVal(row, 'mapY', 'map_y', 'Y', 'y', 'マップY', 'Y座標'));
   const mapX = !isNaN(rawMapX) && rawMapX > 0 ? rawMapX : (boothCoord ? boothCoord.x : 50);
   const mapY = !isNaN(rawMapY) && rawMapY > 0 ? rawMapY : (boothCoord ? boothCoord.y : 50);
 
@@ -649,17 +649,47 @@ export async function loadFacilitiesData(): Promise<{ data: Facility[]; isFromRe
     try {
       const rawRows = await fetchAndParseCsv<Record<string, unknown>>(url);
       const facilities: Facility[] = rawRows
-        .filter((row) => row.nameJa || row.nameEn || row['施設名'])
-        .map((row, index) => ({
-          id: String(row.id || `fac-${index + 1}`),
-          type: (String(row.type || 'info').toLowerCase()) as Facility['type'],
-          nameJa: String(row.nameJa || row.name || row['施設名'] || ''),
-          nameEn: String(row.nameEn || row.nameJa || row['施設名'] || ''),
-          descJa: String(row.descJa || row.desc || row['説明'] || ''),
-          descEn: String(row.descEn || row.descJa || ''),
-          mapX: Number(row.mapX || row.X || row.x) || 50,
-          mapY: Number(row.mapY || row.Y || row.y) || 50
-        }));
+        .map((row, index) => {
+          const nameJa = getVal(row, 'nameJa', 'name', '施設名', '名前', '名称', 'タイトル');
+          const nameEn = getVal(row, 'nameEn', 'name_en', '英語名', '英語施設名') || nameJa;
+          if (!nameJa && !nameEn) return null;
+
+          const rawType = getVal(row, 'type', '種別', '種類', 'カテゴリ', 'アイコン').toLowerCase();
+          let type: Facility['type'] = 'info';
+          if (rawType.includes('entrance') || rawType.includes('入口') || rawType.includes('エントランス') || rawType.includes('門') || rawType.includes('gate')) {
+            type = 'entrance';
+          } else if (rawType.includes('toilet') || rawType.includes('wc') || rawType.includes('restroom') || rawType.includes('トイレ') || rawType.includes('お手洗い')) {
+            type = 'toilet';
+          } else if (rawType.includes('aid') || rawType.includes('救護') || rawType.includes('aed') || rawType.includes('firstaid') || rawType.includes('医務')) {
+            type = 'firstaid';
+          } else if (rawType.includes('nursing') || rawType.includes('授乳') || rawType.includes('おむつ') || rawType.includes('baby') || rawType.includes('キッズ')) {
+            type = 'nursing';
+          } else if (rawType.includes('trash') || rawType.includes('ゴミ') || rawType.includes('ごみ')) {
+            type = 'trash';
+          } else if (rawType.includes('food') || rawType.includes('飲食') || rawType.includes('休憩')) {
+            type = 'food_court';
+          } else if (rawType.includes('info') || rawType.includes('案内') || rawType.includes('受付') || rawType.includes('本部')) {
+            type = 'info';
+          }
+
+          const descJa = getVal(row, 'descJa', 'desc', 'descriptionJa', 'description', '説明', '詳細', '案内', '場所');
+          const descEn = getVal(row, 'descEn', 'desc_en', 'descriptionEn', '英語説明', '英語詳細') || descJa;
+
+          const rawX = Number(getVal(row, 'mapX', 'map_x', 'X', 'x', 'マップX', 'X座標'));
+          const rawY = Number(getVal(row, 'mapY', 'map_y', 'Y', 'y', 'マップY', 'Y座標'));
+
+          return {
+            id: getVal(row, 'id', 'ID') || `fac-${index + 1}`,
+            type,
+            nameJa: nameJa || nameEn,
+            nameEn: nameEn || nameJa,
+            descJa,
+            descEn,
+            mapX: !isNaN(rawX) && rawX > 0 ? rawX : 50,
+            mapY: !isNaN(rawY) && rawY > 0 ? rawY : 50
+          };
+        })
+        .filter((f): f is Facility => f !== null);
 
       if (facilities.length > 0) {
         return { data: facilities, isFromRemote: true };
