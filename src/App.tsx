@@ -40,7 +40,18 @@ const AppContent: React.FC = () => {
     }
     return initialStages;
   });
-  const [facilities, setFacilities] = useState<Facility[]>(initialFacilities);
+  const [facilities, setFacilities] = useState<Facility[]>(() => {
+    try {
+      const cached = localStorage.getItem('jcaf_cached_facilities');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // ignore
+    }
+    return initialFacilities;
+  });
   const [isRemoteLoaded, setIsRemoteLoaded] = useState<boolean>(false);
   const [_isLoading, setIsLoading] = useState<boolean>(true);
 

@@ -52,29 +52,29 @@ export const DEFAULT_SYNC_CONFIG: SyncConfig = {
   freeWorkshopCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1233726698&single=true&output=csv',
   foodCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1944448555&single=true&output=csv',
   kidsCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=476561829&single=true&output=csv',
-  artCsvUrl: '',
+  artCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=2109606652&single=true&output=csv',
   stageCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=795207739&single=true&output=csv',
   outdoorCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=536106092&single=true&output=csv',
   stallsCsvUrl: '',
   stagesCsvUrl: '',
-  facilitiesCsvUrl: ''
+  facilitiesCsvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkci_DzDcJW3ycMaGM4CExIXJXd3jeKfLwMgDamVTEe39hfhVcIATkTHHTdN8MekWJoTo9PQl8PyCI/pub?gid=1192712035&single=true&output=csv'
 };
 
 export function getSyncConfig(): SyncConfig {
   return {
-    marketCsvUrl: localStorage.getItem(STORAGE_KEYS.MARKET_CSV_URL) || DEFAULT_SYNC_CONFIG.marketCsvUrl,
-    sponsorCsvUrl: localStorage.getItem(STORAGE_KEYS.SPONSOR_CSV_URL) || DEFAULT_SYNC_CONFIG.sponsorCsvUrl,
-    paidWorkshopCsvUrl: localStorage.getItem(STORAGE_KEYS.PAID_WORKSHOP_CSV_URL) || DEFAULT_SYNC_CONFIG.paidWorkshopCsvUrl,
-    freeWorkshopCsvUrl: localStorage.getItem(STORAGE_KEYS.FREE_WORKSHOP_CSV_URL) || DEFAULT_SYNC_CONFIG.freeWorkshopCsvUrl,
-    foodCsvUrl: localStorage.getItem(STORAGE_KEYS.FOOD_CSV_URL) || DEFAULT_SYNC_CONFIG.foodCsvUrl,
+    marketCsvUrl: (localStorage.getItem(STORAGE_KEYS.MARKET_CSV_URL) || '').trim() || DEFAULT_SYNC_CONFIG.marketCsvUrl,
+    sponsorCsvUrl: (localStorage.getItem(STORAGE_KEYS.SPONSOR_CSV_URL) || '').trim() || DEFAULT_SYNC_CONFIG.sponsorCsvUrl,
+    paidWorkshopCsvUrl: (localStorage.getItem(STORAGE_KEYS.PAID_WORKSHOP_CSV_URL) || '').trim() || DEFAULT_SYNC_CONFIG.paidWorkshopCsvUrl,
+    freeWorkshopCsvUrl: (localStorage.getItem(STORAGE_KEYS.FREE_WORKSHOP_CSV_URL) || '').trim() || DEFAULT_SYNC_CONFIG.freeWorkshopCsvUrl,
+    foodCsvUrl: (localStorage.getItem(STORAGE_KEYS.FOOD_CSV_URL) || '').trim() || DEFAULT_SYNC_CONFIG.foodCsvUrl,
     kidsCsvUrl: (localStorage.getItem(STORAGE_KEYS.KIDS_CSV_URL) || '').trim() || DEFAULT_SYNC_CONFIG.kidsCsvUrl,
     artCsvUrl: (localStorage.getItem(STORAGE_KEYS.ART_CSV_URL) || '').trim() || DEFAULT_SYNC_CONFIG.artCsvUrl,
-    stageCsvUrl: localStorage.getItem(STORAGE_KEYS.STAGE_CSV_URL) || DEFAULT_SYNC_CONFIG.stageCsvUrl,
-    outdoorCsvUrl: localStorage.getItem(STORAGE_KEYS.OUTDOOR_CSV_URL) || DEFAULT_SYNC_CONFIG.outdoorCsvUrl,
+    stageCsvUrl: (localStorage.getItem(STORAGE_KEYS.STAGE_CSV_URL) || '').trim() || DEFAULT_SYNC_CONFIG.stageCsvUrl,
+    outdoorCsvUrl: (localStorage.getItem(STORAGE_KEYS.OUTDOOR_CSV_URL) || '').trim() || DEFAULT_SYNC_CONFIG.outdoorCsvUrl,
 
-    stallsCsvUrl: localStorage.getItem(STORAGE_KEYS.STALLS_CSV_URL) || DEFAULT_SYNC_CONFIG.stallsCsvUrl,
-    stagesCsvUrl: localStorage.getItem(STORAGE_KEYS.STAGES_CSV_URL) || DEFAULT_SYNC_CONFIG.stagesCsvUrl,
-    facilitiesCsvUrl: localStorage.getItem(STORAGE_KEYS.FACILITIES_CSV_URL) || DEFAULT_SYNC_CONFIG.facilitiesCsvUrl
+    stallsCsvUrl: (localStorage.getItem(STORAGE_KEYS.STALLS_CSV_URL) || '').trim() || DEFAULT_SYNC_CONFIG.stallsCsvUrl,
+    stagesCsvUrl: (localStorage.getItem(STORAGE_KEYS.STAGES_CSV_URL) || '').trim() || DEFAULT_SYNC_CONFIG.stagesCsvUrl,
+    facilitiesCsvUrl: (localStorage.getItem(STORAGE_KEYS.FACILITIES_CSV_URL) || '').trim() || DEFAULT_SYNC_CONFIG.facilitiesCsvUrl
   };
 }
 
@@ -877,10 +877,23 @@ export async function loadFacilitiesData(): Promise<{ data: Facility[]; isFromRe
         .filter((f): f is Facility => f !== null);
 
       if (facilities.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.CACHED_FACILITIES, JSON.stringify(facilities));
         return { data: facilities, isFromRemote: true };
       }
     } catch (err) {
       console.warn('Failed to fetch facilities from CSV, using fallback:', err);
+    }
+  }
+
+  const cached = localStorage.getItem(STORAGE_KEYS.CACHED_FACILITIES);
+  if (cached) {
+    try {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return { data: parsed, isFromRemote: false };
+      }
+    } catch {
+      // ignore
     }
   }
 
