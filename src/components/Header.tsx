@@ -144,17 +144,15 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="event-ticker">
           <span className="ticker-tag">INFO</span>
           <Volume2 size={13} style={{ flexShrink: 0, opacity: 0.9 }} />
-          <div
-            style={{
-              fontSize: '0.75rem',
-              letterSpacing: '0.03em',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              flex: 1
-            }}
-          >
-            {isJa ? eventInfo.announcementJa : (eventInfo.announcementEn || eventInfo.announcementJa)}
+          <div className="ticker-marquee-viewport">
+            <div className="ticker-marquee-track">
+              <span className="ticker-marquee-item">
+                {isJa ? eventInfo.announcementJa : (eventInfo.announcementEn || eventInfo.announcementJa)}
+              </span>
+              <span className="ticker-marquee-item" aria-hidden="true">
+                {isJa ? eventInfo.announcementJa : (eventInfo.announcementEn || eventInfo.announcementJa)}
+              </span>
+            </div>
           </div>
         </div>
       )}

@@ -19,7 +19,7 @@ export const initialEventInfo: EventInfo = {
   organizerJa: '日本文化芸術祭実行委員会',
   organizerEn: 'JCAF (Japan Culture and Art Festival) Committee',
   logoUrl: '/logo.jpg',
-  announcementJa: '【開催案内】2026年11月8日(日) 11:00〜16:00 開催！皆様のご来場をお待ちしております。',
+  announcementJa: '日本文化芸術祭へようこそ！2026年11月8日(日) 11:00〜16:00',
   announcementEn: 'Welcome to JCAF 2026! Sunday, Nov 8, 11:00 AM - 4:00 PM.'
 };
 
