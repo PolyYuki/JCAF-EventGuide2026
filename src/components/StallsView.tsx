@@ -176,42 +176,77 @@ export const StallsView: React.FC<StallsViewProps> = ({
           </button>
           <button
             className={`${styles.pill} ${selectedCategory === 'sponsor' ? styles.pillActive : ''}`}
+            style={
+              selectedCategory === 'sponsor'
+                ? { background: '#004aad', color: '#ffffff', borderColor: '#004aad' }
+                : undefined
+            }
             onClick={() => setSelectedCategory('sponsor')}
           >
             🏢 {t('stalls.category_sponsor')}
           </button>
           <button
             className={`${styles.pill} ${selectedCategory === 'market' ? styles.pillActive : ''}`}
+            style={
+              selectedCategory === 'market'
+                ? { background: '#ffbd59', color: '#1e293b', borderColor: '#f59e0b' }
+                : undefined
+            }
             onClick={() => setSelectedCategory('market')}
           >
             🛍️ {t('stalls.category_market')}
           </button>
           <button
             className={`${styles.pill} ${selectedCategory === 'paid_workshop' ? styles.pillActive : ''}`}
+            style={
+              selectedCategory === 'paid_workshop'
+                ? { background: '#f08283', color: '#ffffff', borderColor: '#e15b5d' }
+                : undefined
+            }
             onClick={() => setSelectedCategory('paid_workshop')}
           >
             🎨 {t('stalls.category_paid_workshop')}
           </button>
           <button
             className={`${styles.pill} ${selectedCategory === 'free_workshop' ? styles.pillActive : ''}`}
+            style={
+              selectedCategory === 'free_workshop'
+                ? { background: '#5ce1e6', color: '#1e293b', borderColor: '#06b6d4' }
+                : undefined
+            }
             onClick={() => setSelectedCategory('free_workshop')}
           >
             🖌️ {t('stalls.category_free_workshop')}
           </button>
           <button
             className={`${styles.pill} ${selectedCategory === 'food' ? styles.pillActive : ''}`}
+            style={
+              selectedCategory === 'food'
+                ? { background: '#7ed957', color: '#1e293b', borderColor: '#4ade80' }
+                : undefined
+            }
             onClick={() => setSelectedCategory('food')}
           >
             🍱 {t('stalls.category_food')}
           </button>
           <button
             className={`${styles.pill} ${selectedCategory === 'kids' ? styles.pillActive : ''}`}
+            style={
+              selectedCategory === 'kids'
+                ? { background: '#ffde59', color: '#1e293b', borderColor: '#eab308' }
+                : undefined
+            }
             onClick={() => setSelectedCategory('kids')}
           >
             🎈 {t('stalls.category_kids')}
           </button>
           <button
             className={`${styles.pill} ${selectedCategory === 'art' ? styles.pillActive : ''}`}
+            style={
+              selectedCategory === 'art'
+                ? { background: '#e2a9f1', color: '#1e293b', borderColor: '#c084fc' }
+                : undefined
+            }
             onClick={() => setSelectedCategory('art')}
           >
             🖼️ {t('stalls.category_art')}

@@ -199,12 +199,22 @@ export const StageView: React.FC<StageViewProps> = ({
         </button>
         <button
           className={`${styles.filterBtn} ${stageFilter === 'stage' ? styles.filterBtnActive : ''}`}
+          style={
+            stageFilter === 'stage'
+              ? { background: '#d81e35', color: '#ffffff', borderColor: '#d81e35' }
+              : undefined
+          }
           onClick={() => setStageFilter('stage')}
         >
           🏛️ {t('stage.stage')}
         </button>
         <button
           className={`${styles.filterBtn} ${stageFilter === 'outdoor' ? styles.filterBtnActive : ''}`}
+          style={
+            stageFilter === 'outdoor'
+              ? { background: '#8b5cf6', color: '#ffffff', borderColor: '#8b5cf6' }
+              : undefined
+          }
           onClick={() => setStageFilter('outdoor')}
         >
           🌳 {t('stage.outdoor')}

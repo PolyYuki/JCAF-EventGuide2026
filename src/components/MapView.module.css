@@ -58,7 +58,8 @@
   transform: translateY(-1px);
 }
 
-.filterChipActive {
+.filterChipActive,
+.filterChipActive:hover {
   background: var(--color-primary);
   color: #ffffff;
   border-color: var(--color-primary);

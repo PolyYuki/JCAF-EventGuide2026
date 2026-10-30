@@ -470,48 +470,88 @@ export const MapView: React.FC<MapViewProps> = ({
           </button>
           <button
             className={`${styles.filterChip} ${filterCategory === 'sponsor' ? styles.filterChipActive : ''}`}
+            style={
+              filterCategory === 'sponsor'
+                ? { background: '#004aad', color: '#ffffff', borderColor: '#004aad' }
+                : undefined
+            }
             onClick={() => setFilterCategory('sponsor')}
           >
             🏢 {t('map.filter_sponsor')}
           </button>
           <button
             className={`${styles.filterChip} ${filterCategory === 'market' ? styles.filterChipActive : ''}`}
+            style={
+              filterCategory === 'market'
+                ? { background: '#ffbd59', color: '#1e293b', borderColor: '#f59e0b' }
+                : undefined
+            }
             onClick={() => setFilterCategory('market')}
           >
             🛍️ {t('map.filter_market')}
           </button>
           <button
             className={`${styles.filterChip} ${filterCategory === 'paid_workshop' ? styles.filterChipActive : ''}`}
+            style={
+              filterCategory === 'paid_workshop'
+                ? { background: '#f08283', color: '#ffffff', borderColor: '#e15b5d' }
+                : undefined
+            }
             onClick={() => setFilterCategory('paid_workshop')}
           >
             🎨 {t('map.filter_paid_workshop')}
           </button>
           <button
             className={`${styles.filterChip} ${filterCategory === 'free_workshop' ? styles.filterChipActive : ''}`}
+            style={
+              filterCategory === 'free_workshop'
+                ? { background: '#5ce1e6', color: '#1e293b', borderColor: '#06b6d4' }
+                : undefined
+            }
             onClick={() => setFilterCategory('free_workshop')}
           >
             🖌️ {t('map.filter_free_workshop')}
           </button>
           <button
             className={`${styles.filterChip} ${filterCategory === 'food' ? styles.filterChipActive : ''}`}
+            style={
+              filterCategory === 'food'
+                ? { background: '#7ed957', color: '#1e293b', borderColor: '#4ade80' }
+                : undefined
+            }
             onClick={() => setFilterCategory('food')}
           >
             🍱 {t('map.filter_food')}
           </button>
           <button
             className={`${styles.filterChip} ${filterCategory === 'kids' ? styles.filterChipActive : ''}`}
+            style={
+              filterCategory === 'kids'
+                ? { background: '#ffde59', color: '#1e293b', borderColor: '#eab308' }
+                : undefined
+            }
             onClick={() => setFilterCategory('kids')}
           >
             🎈 {t('map.filter_kids')}
           </button>
           <button
             className={`${styles.filterChip} ${filterCategory === 'art' ? styles.filterChipActive : ''}`}
+            style={
+              filterCategory === 'art'
+                ? { background: '#e2a9f1', color: '#1e293b', borderColor: '#c084fc' }
+                : undefined
+            }
             onClick={() => setFilterCategory('art')}
           >
             🖼️ {t('map.filter_art')}
           </button>
           <button
             className={`${styles.filterChip} ${filterCategory === 'facility' ? styles.filterChipActive : ''}`}
+            style={
+              filterCategory === 'facility'
+                ? { background: '#0284c7', color: '#ffffff', borderColor: '#0284c7' }
+                : undefined
+            }
             onClick={() => setFilterCategory('facility')}
           >
             🚻 {t('map.filter_facility')}
@@ -687,7 +727,7 @@ export const MapView: React.FC<MapViewProps> = ({
         >
           {/* 公式会場マップ画像 */}
           <img
-            src="/venue-map.png?v=2"
+            src="/venue-map.png?v=3"
             alt="JCAF Venue Map"
             className={styles.mapImage}
             draggable={false}
