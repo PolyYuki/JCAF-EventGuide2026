@@ -243,6 +243,12 @@
 .pinArt {
   background-color: #e2a9f1;
   color: #1e293b;
+  min-width: 21px;
+  height: 15px;
+  padding: 0 3px;
+  font-size: 0.52rem;
+  border-radius: 2.5px;
+  border-width: 1px;
 }
 
 /* 施設ピンも四角形に統一 */

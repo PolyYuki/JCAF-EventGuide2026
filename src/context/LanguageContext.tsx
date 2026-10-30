@@ -34,7 +34,7 @@ const translations: Record<string, { ja: string; en: string }> = {
   'map.filter_food': { ja: 'フード', en: 'Food & Drinks' },
   'map.filter_kids': { ja: 'キッズアクティビティ', en: 'Kids Activity' },
   'map.filter_art': { ja: 'アート展示', en: 'Art Exhibition' },
-  'map.filter_facility': { ja: '施設（トイレ・本部等）', en: 'Facilities' },
+  'map.filter_facility': { ja: '施設', en: 'Facilities' },
   'map.legend_main_stage': { ja: 'ステージ', en: 'Main Stage' },
   'map.legend_culture_stage': { ja: 'アウトドアパフォーマンス', en: 'Outdoor Performance' },
   'map.select_prompt': { ja: 'ピンをタップして詳細を確認', en: 'Tap any pin on the map to inspect' },
