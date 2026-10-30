@@ -261,6 +261,31 @@ export const StallsView: React.FC<StallsViewProps> = ({
             {t('stalls.count_suffix')}
           </span>
         </div>
+
+        {/* キッズアクティビティ選択時のゴールドコイン案内バナー */}
+        {selectedCategory === 'kids' && (
+          <div
+            style={{
+              background: 'linear-gradient(90deg, #fef3c7 0%, #fef9c3 100%)',
+              border: '1.5px solid #eab308',
+              borderRadius: 'var(--radius-md)',
+              padding: '8px 12px',
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              color: '#78350f',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <span>🪙</span>
+            <span>
+              {isJa
+                ? 'キッズアクティビティの参加にはゴールドコイン（$1 or $2）が必要です。'
+                : 'A gold coin ($1 or $2) is required to participate in Kids Activities.'}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* 出店者カードリスト */}
@@ -334,6 +359,21 @@ export const StallsView: React.FC<StallsViewProps> = ({
                         )}
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+                        {(stall.category === 'kids' || stall.category === 'kids_activity') && (
+                          <span
+                            style={{
+                              fontSize: '0.68rem',
+                              fontWeight: 700,
+                              padding: '2px 7px',
+                              borderRadius: '999px',
+                              background: '#fef3c7',
+                              color: '#92400e',
+                              border: '1px solid #f59e0b'
+                            }}
+                          >
+                            🪙 {isJa ? 'ゴールドコイン ($1 or $2)' : 'Gold Coin ($1 or $2)'}
+                          </span>
+                        )}
                         {stall.sponsorTier && (
                           <span className="badge-category badge-gold" style={{ fontSize: '0.68rem', padding: '2px 6px' }}>
                             {stall.sponsorTier}
@@ -495,6 +535,32 @@ export const StallsView: React.FC<StallsViewProps> = ({
                 <h2 className="sheet-title" style={{ fontSize: '1.25rem', marginBottom: '8px' }}>
                   {isJa ? inspectStall.nameJa : inspectStall.nameEn}
                 </h2>
+
+                {/* キッズアクティビティの参加費（ゴールドコイン）案内 */}
+                {(inspectStall.category === 'kids' || inspectStall.category === 'kids_activity') && (
+                  <div
+                    style={{
+                      background: 'linear-gradient(90deg, #fef3c7 0%, #fef9c3 100%)',
+                      border: '1.5px solid #eab308',
+                      borderRadius: 'var(--radius-md)',
+                      padding: '10px 14px',
+                      marginBottom: '14px',
+                      fontSize: '0.86rem',
+                      fontWeight: 700,
+                      color: '#78350f',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <span style={{ fontSize: '1.05rem' }}>🪙</span>
+                    <span>
+                      {isJa
+                        ? '参加にはゴールドコイン（$1 or $2）が必要です'
+                        : 'Gold coin ($1 or $2) required for participation'}
+                    </span>
+                  </div>
+                )}
 
                 {/* こだわりハイライト */}
                 {!isPureInspectSponsor && (inspectStall.highlightJa || inspectStall.highlightEn) && (

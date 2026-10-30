@@ -945,6 +945,18 @@ export const MapView: React.FC<MapViewProps> = ({
                   <h3 className={styles.detailTitle}>
                     {isJa ? selectedItem.stall.nameJa : selectedItem.stall.nameEn}
                   </h3>
+                  {(selectedItem.stall.category === 'kids' || selectedItem.stall.category === 'kids_activity') && (
+                    <div
+                      style={{
+                        fontSize: '0.73rem',
+                        fontWeight: 700,
+                        color: '#92400e',
+                        marginBottom: '2px'
+                      }}
+                    >
+                      🪙 {isJa ? '参加にはゴールドコイン ($1 or $2) が必要です' : 'Gold coin ($1 or $2) required'}
+                    </div>
+                  )}
                   <p className={styles.detailDesc}>
                     {isJa ? selectedItem.stall.shortDescJa : selectedItem.stall.shortDescEn}
                   </p>
