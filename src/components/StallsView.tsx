@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { Stall, StallCategory } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 import styles from './StallsView.module.css';
@@ -11,6 +11,170 @@ import {
   Globe,
   ExternalLink
 } from 'lucide-react';
+
+/**
+ * URLからGoogle DriveのファイルIDを抽出
+ */
+function extractGoogleDriveId(url: string): string | null {
+  if (!url) return null;
+  const fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (fileMatch && fileMatch[1]) return fileMatch[1];
+  const idParamMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (idParamMatch && idParamMatch[1]) return idParamMatch[1];
+  const dMatch = url.match(/lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
+  if (dMatch && dMatch[1]) return dMatch[1];
+  return null;
+}
+
+/**
+ * YouTube URLから動画IDを抽出
+ */
+function extractYouTubeId(url: string): string | null {
+  if (!url) return null;
+  const match = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+  );
+  return match ? match[1] : null;
+}
+
+/**
+ * Vimeo URLから動画IDを抽出
+ */
+function extractVimeoId(url: string): string | null {
+  if (!url) return null;
+  const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  return match ? match[1] : null;
+}
+
+/**
+ * 拡張子から直接動画ファイルであるかを判定
+ */
+function isDirectVideoUrl(url: string): boolean {
+  if (!url) return false;
+  return /\.(mp4|webm|mov|m4v|ogg)(\?|#|$)/i.test(url.trim());
+}
+
+/**
+ * スマホ（iOS Safari等）でも高速・確実にインライン再生できるよう最適化済みのGoogle Drive動画マップ
+ */
+const LOCAL_DRIVE_VIDEOS: Record<string, string> = {
+  '1ndTGbnsCBiYPSBJhxhS76xaYpzsmUjrk': '/videos/ezy-tax-solutions.mp4'
+};
+
+/**
+ * 詳細モーダル用のメディア表示コンポーネント（画像・動画自動判別＆スマホ再生対応）
+ */
+const DetailMediaView: React.FC<{ url: string; alt: string }> = ({ url, alt }) => {
+  const driveId = useMemo(() => extractGoogleDriveId(url), [url]);
+  const youtubeId = useMemo(() => extractYouTubeId(url), [url]);
+  const vimeoId = useMemo(() => extractVimeoId(url), [url]);
+  const directVideo = useMemo(() => isDirectVideoUrl(url), [url]);
+  const localDriveVideoUrl = driveId ? LOCAL_DRIVE_VIDEOS[driveId] : undefined;
+  const isExplicitDriveVideo = Boolean(
+    driveId && (localDriveVideoUrl || /[?&#]video=1/i.test(url) || url.includes('/preview'))
+  );
+
+  const [isHidden, setIsHidden] = useState(false);
+
+  useEffect(() => {
+    setIsHidden(false);
+  }, [url]);
+
+  if (isHidden) return null;
+
+  // 1. YouTube動画
+  if (youtubeId) {
+    return (
+      <div className={styles.modalImageWrapper} style={{ padding: '8px', background: '#000' }}>
+        <iframe
+          src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&playsinline=1&rel=0`}
+          title={alt}
+          style={{ width: '100%', aspectRatio: '16 / 9', border: 'none', borderRadius: '6px' }}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+
+  // 2. Vimeo動画
+  if (vimeoId) {
+    return (
+      <div className={styles.modalImageWrapper} style={{ padding: '8px', background: '#000' }}>
+        <iframe
+          src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=1`}
+          title={alt}
+          style={{ width: '100%', aspectRatio: '16 / 9', border: 'none', borderRadius: '6px' }}
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+
+  // 3. 直接動画URL (.mp4, .mov, .webm) または スマホ最適化済みGoogle Drive動画
+  if (directVideo || localDriveVideoUrl) {
+    const videoSrc = localDriveVideoUrl || url;
+    const posterUrl = driveId ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w1000` : undefined;
+    return (
+      <div className={styles.modalImageWrapper} style={{ padding: '8px', background: '#0f172a' }}>
+        <video
+          src={videoSrc}
+          poster={posterUrl}
+          controls
+          playsInline
+          autoPlay
+          muted
+          preload="metadata"
+          style={{ width: '100%', maxHeight: '320px', borderRadius: '6px', display: 'block' }}
+        />
+      </div>
+    );
+  }
+
+  // 4. その他のGoogle Drive動画プレビュー指定時
+  if (driveId && isExplicitDriveVideo) {
+    return (
+      <div className={styles.modalImageWrapper} style={{ padding: '8px', background: '#0f172a', flexDirection: 'column', gap: '8px' }}>
+        <iframe
+          src={`https://drive.google.com/file/d/${driveId}/preview`}
+          title={alt}
+          style={{ width: '100%', aspectRatio: '16 / 9', minHeight: '220px', border: 'none', borderRadius: '6px' }}
+          allow="autoplay; fullscreen"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+
+  // 5. 通常の画像（またはGoogle Drive画像）
+  return (
+    <div className={styles.modalImageWrapper}>
+      <img
+        src={url}
+        alt={alt}
+        className={styles.modalImage}
+        onError={(e) => {
+          const target = e.currentTarget;
+          if (target.src.includes('drive.google.com/thumbnail')) {
+            const idMatch = target.src.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+            if (idMatch && idMatch[1]) {
+              target.src = `https://lh3.googleusercontent.com/d/${idMatch[1]}`;
+              return;
+            }
+          } else if (target.src.includes('lh3.googleusercontent.com/d/')) {
+            const id = target.src.split('/d/')[1];
+            if (id) {
+              target.src = `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+              return;
+            }
+          }
+          setIsHidden(true);
+        }}
+      />
+    </div>
+  );
+};
 
 const InstagramIcon: React.FC<{ size?: number; style?: React.CSSProperties }> = ({
   size = 16,
@@ -505,31 +669,11 @@ export const StallsView: React.FC<StallsViewProps> = ({
               </div>
 
               <div className="sheet-body">
-                {(inspectStall.photoUrl || inspectStall.imageUrl) && (
-                  <div className={styles.modalImageWrapper}>
-                    <img
-                      src={inspectStall.photoUrl || inspectStall.imageUrl}
-                      alt={isJa ? inspectStall.nameJa : inspectStall.nameEn}
-                      className={styles.modalImage}
-                      onError={(e) => {
-                        const target = e.currentTarget;
-                        if (target.src.includes('drive.google.com/thumbnail')) {
-                          const idMatch = target.src.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-                          if (idMatch && idMatch[1]) {
-                            target.src = `https://lh3.googleusercontent.com/d/${idMatch[1]}`;
-                            return;
-                          }
-                        } else if (target.src.includes('lh3.googleusercontent.com/d/')) {
-                          const id = target.src.split('/d/')[1];
-                          if (id) {
-                            target.src = `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
-                            return;
-                          }
-                        }
-                        (e.currentTarget.parentElement || e.currentTarget).style.display = 'none';
-                      }}
-                    />
-                  </div>
+                {inspectStall.photoUrl && (
+                  <DetailMediaView
+                    url={inspectStall.photoUrl}
+                    alt={isJa ? inspectStall.nameJa : inspectStall.nameEn}
+                  />
                 )}
 
                 <h2 className="sheet-title" style={{ fontSize: '1.25rem', marginBottom: '8px' }}>

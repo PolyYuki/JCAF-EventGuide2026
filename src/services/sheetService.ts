@@ -21,7 +21,7 @@ const STORAGE_KEYS = {
   FACILITIES_CSV_URL: 'jcaf_facilities_csv_url',
 
   // キャッシュ
-  CACHED_STALLS: 'jcaf_cached_stalls_v2',
+  CACHED_STALLS: 'jcaf_cached_stalls_v4',
   CACHED_STAGES: 'jcaf_cached_stages',
   CACHED_FACILITIES: 'jcaf_cached_facilities',
   LAST_SYNC_TIME: 'jcaf_last_sync_time'
@@ -349,7 +349,7 @@ function parseStallRow(
       '商品写真', '作品写真', 'ブース写真'
     ) || getValContaining(row, '写真', 'photo', '画像', 'image');
 
-  const imageUrl = rawLogoUrl ? formatImageUrl(rawLogoUrl) : (rawPhotoUrl ? formatImageUrl(rawPhotoUrl) : undefined);
+  const imageUrl = rawLogoUrl ? formatImageUrl(rawLogoUrl) : undefined;
   const photoUrl = rawPhotoUrl ? formatImageUrl(rawPhotoUrl) : undefined;
 
   const priceRange = getVal(row, 'priceRange', 'price', '価格帯', '価格', '料金') || undefined;
@@ -579,7 +579,7 @@ function parsePerformanceRow(
       'imageUrl', 'image', 'Photo', 'PHOTO', 'Image', 'IMAGE', '演目写真', 'ステージ写真'
     ) || getValContaining(row, '写真', 'photo', '画像', 'image');
 
-  const imageUrl = rawLogoUrl ? formatImageUrl(rawLogoUrl) : (rawPhotoUrl ? formatImageUrl(rawPhotoUrl) : undefined);
+  const imageUrl = rawLogoUrl ? formatImageUrl(rawLogoUrl) : undefined;
   const photoUrl = rawPhotoUrl ? formatImageUrl(rawPhotoUrl) : undefined;
 
   const rawLink = getVal(row, 'link', 'Link', 'リンク', 'url', 'URL', 'インスタ', 'instagram', 'Instagram');
