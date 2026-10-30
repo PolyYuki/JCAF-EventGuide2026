@@ -113,6 +113,7 @@ const AppContent: React.FC = () => {
       {/* プレミアム和モダンヘッダー */}
       <Header
         eventInfo={eventInfo}
+        stages={stages}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onSelectTab={(tab) => {
           setOpenedFromMap(false);
