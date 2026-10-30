@@ -21,7 +21,7 @@ const STORAGE_KEYS = {
   FACILITIES_CSV_URL: 'jcaf_facilities_csv_url',
 
   // キャッシュ
-  CACHED_STALLS: 'jcaf_cached_stalls',
+  CACHED_STALLS: 'jcaf_cached_stalls_v2',
   CACHED_STAGES: 'jcaf_cached_stages',
   CACHED_FACILITIES: 'jcaf_cached_facilities',
   LAST_SYNC_TIME: 'jcaf_last_sync_time'
@@ -382,13 +382,16 @@ function parseStallRow(
     }
   }
 
-  const rawLocationJa = getVal(
-    row,
-    'locationJa', 'location', '出店場所', '場所', 'エリア', '会場',
-    '出店エリア', 'ブースエリア', 'ブース場所', 'area', 'Area', 'location_ja'
-  );
-  const locationJa = rawLocationJa || (boothCoord ? boothCoord.locationJa : undefined);
-  const locationEn = getVal(row, 'locationEn', 'location_en', '英語出店場所', '英語場所') || (boothCoord ? boothCoord.locationEn : locationJa);
+  const rawLocationJa =
+    getVal(
+      row,
+      'locationJa', 'location', '出店場所', '場所', 'エリア', '会場',
+      '出店エリア', 'ブースエリア', 'ブース場所', 'area', 'Area', 'location_ja'
+    ) || getValContaining(row, '出店場所', '場所', 'エリア', '会場', 'location', 'area');
+  const rawLocationEn = getVal(row, 'locationEn', 'location_en', '英語出店場所', '英語場所');
+
+  const locationJa = rawLocationJa || (category === 'market' ? undefined : (boothCoord ? boothCoord.locationJa : undefined));
+  const locationEn = rawLocationEn || rawLocationJa || (category === 'market' ? undefined : (boothCoord ? boothCoord.locationEn : locationJa));
 
   const id = getVal(row, 'id', 'ID') || `stall-${category}-${index + 1}`;
 

@@ -69,6 +69,7 @@ export const SheetSettingsModal: React.FC<SheetSettingsModalProps> = ({
     setConfig(emptyConfig);
     saveSyncConfig(emptyConfig);
     localStorage.removeItem('jcaf_cached_stalls');
+    localStorage.removeItem('jcaf_cached_stalls_v2');
     localStorage.removeItem('jcaf_cached_stages');
     localStorage.removeItem('jcaf_last_sync_time');
     setIsSyncing(true);
