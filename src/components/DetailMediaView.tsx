@@ -274,3 +274,4 @@ export const DetailMediaView: React.FC<DetailMediaViewProps> = ({
     </div>
   );
 };
+

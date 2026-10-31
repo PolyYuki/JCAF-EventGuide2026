@@ -21,7 +21,7 @@ const STORAGE_KEYS = {
   FACILITIES_CSV_URL: 'jcaf_facilities_csv_url',
 
   // キャッシュ
-  CACHED_STALLS: 'jcaf_cached_stalls_v5',
+  CACHED_STALLS: 'jcaf_cached_stalls_v6',
   CACHED_STAGES: 'jcaf_cached_stages',
   CACHED_FACILITIES: 'jcaf_cached_facilities',
   LAST_SYNC_TIME: 'jcaf_last_sync_time'
@@ -271,6 +271,22 @@ export function formatWebsiteUrl(rawVal: string): string {
 }
 
 /**
+ * スポンサー種別を「Gold」「Silver」「Bronze」「In-Kind」「Supporter」に正規化
+ */
+export function normalizeSponsorTier(rawTier?: string): string | undefined {
+  if (!rawTier) return undefined;
+  const trimmed = rawTier.trim();
+  if (!trimmed) return undefined;
+  const lower = trimmed.toLowerCase();
+  if (lower.includes('gold')) return 'Gold';
+  if (lower.includes('silver')) return 'Silver';
+  if (lower.includes('bronze')) return 'Bronze';
+  if (lower.includes('in-kind') || lower.includes('kind')) return 'In-Kind';
+  if (lower.includes('supporter')) return 'Supporter';
+  return trimmed.replace(/\s*sponsor/gi, '').trim() || trimmed;
+}
+
+/**
  * 1つのブース系CSV行をStallオブジェクトに変換
  */
 function parseStallRow(
@@ -353,7 +369,8 @@ function parseStallRow(
   const photoUrl = rawPhotoUrl ? formatImageUrl(rawPhotoUrl) : undefined;
 
   const priceRange = getVal(row, 'priceRange', 'price', '価格帯', '価格', '料金') || undefined;
-  const sponsorTier = getVal(row, 'sponsorTier', 'スポンサー種別', '種別', '協賛種別') || undefined;
+  const rawSponsorTier = getVal(row, 'sponsorTier', 'スポンサー種別', '種別', '協賛種別') || undefined;
+  const sponsorTier = normalizeSponsorTier(rawSponsorTier);
   const highlightJa = getVal(row, 'highlightJa', 'highlight', '見どころ', 'こだわり', 'おすすめ') || sponsorTier || undefined;
   const highlightEn = getVal(row, 'highlightEn', 'highlight_en', '英語見どころ') || highlightJa;
 

@@ -34,6 +34,17 @@ const InstagramIcon: React.FC<{ size?: number; style?: React.CSSProperties }> = 
   </svg>
 );
 
+const normalizeTier = (tier?: string): string => {
+  if (!tier) return '';
+  const lower = tier.toLowerCase();
+  if (lower.includes('gold')) return 'Gold';
+  if (lower.includes('silver')) return 'Silver';
+  if (lower.includes('bronze')) return 'Bronze';
+  if (lower.includes('in-kind') || lower.includes('kind')) return 'In-Kind';
+  if (lower.includes('supporter')) return 'Supporter';
+  return tier.replace(/\s*sponsor/gi, '').trim() || tier;
+};
+
 interface StallsViewProps {
   stalls: Stall[];
   initialSelectedStallId?: string | null;
@@ -382,7 +393,7 @@ export const StallsView: React.FC<StallsViewProps> = ({
                         )}
                         {stall.sponsorTier && (
                           <span className="badge-category badge-gold" style={{ fontSize: '0.68rem', padding: '2px 6px' }}>
-                            {stall.sponsorTier}
+                            {normalizeTier(stall.sponsorTier)}
                           </span>
                         )}
                         <span className={getBadgeClass(stall.category)}>
@@ -493,7 +504,7 @@ export const StallsView: React.FC<StallsViewProps> = ({
                   )}
                   {inspectStall.sponsorTier && (
                     <span className="badge-category badge-gold" style={{ fontSize: '0.72rem' }}>
-                      {inspectStall.sponsorTier}
+                      {normalizeTier(inspectStall.sponsorTier)}
                     </span>
                   )}
                   <span className={getBadgeClass(inspectStall.category)}>

@@ -35,6 +35,19 @@ const InstagramIcon: React.FC<{ size?: number; style?: React.CSSProperties }> = 
   </svg>
 );
 
+const normalizeTier = (tier?: string): string => {
+  if (!tier) return '';
+  const lower = tier.toLowerCase();
+  if (lower.includes('gold')) return 'Gold';
+  if (lower.includes('silver')) return 'Silver';
+  if (lower.includes('bronze')) return 'Bronze';
+  if (lower.includes('in-kind') || lower.includes('kind')) return 'In-Kind';
+  if (lower.includes('supporter')) return 'Supporter';
+  return tier.replace(/\s*sponsor/gi, '').trim() || tier;
+};
+
+const SPONSOR_TIERS = ['Gold', 'Silver', 'Bronze', 'In-Kind', 'Supporter'] as const;
+
 interface SponsorsViewProps {
   stalls: Stall[];
   onShowOnMap: (stallId: string) => void;
@@ -53,38 +66,21 @@ export const SponsorsView: React.FC<SponsorsViewProps> = ({ stalls, onShowOnMap 
     return stalls.filter((s) => s.category === 'sponsor');
   }, [stalls]);
 
-  // 利用可能なスポンサー種別のリストを動的抽出
+  // 利用可能なスポンサー種別のリスト（Gold, Silver, Bronze, In-Kind, Supporter の順）
   const availableTiers = useMemo(() => {
-    const tiers = new Set<string>();
-    allSponsors.forEach((s) => {
-      if (s.sponsorTier) tiers.add(s.sponsorTier.trim());
-    });
-    // 好ましい表示順
-    const preferredOrder = [
-      'Gold Sponsor',
-      'Silver Sponsor',
-      'Bronze Sponsor',
-      'In-Kind Sponsor',
-      'Supporter'
-    ];
-    return Array.from(tiers).sort((a, b) => {
-      const idxA = preferredOrder.indexOf(a);
-      const idxB = preferredOrder.indexOf(b);
-      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
-      if (idxA !== -1) return -1;
-      if (idxB !== -1) return 1;
-      return a.localeCompare(b);
-    });
+    return SPONSOR_TIERS.filter((tier) =>
+      allSponsors.some((s) => normalizeTier(s.sponsorTier) === tier)
+    );
   }, [allSponsors]);
 
   // フィルタリング処理
   const filteredSponsors = useMemo(() => {
     return allSponsors.filter((sponsor) => {
+      const tier = normalizeTier(sponsor.sponsorTier);
+
       // 種別フィルタ
-      if (selectedTier !== 'all') {
-        if (!sponsor.sponsorTier || !sponsor.sponsorTier.toLowerCase().includes(selectedTier.toLowerCase())) {
-          return false;
-        }
+      if (selectedTier !== 'all' && tier !== selectedTier) {
+        return false;
       }
 
       // 検索クエリ
@@ -94,7 +90,7 @@ export const SponsorsView: React.FC<SponsorsViewProps> = ({ stalls, onShowOnMap 
       const matchNameEn = sponsor.nameEn.toLowerCase().includes(q);
       const matchDescJa = sponsor.descriptionJa.toLowerCase().includes(q);
       const matchDescEn = sponsor.descriptionEn.toLowerCase().includes(q);
-      const matchTier = (sponsor.sponsorTier || '').toLowerCase().includes(q);
+      const matchTier = tier.toLowerCase().includes(q) || (sponsor.sponsorTier || '').toLowerCase().includes(q);
       const matchBooth = sponsor.boothNumber.toLowerCase().includes(q);
 
       return matchNameJa || matchNameEn || matchDescJa || matchDescEn || matchTier || matchBooth;
@@ -167,7 +163,7 @@ export const SponsorsView: React.FC<SponsorsViewProps> = ({ stalls, onShowOnMap 
           {isJa ? 'すべて表示' : 'All Sponsors'} ({allSponsors.length})
         </button>
         {availableTiers.map((tier) => {
-          const count = allSponsors.filter((s) => s.sponsorTier && s.sponsorTier.includes(tier)).length;
+          const count = allSponsors.filter((s) => normalizeTier(s.sponsorTier) === tier).length;
           return (
             <button
               key={tier}
@@ -236,7 +232,7 @@ export const SponsorsView: React.FC<SponsorsViewProps> = ({ stalls, onShowOnMap 
                     <div className={styles.badgeRow}>
                       {sponsor.sponsorTier && (
                         <span className={`${styles.tierBadge} ${getTierClass(sponsor.sponsorTier)}`}>
-                          {sponsor.sponsorTier}
+                          {normalizeTier(sponsor.sponsorTier)}
                         </span>
                       )}
                       {hasBooth && (
@@ -328,7 +324,7 @@ export const SponsorsView: React.FC<SponsorsViewProps> = ({ stalls, onShowOnMap 
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 {inspectSponsor.sponsorTier && (
                   <span className={`${styles.tierBadge} ${getTierClass(inspectSponsor.sponsorTier)}`}>
-                    {inspectSponsor.sponsorTier}
+                    {normalizeTier(inspectSponsor.sponsorTier)}
                   </span>
                 )}
                 {inspectSponsor.boothNumber && (
@@ -493,3 +489,4 @@ export const SponsorsView: React.FC<SponsorsViewProps> = ({ stalls, onShowOnMap 
     </div>
   );
 };
+
