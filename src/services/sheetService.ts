@@ -1,6 +1,5 @@
 import Papa from 'papaparse';
 import type { Stall, StagePerformance, Facility, StallCategory, PerformanceArea } from '../types';
-import { initialFacilities, initialStalls, initialStages } from '../data/mockData';
 import { getBoothCoordinates } from '../data/boothCoordinates';
 
 const STORAGE_KEYS = {
@@ -507,11 +506,11 @@ export async function loadStallsData(): Promise<{ data: Stall[]; isFromRemote: b
           // ignore
         }
       }
-      return { data: initialStalls, isFromRemote: false, error: errorMessage };
+      return { data: [], isFromRemote: false, error: errorMessage };
     }
   }
 
-  // URL未指定の場合はキャッシュまたは初期データ
+  // URL未指定の場合はキャッシュまたは空配列
   const cached = localStorage.getItem(STORAGE_KEYS.CACHED_STALLS);
   if (cached) {
     try {
@@ -524,7 +523,7 @@ export async function loadStallsData(): Promise<{ data: Stall[]; isFromRemote: b
     }
   }
 
-  return { data: initialStalls, isFromRemote: false };
+  return { data: [], isFromRemote: false };
 }
 
 /**
@@ -671,7 +670,7 @@ export async function loadStagesData(): Promise<{ data: StagePerformance[]; isFr
     } catch (err: unknown) {
       console.warn('Failed to fetch stages from sheets:', err);
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      return { data: initialStages, isFromRemote: false, error: errorMessage };
+      return { data: [], isFromRemote: false, error: errorMessage };
     }
   }
 
@@ -684,7 +683,7 @@ export async function loadStagesData(): Promise<{ data: StagePerformance[]; isFr
     }
   }
 
-  return { data: initialStages, isFromRemote: false };
+  return { data: [], isFromRemote: false };
 }
 
 /**
@@ -693,12 +692,6 @@ export async function loadStagesData(): Promise<{ data: StagePerformance[]; isFr
 function translateFacilityNameEn(nameJa: string, type: Facility['type']): string {
   const n = nameJa.trim();
   if (!n) return '';
-
-  // 既存初期データとの一致チェック
-  const matched = initialFacilities.find(
-    (f) => f.nameJa === n || f.nameJa.replace(/\s+/g, '') === n.replace(/\s+/g, '')
-  );
-  if (matched) return matched.nameEn;
 
   if (n.includes('正門') || n.includes('メインエントランス')) {
     return n.includes('Hoddle') ? 'Main Entrance Gate (Hoddle St)' : 'Main Entrance Gate';
@@ -781,14 +774,9 @@ function translateFacilityNameEn(nameJa: string, type: Facility['type']): string
 /**
  * 施設説明の日本語→英語自動変換フォールバック（スプレッドシートに英語列がない場合用）
  */
-function translateFacilityDescEn(descJa: string, nameJa: string, type: Facility['type']): string {
+function translateFacilityDescEn(descJa: string, _nameJa: string, type: Facility['type']): string {
   const d = descJa.trim();
   if (!d) return '';
-
-  const matched = initialFacilities.find(
-    (f) => f.descJa === d || f.nameJa === nameJa.trim()
-  );
-  if (matched && matched.descJa === d) return matched.descEn;
 
   if (d.includes('正面入口') || d.includes('入場受付')) {
     return 'Main entrance gate & visitor entry';
@@ -840,8 +828,6 @@ function translateFacilityDescEn(descJa: string, nameJa: string, type: Facility[
   if (!/[ぁ-んァ-ヶ一-龠]/.test(translated)) {
     return translated;
   }
-
-  if (matched) return matched.descEn;
 
   switch (type) {
     case 'entrance':
@@ -945,7 +931,7 @@ export async function loadFacilitiesData(): Promise<{ data: Facility[]; isFromRe
     }
   }
 
-  return { data: initialFacilities, isFromRemote: false };
+  return { data: [], isFromRemote: false };
 }
 
 /**

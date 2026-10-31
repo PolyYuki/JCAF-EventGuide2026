@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { ActiveTab, Stall, StagePerformance, Facility, EventInfo } from './types';
-import { initialEventInfo, initialFaqs, initialStalls, initialStages, initialFacilities } from './data/mockData';
+import { initialEventInfo, initialFaqs } from './data/mockData';
 import { loadStallsData, loadStagesData, loadFacilitiesData } from './services/sheetService';
 import { LanguageProvider } from './context/LanguageContext';
 import { Header } from './components/Header';
@@ -27,7 +27,7 @@ const AppContent: React.FC = () => {
     } catch {
       // ignore
     }
-    return initialStalls;
+    return [];
   });
   const [stages, setStages] = useState<StagePerformance[]>(() => {
     try {
@@ -39,7 +39,7 @@ const AppContent: React.FC = () => {
     } catch {
       // ignore
     }
-    return initialStages;
+    return [];
   });
   const [facilities, setFacilities] = useState<Facility[]>(() => {
     try {
@@ -51,7 +51,7 @@ const AppContent: React.FC = () => {
     } catch {
       // ignore
     }
-    return initialFacilities;
+    return [];
   });
   const [isRemoteLoaded, setIsRemoteLoaded] = useState<boolean>(false);
   const [_isLoading, setIsLoading] = useState<boolean>(true);
