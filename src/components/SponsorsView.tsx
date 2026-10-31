@@ -289,14 +289,14 @@ export const SponsorsView: React.FC<SponsorsViewProps> = ({ stalls, onShowOnMap 
                     )}
                   </div>
 
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <div className={styles.actionRightGroup}>
                     {hasBooth ? (
                       <button
                         className={styles.btnShowMap}
                         onClick={() => onShowOnMap(sponsor.id)}
                       >
                         <MapPin size={13} />
-                        <span>{isJa ? '地図で出店位置を見る' : 'View on Map'}</span>
+                        <span>{isJa ? '地図で位置を見る' : 'View on Map'}</span>
                       </button>
                     ) : (
                       <button
@@ -357,7 +357,7 @@ export const SponsorsView: React.FC<SponsorsViewProps> = ({ stalls, onShowOnMap 
                 />
               )}
 
-              <h2 className="sheet-title" style={{ fontSize: '1.25rem', marginBottom: '12px' }}>
+              <h2 className="sheet-title" style={{ fontSize: '1.25rem', marginBottom: '12px', wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                 {isJa ? inspectSponsor.nameJa : inspectSponsor.nameEn}
               </h2>
 
@@ -444,11 +444,11 @@ export const SponsorsView: React.FC<SponsorsViewProps> = ({ stalls, onShowOnMap 
               )}
 
               {/* 下部アクションボタン */}
-              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px', flexWrap: 'wrap' }}>
                 {inspectSponsor.boothNumber ? (
                   <button
                     className="btn btn-primary"
-                    style={{ flex: 1, padding: '12px', background: '#004aad', borderColor: '#004aad' }}
+                    style={{ flex: '1 1 200px', minWidth: '160px', padding: '12px', background: '#004aad', borderColor: '#004aad' }}
                     onClick={() => {
                       const id = inspectSponsor.id;
                       setInspectSponsor(null);
@@ -465,7 +465,7 @@ export const SponsorsView: React.FC<SponsorsViewProps> = ({ stalls, onShowOnMap 
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-primary"
-                      style={{ flex: 1, padding: '12px', textDecoration: 'none', justifyContent: 'center', background: '#004aad', borderColor: '#004aad' }}
+                      style={{ flex: '1 1 200px', minWidth: '160px', padding: '12px', textDecoration: 'none', justifyContent: 'center', background: '#004aad', borderColor: '#004aad' }}
                     >
                       <ExternalLink size={16} />
                       <span>{isJa ? '公式ページを開く' : 'Visit Website'}</span>
@@ -475,7 +475,7 @@ export const SponsorsView: React.FC<SponsorsViewProps> = ({ stalls, onShowOnMap 
 
                 <button
                   className="btn btn-outline"
-                  style={{ padding: '12px 18px' }}
+                  style={{ padding: '12px 18px', flexShrink: 0 }}
                   onClick={() => handleShare(inspectSponsor)}
                   title="Share"
                 >
