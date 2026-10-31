@@ -24,6 +24,13 @@ export function extractGoogleDriveId(url: string): string | null {
 }
 
 /**
+ * Google Driveの直接ストリーミング動画URLを生成（CORS許可・暗いオーバーレイなしで直接再生可能）
+ */
+export function getDriveDirectVideoUrl(driveId: string): string {
+  return `https://drive.usercontent.google.com/download?id=${driveId}&export=download&confirm=t`;
+}
+
+/**
  * YouTube URLから動画IDを抽出
  */
 export function extractYouTubeId(url: string): string | null {
@@ -86,15 +93,17 @@ function formatTime(seconds: number): string {
 }
 
 /**
- * スマホでも確実に一時停止・再生できるカスタムビデオプレイヤー（<video>用）
+ * 再生開始時から常に明るく、一時停止・再生が確実にできるカスタムビデオプレイヤー
  */
 const CustomNativeVideoPlayer: React.FC<{
   src: string;
   poster?: string;
   alt: string;
+  driveId?: string;
   wrapperClassName?: string;
   defaultWrapperStyle: React.CSSProperties;
-}> = ({ src, poster, alt, wrapperClassName, defaultWrapperStyle }) => {
+  onErrorFallback?: () => void;
+}> = ({ src, poster, alt, driveId, wrapperClassName, defaultWrapperStyle, onErrorFallback }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isMuted, setIsMuted] = useState<boolean>(true);
@@ -154,9 +163,15 @@ const CustomNativeVideoPlayer: React.FC<{
         position: 'relative'
       }}
     >
-      {/* ビデオ本体（タップで一時停止/再生） */}
+      {/* ビデオ本体（タップで一時停止/再生・再生開始時から本来の明るさで表示） */}
       <div
-        style={{ position: 'relative', width: '100%', cursor: 'pointer', background: '#000' }}
+        style={{
+          position: 'relative',
+          width: '100%',
+          cursor: 'pointer',
+          background: '#000000',
+          overflow: 'hidden'
+        }}
         onClick={togglePlay}
       >
         <video
@@ -168,7 +183,7 @@ const CustomNativeVideoPlayer: React.FC<{
           playsInline
           autoPlay
           muted
-          preload="metadata"
+          preload="auto"
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           onTimeUpdate={() => {
@@ -181,10 +196,18 @@ const CustomNativeVideoPlayer: React.FC<{
               setDuration(videoRef.current.duration || 0);
             }
           }}
+          onError={() => {
+            if (onErrorFallback) {
+              onErrorFallback();
+            }
+          }}
           style={{
             width: '100%',
             maxHeight: '340px',
-            display: 'block'
+            display: 'block',
+            // 再生開始直後から暗くならずクリアで鮮明な明るさを維持
+            filter: 'brightness(1.02) contrast(1.02)',
+            transition: 'filter 0.15s ease'
           }}
         />
 
@@ -256,7 +279,7 @@ const CustomNativeVideoPlayer: React.FC<{
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {/* メインの一時停止 / 再生ボタン（誰でも分かるラベル付き） */}
+            {/* メインの一時停止 / 再生ボタン */}
             <button
               onClick={togglePlay}
               style={{
@@ -343,6 +366,32 @@ const CustomNativeVideoPlayer: React.FC<{
               )}
             </button>
 
+            {/* Google Driveの大画面リンク（Drive動画の場合） */}
+            {driveId && (
+              <a
+                href={`https://drive.google.com/file/d/${driveId}/view`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: '#e2e8f0',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '6px',
+                  padding: '6px 10px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  textDecoration: 'none'
+                }}
+                title="Google Driveで大画面再生"
+              >
+                <span>大画面</span>
+                <ExternalLink size={12} style={{ opacity: 0.8 }} />
+              </a>
+            )}
+
             {/* 全画面ボタン */}
             <button
               onClick={handleFullscreen}
@@ -369,7 +418,7 @@ const CustomNativeVideoPlayer: React.FC<{
 };
 
 /**
- * Google Driveプレビュー用プレイヤー（スマホでも確実に一時停止・停止できるコントロール付き）
+ * Google Driveプレビュー用フォールバックプレイヤー（一時停止・再開コントロール付き）
  */
 const CustomDriveVideoPlayer: React.FC<{
   driveId: string;
@@ -379,7 +428,8 @@ const CustomDriveVideoPlayer: React.FC<{
 }> = ({ driveId, alt, wrapperClassName, defaultWrapperStyle }) => {
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [reloadKey, setReloadKey] = useState<number>(0);
-  const previewUrl = `https://drive.google.com/file/d/${driveId}/preview`;
+  // rm=minimal を付加して不要な暗いUIオーバーレイバーを最小化
+  const previewUrl = `https://drive.google.com/file/d/${driveId}/preview?rm=minimal&autoplay=1`;
   const openUrl = `https://drive.google.com/file/d/${driveId}/view`;
   const posterUrl = `https://drive.google.com/thumbnail?id=${driveId}&sz=w1000`;
 
@@ -433,7 +483,10 @@ const CustomDriveVideoPlayer: React.FC<{
               border: 'none',
               borderRadius: '6px',
               background: '#000000',
-              display: 'block'
+              display: 'block',
+              // 明度を補正して初期表示の暗転感を和らげる
+              filter: 'brightness(1.05)',
+              transition: 'filter 0.2s ease'
             }}
             allow="autoplay; fullscreen"
             allowFullScreen
@@ -458,7 +511,7 @@ const CustomDriveVideoPlayer: React.FC<{
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
-                opacity: 0.4
+                opacity: 0.5
               }}
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
@@ -510,7 +563,7 @@ const CustomDriveVideoPlayer: React.FC<{
         )}
       </div>
 
-      {/* Google Drive専用の操作コントロールバー（一時停止・再開を確実に提供） */}
+      {/* Google Drive専用の操作コントロールバー */}
       <div
         style={{
           display: 'flex',
@@ -663,10 +716,13 @@ export const DetailMediaView: React.FC<DetailMediaViewProps> = ({
     )
   );
 
+  // Google Drive動画の直接ストリーミング失敗時にiframeへフォールバックするフラグ
+  const [useIframeFallback, setUseIframeFallback] = useState<boolean>(false);
   const [isHidden, setIsHidden] = useState(false);
 
   useEffect(() => {
     setIsHidden(false);
+    setUseIframeFallback(false);
   }, [url]);
 
   if (isHidden) return null;
@@ -715,22 +771,25 @@ export const DetailMediaView: React.FC<DetailMediaViewProps> = ({
     );
   }
 
-  // 3. 直接動画URL (.mp4, .mov, .webm) または スマホ最適化済みGoogle Drive動画
-  if (directVideo || localDriveVideoUrl) {
-    const videoSrc = localDriveVideoUrl || url;
+  // 3. 直接動画URL (.mp4, .mov, .webm) または ローカル/Google Drive直接ストリーミング動画
+  // Google Drive動画も直接ストリーミングで再生することで、暗いディマーオーバーレイなしで再生開始直後から明るく表示！
+  if (directVideo || localDriveVideoUrl || (driveId && isDriveVideo && !useIframeFallback)) {
+    const videoSrc = localDriveVideoUrl || (driveId ? getDriveDirectVideoUrl(driveId) : url);
     const posterUrl = driveId ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w1000` : undefined;
     return (
       <CustomNativeVideoPlayer
         src={videoSrc}
         poster={posterUrl}
         alt={alt}
+        driveId={driveId || undefined}
         wrapperClassName={wrapperClassName}
         defaultWrapperStyle={defaultWrapperStyle}
+        onErrorFallback={() => setUseIframeFallback(true)}
       />
     );
   }
 
-  // 4. その他のGoogle Drive動画（埋め込みプレビュー ＋ スマホでも確実に一時停止・再生できるコントローラー付き）
+  // 4. その他のGoogle Drive動画（フォールバック用iframeプレビュー）
   if (driveId && isDriveVideo) {
     return (
       <CustomDriveVideoPlayer
