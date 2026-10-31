@@ -83,7 +83,9 @@ export const LOCAL_DRIVE_VIDEOS: Record<string, string> = {
   '15atto9tD_cHy9Pw7kEiIPeM_F3sVvTWW': '/videos/ezy-tax-solutions.mp4',
   '1q7qsRqhuB-KGsHglrxRhc-iC_zGwgGm2': '/videos/isuzu.mp4', // いすゞ
   '1U-GqDvmJGSvCE6VRknMBp0gPKNxPzhzC': '/videos/nagomi.mp4', // Nagomi&Co
-  '1cHZoRKc5AQUF5asclOGmQNKIkod02v4H': '/videos/hojicha.mp4' // 芳香園ほうじ茶
+  '1cHZoRKc5AQUF5asclOGmQNKIkod02v4H': '/videos/hojicha.mp4', // 芳香園ほうじ茶
+  '1hcXRFm9KrQdULmf2N1bwtLNr2NDPq0B9': '/videos/talewind.mp4', // TALEWIND WORKS
+  '1BEvUhqTc-RpCoCed0MEawhXJWQLt2-ry': '/videos/littles.mp4' // Littles Lawyers
 };
 
 /**
@@ -454,8 +456,8 @@ const CustomDriveVideoPlayer: React.FC<{
 }> = ({ driveId, alt, wrapperClassName, defaultWrapperStyle }) => {
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [reloadKey, setReloadKey] = useState<number>(0);
-  // rm=minimal を付加して不要な暗いUIオーバーレイバーを最小化
-  const previewUrl = `https://drive.google.com/file/d/${driveId}/preview?rm=minimal&autoplay=1`;
+  // 標準のGoogle DriveプレビューURL（確実に読み込めるようにパラメータなしに統一）
+  const previewUrl = `https://drive.google.com/file/d/${driveId}/preview`;
   const openUrl = `https://drive.google.com/file/d/${driveId}/view`;
   const posterUrl = `https://drive.google.com/thumbnail?id=${driveId}&sz=w1000`;
 
@@ -742,13 +744,10 @@ export const DetailMediaView: React.FC<DetailMediaViewProps> = ({
     )
   );
 
-  // Google Drive動画の直接ストリーミング失敗時にiframeへフォールバックするフラグ
-  const [useIframeFallback, setUseIframeFallback] = useState<boolean>(false);
   const [isHidden, setIsHidden] = useState(false);
 
   useEffect(() => {
     setIsHidden(false);
-    setUseIframeFallback(false);
   }, [url]);
 
   if (isHidden) return null;
@@ -797,10 +796,10 @@ export const DetailMediaView: React.FC<DetailMediaViewProps> = ({
     );
   }
 
-  // 3. 直接動画URL (.mp4, .mov, .webm) または ローカル/Google Drive直接ストリーミング動画
-  // Google Drive動画も直接ストリーミングで再生することで、暗いディマーオーバーレイなしで再生開始直後から明るく表示！
-  if (directVideo || localDriveVideoUrl || (driveId && isDriveVideo && !useIframeFallback)) {
-    const videoSrc = localDriveVideoUrl || (driveId ? getDriveDirectVideoUrl(driveId) : url);
+  // 3. 直接動画URL (.mp4, .mov, .webm) または ローカル最適化済みGoogle Drive動画
+  // ローカルに最適化動画があるものは直接高速プレイヤーで即座に再生
+  if (directVideo || localDriveVideoUrl) {
+    const videoSrc = localDriveVideoUrl || url;
     const posterUrl = driveId ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w1000` : undefined;
     return (
       <CustomNativeVideoPlayer
@@ -810,7 +809,6 @@ export const DetailMediaView: React.FC<DetailMediaViewProps> = ({
         driveId={driveId || undefined}
         wrapperClassName={wrapperClassName}
         defaultWrapperStyle={defaultWrapperStyle}
-        onErrorFallback={() => setUseIframeFallback(true)}
       />
     );
   }
