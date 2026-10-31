@@ -13,6 +13,7 @@ const translations: Record<string, { ja: string; en: string }> = {
   'nav.map': { ja: '会場マップ', en: 'Map' },
   'nav.stalls': { ja: '出店者一覧', en: 'Stalls' },
   'nav.stage': { ja: 'ステージ', en: 'Stage' },
+  'nav.sponsors': { ja: 'スポンサー', en: 'Sponsors' },
   'nav.info': { ja: '来場案内', en: 'Info' },
 
   // Header

@@ -1,6 +1,6 @@
 import type { ActiveTab } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import { Map, Store, Calendar, Info } from 'lucide-react';
+import { Map, Store, Calendar, Building2, Info } from 'lucide-react';
 
 interface BottomNavProps {
   activeTab: ActiveTab;
@@ -25,6 +25,11 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onSelectTab }) 
       id: 'stage' as ActiveTab,
       label: t('nav.stage'),
       icon: Calendar
+    },
+    {
+      id: 'sponsors' as ActiveTab,
+      label: t('nav.sponsors'),
+      icon: Building2
     },
     {
       id: 'info' as ActiveTab,

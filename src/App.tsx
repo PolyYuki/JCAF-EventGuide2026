@@ -8,6 +8,7 @@ import { BottomNav } from './components/BottomNav';
 import { MapView } from './components/MapView';
 import { StallsView } from './components/StallsView';
 import { StageView } from './components/StageView';
+import { SponsorsView } from './components/SponsorsView';
 import { InfoView } from './components/InfoView';
 import { SheetSettingsModal } from './components/SheetSettingsModal';
 
@@ -173,6 +174,13 @@ const AppContent: React.FC = () => {
             stages={stages}
             initialStageFilter={focusedStageArea}
             onShowStageOnMap={handleShowStageOnMap}
+          />
+        )}
+
+        {activeTab === 'sponsors' && (
+          <SponsorsView
+            stalls={stalls}
+            onShowOnMap={handleShowOnMap}
           />
         )}
 

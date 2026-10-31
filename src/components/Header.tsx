@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import type { EventInfo, StagePerformance } from '../types';
+import type { EventInfo, StagePerformance, ActiveTab } from '../types';
 import { Settings, Globe, Volume2 } from 'lucide-react';
 
 /**
@@ -42,7 +42,7 @@ interface HeaderProps {
   eventInfo: EventInfo;
   stages?: StagePerformance[];
   onOpenSettings: () => void;
-  onSelectTab: (tab: 'map' | 'stalls' | 'stage' | 'info') => void;
+  onSelectTab: (tab: ActiveTab) => void;
 }
 
 const parseTimeToMinutes = (timeStr?: string): number | null => {

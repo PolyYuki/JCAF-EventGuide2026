@@ -111,4 +111,4 @@ export interface FaqItem {
   categoryEn: string;
 }
 
-export type ActiveTab = 'map' | 'stalls' | 'stage' | 'info';
+export type ActiveTab = 'map' | 'stalls' | 'stage' | 'sponsors' | 'info';
