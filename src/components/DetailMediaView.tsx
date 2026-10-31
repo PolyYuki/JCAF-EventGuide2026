@@ -339,36 +339,58 @@ const CustomNativeVideoPlayer: React.FC<{
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            {/* 音声ミュートトグルボタン */}
-            <button
-              onClick={toggleMute}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                color: '#e2e8f0',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                borderRadius: '6px',
-                padding: '6px 10px',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
-              title={isMuted ? 'ミュート解除（音声を出す）' : 'ミュートにする'}
-            >
-              {isMuted ? (
-                <>
-                  <VolumeX size={14} />
-                  <span>消音</span>
-                </>
-              ) : (
-                <>
-                  <Volume2 size={14} />
-                  <span>音声</span>
-                </>
-              )}
-            </button>
+            {/* 音声なし動画（Hosaku等）の場合は「音声なし」と表示 */}
+            {src.includes('hojicha') ? (
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  color: '#94a3b8',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '6px',
+                  padding: '6px 9px',
+                  fontSize: '0.72rem',
+                  fontWeight: 600
+                }}
+                title="この動画素材には音声が含まれていません（映像のみ）"
+              >
+                <VolumeX size={13} style={{ opacity: 0.7 }} />
+                <span>音声なし（映像のみ）</span>
+              </span>
+            ) : (
+              /* 音声ミュートトグルボタン */
+              <button
+                onClick={toggleMute}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: '#e2e8f0',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '6px',
+                  padding: '6px 10px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+                title={isMuted ? 'ミュート解除（音声を出す）' : 'ミュートにする'}
+              >
+                {isMuted ? (
+                  <>
+                    <VolumeX size={14} />
+                    <span>消音</span>
+                  </>
+                ) : (
+                  <>
+                    <Volume2 size={14} />
+                    <span>音声</span>
+                  </>
+                )}
+              </button>
+            )}
 
             {/* Google Driveの大画面リンク（Drive動画の場合） */}
             {driveId && (
