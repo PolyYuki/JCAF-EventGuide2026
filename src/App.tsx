@@ -18,7 +18,7 @@ const AppContent: React.FC = () => {
   const [eventInfo] = useState<EventInfo>(initialEventInfo);
   const [stalls, setStalls] = useState<Stall[]>(() => {
     try {
-      const cached = localStorage.getItem('jcaf_cached_stalls_v4');
+      const cached = localStorage.getItem('jcaf_cached_stalls_v5');
       if (cached) {
         const parsed = JSON.parse(cached);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;

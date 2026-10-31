@@ -55,10 +55,25 @@ function isDirectVideoUrl(url: string): boolean {
 }
 
 /**
+ * 判明しているGoogle Drive動画ファイルID一覧（スプレッドシート上の動画）
+ */
+const KNOWN_DRIVE_VIDEOS = new Set([
+  '1alVEMP7UT_sw4TV4NBd3JHpCRGfClRYU', // Japan Homes (Video 001 AUS.mp4)
+  '1U-GqDvmJGSvCE6VRknMBp0gPKNxPzhzC', // Nagomi&Co (会社PR.mov)
+  '1cHZoRKc5AQUF5asclOGmQNKIkod02v4H', // Hosaku Hojicha (B-Roll Promotional Video.mp4)
+  '15atto9tD_cHy9Pw7kEiIPeM_F3sVvTWW', // Ezy Tax Solutions (60sec.mp4)
+  '1ndTGbnsCBiYPSBJhxhS76xaYpzsmUjrk', // Ezy Tax Solutions (旧ID)
+  '1BEvUhqTc-RpCoCed0MEawhXJWQLt2-ry', // Littles Lawyers (Motor_Claim_EN.mov)
+  '1hcXRFm9KrQdULmf2N1bwtLNr2NDPq0B9', // TALEWIND WORKS (WonderAir_会場用.mp4)
+  '1q7qsRqhuB-KGsHglrxRhc-iC_zGwgGm2', // いすゞ (Isuzu Australia branding video.mp4)
+]);
+
+/**
  * スマホ（iOS Safari等）でも高速・確実にインライン再生できるよう最適化済みのGoogle Drive動画マップ
  */
 const LOCAL_DRIVE_VIDEOS: Record<string, string> = {
-  '1ndTGbnsCBiYPSBJhxhS76xaYpzsmUjrk': '/videos/ezy-tax-solutions.mp4'
+  '1ndTGbnsCBiYPSBJhxhS76xaYpzsmUjrk': '/videos/ezy-tax-solutions.mp4',
+  '15atto9tD_cHy9Pw7kEiIPeM_F3sVvTWW': '/videos/ezy-tax-solutions.mp4'
 };
 
 /**
@@ -70,8 +85,13 @@ const DetailMediaView: React.FC<{ url: string; alt: string }> = ({ url, alt }) =
   const vimeoId = useMemo(() => extractVimeoId(url), [url]);
   const directVideo = useMemo(() => isDirectVideoUrl(url), [url]);
   const localDriveVideoUrl = driveId ? LOCAL_DRIVE_VIDEOS[driveId] : undefined;
-  const isExplicitDriveVideo = Boolean(
-    driveId && (localDriveVideoUrl || /[?&#]video=1/i.test(url) || url.includes('/preview'))
+  const isDriveVideo = Boolean(
+    driveId && (
+      localDriveVideoUrl ||
+      KNOWN_DRIVE_VIDEOS.has(driveId) ||
+      /[?&#]video=1/i.test(url) ||
+      url.includes('/preview')
+    )
   );
 
   const [isHidden, setIsHidden] = useState(false);
@@ -132,17 +152,58 @@ const DetailMediaView: React.FC<{ url: string; alt: string }> = ({ url, alt }) =
     );
   }
 
-  // 4. その他のGoogle Drive動画プレビュー指定時
-  if (driveId && isExplicitDriveVideo) {
+  // 4. その他のGoogle Drive動画（埋め込みプレビュー ＋ スマホでも確実に再生できる直通ボタン）
+  if (driveId && isDriveVideo) {
+    const previewUrl = `https://drive.google.com/file/d/${driveId}/preview`;
+    const openUrl = `https://drive.google.com/file/d/${driveId}/view`;
     return (
-      <div className={styles.modalImageWrapper} style={{ padding: '8px', background: '#0f172a', flexDirection: 'column', gap: '8px' }}>
+      <div
+        className={styles.modalImageWrapper}
+        style={{
+          padding: '8px',
+          background: '#0f172a',
+          flexDirection: 'column',
+          gap: '8px'
+        }}
+      >
         <iframe
-          src={`https://drive.google.com/file/d/${driveId}/preview`}
+          src={previewUrl}
           title={alt}
-          style={{ width: '100%', aspectRatio: '16 / 9', minHeight: '220px', border: 'none', borderRadius: '6px' }}
+          style={{
+            width: '100%',
+            aspectRatio: '16 / 9',
+            minHeight: '220px',
+            border: 'none',
+            borderRadius: '6px',
+            background: '#000000'
+          }}
           allow="autoplay; fullscreen"
           allowFullScreen
         />
+        <a
+          href={openUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            width: '100%',
+            padding: '7px 12px',
+            fontSize: '0.78rem',
+            fontWeight: 600,
+            color: '#f8fafc',
+            background: 'rgba(255, 255, 255, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            borderRadius: '6px',
+            textDecoration: 'none'
+          }}
+        >
+          <span>🎬</span>
+          <span>Google Driveで動画を開く / 大画面再生</span>
+          <ExternalLink size={12} style={{ opacity: 0.8 }} />
+        </a>
       </div>
     );
   }

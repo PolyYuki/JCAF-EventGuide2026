@@ -21,7 +21,7 @@ const STORAGE_KEYS = {
   FACILITIES_CSV_URL: 'jcaf_facilities_csv_url',
 
   // キャッシュ
-  CACHED_STALLS: 'jcaf_cached_stalls_v4',
+  CACHED_STALLS: 'jcaf_cached_stalls_v5',
   CACHED_STAGES: 'jcaf_cached_stages',
   CACHED_FACILITIES: 'jcaf_cached_facilities',
   LAST_SYNC_TIME: 'jcaf_last_sync_time'
