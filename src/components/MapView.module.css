@@ -69,7 +69,7 @@
 .mapControls {
   position: absolute;
   right: 12px;
-  bottom: 80px;
+  bottom: calc(var(--bottom-nav-height, 64px) + env(safe-area-inset-bottom, 16px) + 130px);
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -269,19 +269,33 @@
 .detailPopup,
 .detailBottomCard {
   position: absolute;
-  bottom: 12px;
+  /* 画面下のタブメニューに重ならないよう十分上に（画面中央寄りに）浮かせ、左右中央揃えにする */
+  bottom: calc(var(--bottom-nav-height, 64px) + env(safe-area-inset-bottom, 16px) + 36px);
   left: 12px;
   right: 12px;
-  z-index: 40;
+  max-width: 520px;
+  margin: 0 auto;
+  z-index: 60;
   background: linear-gradient(90deg, #fef3c7 0%, #fef9c3 100%);
   border-radius: var(--radius-lg);
   border: 1.5px solid #fde047;
-  box-shadow: 0 10px 30px rgba(180, 83, 9, 0.18);
-  padding: 14px 36px 14px 16px;
+  box-shadow: 0 12px 36px rgba(180, 83, 9, 0.24), 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 14px 38px 14px 16px;
   display: flex;
   align-items: center;
   gap: 14px;
   animation: slideUpCard 0.25s ease-out;
+}
+
+@media (max-width: 600px) {
+  .detailPopup,
+  .detailBottomCard {
+    bottom: calc(var(--bottom-nav-height, 64px) + env(safe-area-inset-bottom, 16px) + 40px);
+    left: 10px;
+    right: 10px;
+    padding: 12px 36px 12px 12px;
+    gap: 10px;
+  }
 }
 
 @keyframes slideUpCard {
@@ -356,11 +370,11 @@
   position: absolute;
   top: 8px;
   right: 8px;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.75);
   border: none;
   border-radius: 50%;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
