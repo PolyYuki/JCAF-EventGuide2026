@@ -13,6 +13,8 @@ import {
   Award,
   Navigation,
   Info,
+  Sparkles,
+  Ban,
   Coffee,
   Trash2,
   Baby,
@@ -48,7 +50,11 @@ export const InfoView: React.FC<InfoViewProps> = ({
       case 'entrance':
         return <Navigation size={14} />;
       case 'info':
-        return <Info size={14} />;
+        return <Info size={14} strokeWidth={2.5} />;
+      case 'welcome':
+        return <Sparkles size={14} strokeWidth={2.5} />;
+      case 'no_entry':
+        return <Ban size={14} strokeWidth={2.5} />;
       case 'firstaid':
         return <ShieldAlert size={14} />;
       case 'toilet':
@@ -61,6 +67,31 @@ export const InfoView: React.FC<InfoViewProps> = ({
         return <Baby size={14} />;
       default:
         return <Info size={14} />;
+    }
+  };
+
+  const getFacilityTheme = (type: Facility['type']): { bg: string; color: string } => {
+    switch (type) {
+      case 'no_entry':
+        return { bg: '#dc2626', color: '#ffffff' };
+      case 'welcome':
+        return { bg: '#059669', color: '#ffffff' };
+      case 'info':
+        return { bg: '#0284c7', color: '#ffffff' };
+      case 'firstaid':
+        return { bg: '#e11d48', color: '#ffffff' };
+      case 'toilet':
+        return { bg: '#475569', color: '#ffffff' };
+      case 'entrance':
+        return { bg: '#1e293b', color: '#ffffff' };
+      case 'food_court':
+        return { bg: '#d97706', color: '#ffffff' };
+      case 'trash':
+        return { bg: '#64748b', color: '#ffffff' };
+      case 'nursing':
+        return { bg: '#ec4899', color: '#ffffff' };
+      default:
+        return { bg: '#0284c7', color: '#ffffff' };
     }
   };
 
@@ -263,7 +294,10 @@ export const InfoView: React.FC<InfoViewProps> = ({
               style={{ cursor: onShowFacilityOnMap ? 'pointer' : 'default' }}
               onClick={() => onShowFacilityOnMap && onShowFacilityOnMap(fac.id)}
             >
-              <div className={styles.facilityItemIcon}>
+              <div
+                className={styles.facilityItemIcon}
+                style={{ backgroundColor: getFacilityTheme(fac.type).bg, color: getFacilityTheme(fac.type).color }}
+              >
                 {renderFacilityIcon(fac.type)}
               </div>
               <div className={styles.facilityItemContent}>

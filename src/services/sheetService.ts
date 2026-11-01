@@ -756,6 +756,10 @@ function translateFacilityNameEn(nameJa: string, type: Facility['type']): string
   switch (type) {
     case 'entrance':
       return 'Entrance Gate';
+    case 'welcome':
+      return 'Welcome Table';
+    case 'no_entry':
+      return 'Do Not Enter Area';
     case 'toilet':
       return 'Restroom';
     case 'firstaid':
@@ -832,6 +836,10 @@ function translateFacilityDescEn(descJa: string, _nameJa: string, type: Facility
   switch (type) {
     case 'entrance':
       return 'Venue entrance & access point';
+    case 'welcome':
+      return 'Welcome board, exhibition & event brochures';
+    case 'no_entry':
+      return 'Restricted area / Under construction (Do not enter)';
     case 'toilet':
       return 'Restroom facility';
     case 'firstaid':
@@ -866,8 +874,26 @@ export async function loadFacilitiesData(): Promise<{ data: Facility[]; isFromRe
           if (!nameJa && !explicitNameEn) return null;
 
           const rawType = getVal(row, 'type', '種別', '種類', 'カテゴリ', 'アイコン').toLowerCase();
+          const rawName = (nameJa || explicitNameEn || '').toLowerCase();
           let type: Facility['type'] = 'info';
-          if (rawType.includes('entrance') || rawType.includes('入口') || rawType.includes('エントランス') || rawType.includes('門') || rawType.includes('gate')) {
+
+          if (
+            rawType.includes('donotenter') ||
+            rawType.includes('no_entry') ||
+            rawType.includes('禁止') ||
+            rawName.includes('立入禁止') ||
+            rawName.includes('進入禁止') ||
+            rawName.includes('do not enter')
+          ) {
+            type = 'no_entry';
+          } else if (
+            rawType.includes('welcome') ||
+            rawName.includes('ウェルカム') ||
+            rawName.includes('welcome') ||
+            (rawType.includes('受付') && !rawType.includes('救護'))
+          ) {
+            type = 'welcome';
+          } else if (rawType.includes('entrance') || rawType.includes('入口') || rawType.includes('エントランス') || rawType.includes('門') || rawType.includes('gate')) {
             type = 'entrance';
           } else if (rawType.includes('toilet') || rawType.includes('wc') || rawType.includes('restroom') || rawType.includes('トイレ') || rawType.includes('お手洗い')) {
             type = 'toilet';
@@ -879,7 +905,7 @@ export async function loadFacilitiesData(): Promise<{ data: Facility[]; isFromRe
             type = 'trash';
           } else if (rawType.includes('food') || rawType.includes('飲食') || rawType.includes('休憩')) {
             type = 'food_court';
-          } else if (rawType.includes('info') || rawType.includes('案内') || rawType.includes('受付') || rawType.includes('本部')) {
+          } else if (rawType.includes('info') || rawType.includes('案内') || rawName.includes('インフォメーション') || rawName.includes('information')) {
             type = 'info';
           }
 

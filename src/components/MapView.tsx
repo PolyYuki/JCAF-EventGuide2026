@@ -12,6 +12,8 @@ import {
   X,
   Info,
   ShieldAlert,
+  Sparkles,
+  Ban,
   Coffee,
   Trash2,
   Baby,
@@ -389,7 +391,11 @@ export const MapView: React.FC<MapViewProps> = ({
       case 'entrance':
         return <Navigation size={13} />;
       case 'info':
-        return <Info size={13} />;
+        return <Info size={13} strokeWidth={2.5} />;
+      case 'welcome':
+        return <Sparkles size={13} strokeWidth={2.5} />;
+      case 'no_entry':
+        return <Ban size={13} strokeWidth={2.5} />;
       case 'firstaid':
         return <ShieldAlert size={13} />;
       case 'toilet':
@@ -402,6 +408,31 @@ export const MapView: React.FC<MapViewProps> = ({
         return <Baby size={13} />;
       default:
         return <Info size={13} />;
+    }
+  };
+
+  const getFacilityTheme = (type: Facility['type']): { bg: string; color: string; labelJa: string; labelEn: string } => {
+    switch (type) {
+      case 'no_entry':
+        return { bg: '#dc2626', color: '#ffffff', labelJa: '立入禁止', labelEn: 'Do Not Enter' };
+      case 'welcome':
+        return { bg: '#059669', color: '#ffffff', labelJa: 'ウェルカム', labelEn: 'Welcome' };
+      case 'info':
+        return { bg: '#0284c7', color: '#ffffff', labelJa: '総合案内', labelEn: 'Information' };
+      case 'firstaid':
+        return { bg: '#e11d48', color: '#ffffff', labelJa: '救護所', labelEn: 'First Aid' };
+      case 'toilet':
+        return { bg: '#475569', color: '#ffffff', labelJa: 'お手洗い', labelEn: 'Restroom' };
+      case 'entrance':
+        return { bg: '#1e293b', color: '#ffffff', labelJa: '出入口', labelEn: 'Entrance' };
+      case 'food_court':
+        return { bg: '#d97706', color: '#ffffff', labelJa: '飲食エリア', labelEn: 'Dining' };
+      case 'trash':
+        return { bg: '#64748b', color: '#ffffff', labelJa: 'ゴミ箱', labelEn: 'Waste' };
+      case 'nursing':
+        return { bg: '#ec4899', color: '#ffffff', labelJa: '授乳室', labelEn: 'Nursing' };
+      default:
+        return { bg: '#0284c7', color: '#ffffff', labelJa: '施設案内', labelEn: 'Facility' };
     }
   };
 
@@ -863,9 +894,18 @@ export const MapView: React.FC<MapViewProps> = ({
                   }}
                 >
                   {isSelected && <div className={styles.pulseRing} />}
-                  <div className={styles.facilityPin}>
-                    {renderFacilityIcon(fac.type)}
-                  </div>
+                  {(() => {
+                    const theme = getFacilityTheme(fac.type);
+                    return (
+                      <div
+                        className={styles.facilityPin}
+                        style={{ backgroundColor: theme.bg, color: theme.color }}
+                        title={isJa ? fac.nameJa : fac.nameEn}
+                      >
+                        {renderFacilityIcon(fac.type)}
+                      </div>
+                    );
+                  })()}
                 </div>
               );
             })}
@@ -982,43 +1022,46 @@ export const MapView: React.FC<MapViewProps> = ({
             );
           })()}
 
-          {selectedItem.type === 'facility' && selectedItem.facility && (
-            <>
-              <div
-                style={{
-                  width: '42px',
-                  height: '42px',
-                  borderRadius: 'var(--radius-md)',
-                  background: '#0284c7',
-                  color: '#ffffff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0
-                }}
-              >
-                {renderFacilityIcon(selectedItem.facility.type)}
-              </div>
-              <div className={styles.detailInfo}>
-                <span
-                  className={styles.detailBoothBadge}
+          {selectedItem.type === 'facility' && selectedItem.facility && (() => {
+            const facTheme = getFacilityTheme(selectedItem.facility.type);
+            return (
+              <>
+                <div
                   style={{
-                    backgroundColor: '#0284c7',
-                    color: '#ffffff',
-                    border: '1px solid rgba(0, 0, 0, 0.1)'
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: 'var(--radius-md)',
+                    background: facTheme.bg,
+                    color: facTheme.color,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
                   }}
                 >
-                  {isJa ? '施設案内' : 'Facility'}
-                </span>
-                <h3 className={styles.detailTitle}>
-                  {isJa ? selectedItem.facility.nameJa : selectedItem.facility.nameEn}
-                </h3>
-                <p className={styles.detailDesc}>
-                  {isJa ? selectedItem.facility.descJa : selectedItem.facility.descEn}
-                </p>
-              </div>
-            </>
-          )}
+                  {renderFacilityIcon(selectedItem.facility.type)}
+                </div>
+                <div className={styles.detailInfo}>
+                  <span
+                    className={styles.detailBoothBadge}
+                    style={{
+                      backgroundColor: facTheme.bg,
+                      color: facTheme.color,
+                      border: '1px solid rgba(0, 0, 0, 0.1)'
+                    }}
+                  >
+                    {isJa ? facTheme.labelJa : facTheme.labelEn}
+                  </span>
+                  <h3 className={styles.detailTitle}>
+                    {isJa ? selectedItem.facility.nameJa : selectedItem.facility.nameEn}
+                  </h3>
+                  <p className={styles.detailDesc}>
+                    {isJa ? selectedItem.facility.descJa : selectedItem.facility.descEn}
+                  </p>
+                </div>
+              </>
+            );
+          })()}
 
           {selectedItem.type === 'stage' && selectedItem.stageInfo && (
             <>

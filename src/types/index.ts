@@ -65,7 +65,16 @@ export interface StagePerformance {
   link?: string;
 }
 
-export type FacilityType = 'toilet' | 'info' | 'firstaid' | 'food_court' | 'trash' | 'nursing' | 'entrance';
+export type FacilityType =
+  | 'toilet'
+  | 'info'
+  | 'welcome'
+  | 'no_entry'
+  | 'firstaid'
+  | 'food_court'
+  | 'trash'
+  | 'nursing'
+  | 'entrance';
 
 export interface Facility {
   id: string;
