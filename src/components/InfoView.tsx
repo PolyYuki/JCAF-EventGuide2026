@@ -449,6 +449,99 @@ export const InfoView: React.FC<InfoViewProps> = ({
             <ExternalLink size={14} />
           </a>
         </div>
+
+        {/* メンバー情報 */}
+        <div
+          style={{
+            marginTop: '20px',
+            paddingTop: '16px',
+            borderTop: '1px solid rgba(255, 255, 255, 0.15)',
+            fontSize: '0.74rem',
+            lineHeight: 1.6,
+            color: '#cbd5e1'
+          }}
+        >
+          <div style={{ fontWeight: 800, fontSize: '0.82rem', color: '#fef08a', marginBottom: '8px' }}>
+            Japan Culture and Art Foundation Inc
+          </div>
+
+          <div style={{ marginBottom: '14px' }}>
+            <div
+              style={{
+                fontWeight: 700,
+                color: '#ffffff',
+                marginBottom: '4px',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+                paddingBottom: '2px'
+              }}
+            >
+              Committee members / 役員
+            </div>
+            <div style={{ display: 'grid', gap: '3px', paddingLeft: '4px' }}>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>President / 代表:</strong> Minako Jones / ジョーンズ三奈子
+              </div>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>Vice President / 副代表:</strong> Yukiko Iguchi / 井口由紀子
+              </div>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>Secretary / 事務局長:</strong> Yumiko Ishigaki / 石垣裕美子
+              </div>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>Assistant Secretary / 事務局長補佐:</strong> Yuka Inoue / 井上祐佳
+              </div>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>Treasurer / 会計:</strong> Masa Takahashi / 高橋将史
+              </div>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>Assistant Treasurer / 会計補佐:</strong> Chihiro Fujimoto / 藤本千尋
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div
+              style={{
+                fontWeight: 700,
+                color: '#ffffff',
+                marginBottom: '4px',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+                paddingBottom: '2px'
+              }}
+            >
+              Festival Helpers / Supporters in 2026:
+            </div>
+            <div style={{ display: 'grid', gap: '3px', paddingLeft: '4px' }}>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>Art:</strong> Kaori Lockwood, Kiri Imai
+              </div>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>IT & Website Management:</strong> Yuki Nagatsuka
+              </div>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>Design:</strong> Noriko Clarke
+              </div>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>Food:</strong> Tak Miyata, Chihiro Akimono
+              </div>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>PR:</strong> Yuri Mathews, Taiyo Rigby, Shin Kato, So Nishida, Misako Kusu, Hitomi Tokiwa
+              </div>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>Sponsor:</strong> Kimie Tomida
+              </div>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>Stage:</strong> Shoko Kikuchi
+              </div>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>Venue management:</strong> Aaron Nagy, Haruya Maki
+              </div>
+              <div>
+                <strong style={{ color: '#e2e8f0' }}>Volunteer Lead:</strong> Moeho Ohira, Haruya Maki, Ryo Kanda
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* ポスター拡大モーダル */}
