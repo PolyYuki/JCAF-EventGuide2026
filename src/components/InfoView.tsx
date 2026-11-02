@@ -116,18 +116,26 @@ export const InfoView: React.FC<InfoViewProps> = ({
             marginBottom: '14px'
           }}
         >
-          <img
-            src={eventInfo.logoUrl}
-            alt="JCAF Logo"
-            style={{
-              width: '84px',
-              height: '84px',
-              objectFit: 'contain',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid #f1f5f9',
-              flexShrink: 0
-            }}
-          />
+          <a
+            href="https://www.jcafmel.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="JCAF Official Website (https://www.jcafmel.com/)"
+            style={{ display: 'block', flexShrink: 0, textDecoration: 'none' }}
+          >
+            <img
+              src={eventInfo.logoUrl}
+              alt="JCAF Logo"
+              style={{
+                width: '84px',
+                height: '84px',
+                objectFit: 'contain',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid #f1f5f9',
+                display: 'block'
+              }}
+            />
+          </a>
           <div>
             <h2 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-sans)', fontWeight: 800, color: '#1e293b', margin: '0 0 6px' }}>
               {isJa ? eventInfo.nameJa : eventInfo.nameEn}
@@ -382,7 +390,11 @@ export const InfoView: React.FC<InfoViewProps> = ({
             {isJa ? eventInfo.organizerJa : eventInfo.organizerEn}
           </h3>
         </div>
-        <div
+        <a
+          href="https://www.jcafmel.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="JCAF Official Website (https://www.jcafmel.com/)"
           style={{
             background: '#ffffff',
             borderRadius: 'var(--radius-md)',
@@ -391,7 +403,9 @@ export const InfoView: React.FC<InfoViewProps> = ({
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+            textDecoration: 'none',
+            cursor: 'pointer'
           }}
         >
           <img
@@ -405,12 +419,36 @@ export const InfoView: React.FC<InfoViewProps> = ({
               display: 'block'
             }}
           />
-        </div>
+        </a>
         <p className={styles.jcafBannerText}>
           {isJa
             ? '日本文化芸術祭実行委員会（JCAF Committee）は、メルボルンにおける日本文化・芸術の振興と交流を目的に設立された非営利法人 Japan Culture and Art Foundation Inc (JCAF Inc)が主導する、有志ボランティアチームです。明るく、楽しく、誰もが参加できるイベント・コミュニティ作りを目指しています。'
             : 'The Japan Culture and Art Festival Committee (JCAF Committee) is a dedicated volunteer team led by Japan Culture and Art Foundation Inc (JCAF Inc), a non-profit organisation established to promote and foster Japanese culture and arts in Melbourne. We aim to create cheerful, fun, and inclusive events and community spaces where everyone can participate and connect.'}
         </p>
+        <div style={{ marginTop: '12px', textAlign: 'center' }}>
+          <a
+            href="https://www.jcafmel.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '0.85rem',
+              fontWeight: 700,
+              padding: '8px 18px',
+              backgroundColor: '#ffffff',
+              color: '#d81e35',
+              borderRadius: 'var(--radius-full)',
+              border: '1.5px solid var(--color-gold)',
+              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)',
+              textDecoration: 'none'
+            }}
+          >
+            <span>🌐 {isJa ? 'JCAF 公式ウェブサイト' : 'JCAF Official Website'}</span>
+            <ExternalLink size={14} />
+          </a>
+        </div>
       </div>
 
       {/* ポスター拡大モーダル */}
