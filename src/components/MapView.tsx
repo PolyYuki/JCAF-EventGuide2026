@@ -88,12 +88,14 @@ export const MapView: React.FC<MapViewProps> = ({
   // フィルター
   const [filterCategory, setFilterCategory] = useState<string>('all');
 
-  // ズーム・パン状態
-  const [scale, setScale] = useState<number>(1);
+  // ズーム・パン状態（モバイル初期表示でマップがはみ出さない安全なスケール0.4を初期値に）
+  const [scale, setScale] = useState<number>(0.4);
   const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const dragStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const viewportRef = useRef<HTMLDivElement>(null);
+  const hasUserInteractedRef = useRef<boolean>(false);
+  const hasFittedRef = useRef<boolean>(false);
 
   // マルチタッチ（ピンチズーム）追跡用Ref
   const activePointersRef = useRef<Map<number, { x: number; y: number }>>(new Map());
@@ -177,19 +179,98 @@ export const MapView: React.FC<MapViewProps> = ({
     }
   }, [selectedFacilityId, facilities]);
 
-  // 初期センタリング
+  // ビューポートサイズに合わせて全体を自動フィット＆中央揃えする関数
+  const fitMapToViewport = (force = false) => {
+    if (!viewportRef.current) return false;
+    const rect = viewportRef.current.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return false;
+
+    // 外部からのブース・施設指定がある場合はそちらのフォーカスを優先
+    if (!force && (selectedStallId || selectedFacilityId)) return true;
+
+    const initialScale = Math.min(rect.width / MAP_WIDTH, rect.height / MAP_HEIGHT) * 0.95;
+    const validScale = Math.max(0.35, Math.min(1.0, initialScale));
+    setScale(validScale);
+    setPosition({
+      x: (rect.width - MAP_WIDTH * validScale) / 2,
+      y: (rect.height - MAP_HEIGHT * validScale) / 2
+    });
+    return true;
+  };
+
+  // 初期センタリング & リサイズ監視（初回アクセス時のレイアウト未確定によるマップ非表示を確実に防止）
   useEffect(() => {
-    if (viewportRef.current && !selectedStallId && !selectedFacilityId) {
-      const rect = viewportRef.current.getBoundingClientRect();
-      const initialScale = Math.min(rect.width / MAP_WIDTH, rect.height / MAP_HEIGHT) * 0.95;
-      const validScale = Math.max(0.4, Math.min(1.0, initialScale));
-      setScale(validScale);
-      setPosition({
-        x: (rect.width - MAP_WIDTH * validScale) / 2,
-        y: (rect.height - MAP_HEIGHT * validScale) / 2
-      });
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    // 即時試行
+    if (fitMapToViewport()) {
+      hasFittedRef.current = true;
     }
-  }, []);
+
+    // 次のアニメーションフレームで再試行
+    const rafId = requestAnimationFrame(() => {
+      if (!hasUserInteractedRef.current && fitMapToViewport()) {
+        hasFittedRef.current = true;
+      }
+    });
+
+    // 短時間遅延での再試行（スタイル適用・Webフォント・セーフエリア計算完了を待機）
+    const t1 = setTimeout(() => {
+      if (!hasUserInteractedRef.current && fitMapToViewport()) {
+        hasFittedRef.current = true;
+      }
+    }, 60);
+
+    const t2 = setTimeout(() => {
+      if (!hasUserInteractedRef.current && fitMapToViewport()) {
+        hasFittedRef.current = true;
+      }
+    }, 250);
+
+    const t3 = setTimeout(() => {
+      if (!hasUserInteractedRef.current && fitMapToViewport()) {
+        hasFittedRef.current = true;
+      }
+    }, 600);
+
+    // ResizeObserver で要素の描画サイズが 0 から確定した瞬間を捕捉
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const { width, height } = entry.contentRect;
+          if (width > 0 && height > 0) {
+            if (!hasUserInteractedRef.current && (!hasFittedRef.current || scale === 0.4)) {
+              if (fitMapToViewport()) {
+                hasFittedRef.current = true;
+              }
+            }
+          }
+        }
+      });
+      ro.observe(viewport);
+    }
+
+    // ウィンドウリサイズ・画面回転
+    const handleWindowResize = () => {
+      if (!hasUserInteractedRef.current) {
+        fitMapToViewport();
+      }
+    };
+    window.addEventListener('resize', handleWindowResize);
+    window.addEventListener('orientationchange', handleWindowResize);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      if (ro) ro.disconnect();
+      window.removeEventListener('resize', handleWindowResize);
+      window.removeEventListener('orientationchange', handleWindowResize);
+    };
+  }, [selectedStallId, selectedFacilityId]);
 
   // 2点間のユークリッド距離
   const getDistance = (p1: { x: number; y: number }, p2: { x: number; y: number }) => {
@@ -206,6 +287,7 @@ export const MapView: React.FC<MapViewProps> = ({
 
   // パン & ピンチ操作（マルチタッチ対応）
   const handlePointerDown = (e: React.PointerEvent) => {
+    hasUserInteractedRef.current = true;
     try {
       (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
     } catch {
@@ -354,6 +436,7 @@ export const MapView: React.FC<MapViewProps> = ({
 
   // ズーム操作
   const handleZoom = (delta: number) => {
+    hasUserInteractedRef.current = true;
     setScale((prev) => {
       const next = Math.min(Math.max(0.4, prev + delta), 2.8);
       return Number(next.toFixed(2));
@@ -361,16 +444,8 @@ export const MapView: React.FC<MapViewProps> = ({
   };
 
   const handleReset = () => {
-    if (viewportRef.current) {
-      const rect = viewportRef.current.getBoundingClientRect();
-      const initialScale = Math.min(rect.width / MAP_WIDTH, rect.height / MAP_HEIGHT) * 0.95;
-      const validScale = Math.max(0.4, Math.min(1.0, initialScale));
-      setScale(validScale);
-      setPosition({
-        x: (rect.width - MAP_WIDTH * validScale) / 2,
-        y: (rect.height - MAP_HEIGHT * validScale) / 2
-      });
-    }
+    hasUserInteractedRef.current = false;
+    fitMapToViewport(true);
   };
 
   // フィルタリング (ブース番号がないスポンサーは出店しないためマップピンから除外)
@@ -762,6 +837,15 @@ export const MapView: React.FC<MapViewProps> = ({
             alt="JCAF Venue Map"
             className={styles.mapImage}
             draggable={false}
+            loading="eager"
+            decoding="async"
+            onLoad={() => {
+              if (!hasUserInteractedRef.current) {
+                if (fitMapToViewport()) {
+                  hasFittedRef.current = true;
+                }
+              }
+            }}
           />
 
           {/* --- メインステージ タップゾーン --- */}
