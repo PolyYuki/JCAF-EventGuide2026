@@ -274,14 +274,13 @@ const CustomNativeVideoPlayer: React.FC<{
           </span>
         </div>
 
-        {/* ボタン群（一時停止・再生・音声・最初から・全画面） */}
+        {/* ボタン群（一時停止・再生・音声・最初から・全画面：アイコンのみ＆色なし統一） */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: '8px',
-            flexWrap: 'wrap'
+            gap: '8px'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -289,54 +288,44 @@ const CustomNativeVideoPlayer: React.FC<{
             <button
               onClick={togglePlay}
               style={{
+                width: '36px',
+                height: '36px',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '5px',
-                background: isPlaying ? '#dc2626' : '#004aad',
+                justifyContent: 'center',
+                background: 'rgba(255, 255, 255, 0.1)',
                 color: '#ffffff',
-                border: 'none',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
                 borderRadius: '6px',
-                padding: '6px 14px',
-                fontSize: '0.8rem',
-                fontWeight: 700,
                 cursor: 'pointer',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.2)'
+                transition: 'all 0.15s ease'
               }}
               title={isPlaying ? '動画を一時停止' : '動画を再生'}
+              aria-label={isPlaying ? '動画を一時停止' : '動画を再生'}
             >
-              {isPlaying ? (
-                <>
-                  <Pause size={14} />
-                  <span>一時停止</span>
-                </>
-              ) : (
-                <>
-                  <Play size={14} />
-                  <span>再生</span>
-                </>
-              )}
+              {isPlaying ? <Pause size={16} /> : <Play size={16} />}
             </button>
 
             {/* 最初から再生ボタン */}
             <button
               onClick={handleRestart}
               style={{
+                width: '36px',
+                height: '36px',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '4px',
+                justifyContent: 'center',
                 background: 'rgba(255, 255, 255, 0.1)',
                 color: '#e2e8f0',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 borderRadius: '6px',
-                padding: '6px 10px',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                cursor: 'pointer'
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
               }}
               title="最初から再生"
+              aria-label="最初から再生"
             >
-              <RotateCcw size={13} />
-              <span>最初から</span>
+              <RotateCcw size={15} />
             </button>
           </div>
 
@@ -352,45 +341,36 @@ const CustomNativeVideoPlayer: React.FC<{
                   color: '#94a3b8',
                   border: '1px solid rgba(255, 255, 255, 0.15)',
                   borderRadius: '6px',
-                  padding: '6px 9px',
+                  padding: '5px 8px',
                   fontSize: '0.72rem',
                   fontWeight: 600
                 }}
                 title="この動画素材には音声が含まれていません（映像のみ）"
               >
                 <VolumeX size={13} style={{ opacity: 0.7 }} />
-                <span>音声なし（映像のみ）</span>
+                <span>音声なし</span>
               </span>
             ) : (
               /* 音声ミュートトグルボタン */
               <button
                 onClick={toggleMute}
                 style={{
+                  width: '36px',
+                  height: '36px',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  justifyContent: 'center',
                   background: 'rgba(255, 255, 255, 0.1)',
                   color: '#e2e8f0',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                   borderRadius: '6px',
-                  padding: '6px 10px',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
                 }}
                 title={isMuted ? 'ミュート解除（音声を出す）' : 'ミュートにする'}
+                aria-label={isMuted ? 'ミュート解除（音声を出す）' : 'ミュートにする'}
               >
-                {isMuted ? (
-                  <>
-                    <VolumeX size={14} />
-                    <span>消音</span>
-                  </>
-                ) : (
-                  <>
-                    <Volume2 size={14} />
-                    <span>音声</span>
-                  </>
-                )}
+                {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
               </button>
             )}
 
@@ -401,22 +381,22 @@ const CustomNativeVideoPlayer: React.FC<{
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
+                  width: '36px',
+                  height: '36px',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  justifyContent: 'center',
                   background: 'rgba(255, 255, 255, 0.1)',
                   color: '#e2e8f0',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                   borderRadius: '6px',
-                  padding: '6px 10px',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  textDecoration: 'none'
+                  textDecoration: 'none',
+                  transition: 'all 0.15s ease'
                 }}
                 title="Google Driveで大画面再生"
+                aria-label="Google Driveで大画面再生"
               >
-                <span>大画面</span>
-                <ExternalLink size={12} style={{ opacity: 0.8 }} />
+                <ExternalLink size={14} style={{ opacity: 0.85 }} />
               </a>
             )}
 
@@ -424,6 +404,8 @@ const CustomNativeVideoPlayer: React.FC<{
             <button
               onClick={handleFullscreen}
               style={{
+                width: '36px',
+                height: '36px',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -431,12 +413,13 @@ const CustomNativeVideoPlayer: React.FC<{
                 color: '#e2e8f0',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 borderRadius: '6px',
-                padding: '6px 8px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
               }}
               title="全画面表示"
+              aria-label="全画面表示"
             >
-              <Maximize2 size={14} />
+              <Maximize2 size={15} />
             </button>
           </div>
         </div>
@@ -591,86 +574,79 @@ const CustomDriveVideoPlayer: React.FC<{
         )}
       </div>
 
-      {/* Google Drive専用の操作コントロールバー */}
+      {/* Google Drive専用の操作コントロールバー（アイコンのみ＆色なし統一） */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
-          flexWrap: 'wrap'
+          justifyContent: 'center',
+          gap: '12px',
+          padding: '4px 0'
         }}
       >
         {!isPaused ? (
           <button
             onClick={handlePause}
             style={{
-              flex: 1,
-              minWidth: '130px',
+              width: '42px',
+              height: '42px',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '6px',
-              background: '#dc2626',
+              background: 'rgba(255, 255, 255, 0.1)',
               color: '#ffffff',
-              border: 'none',
-              borderRadius: '6px',
-              padding: '8px 12px',
-              fontSize: '0.82rem',
-              fontWeight: 700,
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '8px',
               cursor: 'pointer',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+              transition: 'all 0.15s ease'
             }}
             title="再生中の動画を一時停止"
+            aria-label="動画を一時停止"
           >
-            <Pause size={15} />
-            <span>動画を一時停止</span>
+            <Pause size={18} />
           </button>
         ) : (
           <button
             onClick={handlePlay}
             style={{
-              flex: 1,
-              minWidth: '130px',
+              width: '42px',
+              height: '42px',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '6px',
-              background: '#004aad',
+              background: 'rgba(255, 255, 255, 0.1)',
               color: '#ffffff',
-              border: 'none',
-              borderRadius: '6px',
-              padding: '8px 12px',
-              fontSize: '0.82rem',
-              fontWeight: 700,
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '8px',
               cursor: 'pointer',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+              transition: 'all 0.15s ease'
             }}
             title="動画の再生を再開"
+            aria-label="動画を再開"
           >
-            <Play size={15} />
-            <span>動画を再開</span>
+            <Play size={18} />
           </button>
         )}
 
         <button
           onClick={handleRestart}
           style={{
+            width: '42px',
+            height: '42px',
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '4px',
+            justifyContent: 'center',
             background: 'rgba(255, 255, 255, 0.1)',
             color: '#f8fafc',
             border: '1px solid rgba(255, 255, 255, 0.2)',
-            borderRadius: '6px',
-            padding: '8px 12px',
-            fontSize: '0.78rem',
-            fontWeight: 600,
-            cursor: 'pointer'
+            borderRadius: '8px',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease'
           }}
           title="動画を最初から再生"
+          aria-label="最初から再生"
         >
-          <RotateCcw size={13} />
-          <span>最初から</span>
+          <RotateCcw size={17} />
         </button>
 
         <a
@@ -678,24 +654,23 @@ const CustomDriveVideoPlayer: React.FC<{
           target="_blank"
           rel="noopener noreferrer"
           style={{
+            width: '42px',
+            height: '42px',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '5px',
-            padding: '8px 12px',
-            fontSize: '0.78rem',
-            fontWeight: 600,
-            color: '#f8fafc',
             background: 'rgba(255, 255, 255, 0.1)',
+            color: '#f8fafc',
             border: '1px solid rgba(255, 255, 255, 0.2)',
-            borderRadius: '6px',
+            borderRadius: '8px',
             textDecoration: 'none',
-            boxSizing: 'border-box'
+            cursor: 'pointer',
+            transition: 'all 0.15s ease'
           }}
           title="Google Driveで大画面再生"
+          aria-label="大画面で開く"
         >
-          <span>🎬 大画面で開く</span>
-          <ExternalLink size={12} style={{ opacity: 0.8 }} />
+          <ExternalLink size={17} style={{ opacity: 0.9 }} />
         </a>
       </div>
 
@@ -708,7 +683,7 @@ const CustomDriveVideoPlayer: React.FC<{
           textAlign: 'center'
         }}
       >
-        💡 スマートフォンで動画プレイヤー内の一時停止ボタンが表示されない場合は、上の「一時停止」ボタンを押して停止できます。
+        💡 スマートフォンで動画プレイヤー内の一時停止ボタンが表示されない場合は、上の「一時停止」アイコンボタンを押して停止できます。
       </div>
     </div>
   );
