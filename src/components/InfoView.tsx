@@ -537,7 +537,7 @@ export const InfoView: React.FC<InfoViewProps> = ({
                 <strong style={{ color: '#e2e8f0' }}>Venue management:</strong> Aaron Nagy, Haruya Maki
               </div>
               <div>
-                <strong style={{ color: '#e2e8f0' }}>Volunteer Lead:</strong> Moeho Ohira, Haruya Maki, Ryo Kanda
+                <strong style={{ color: '#e2e8f0' }}>Volunteer Lead:</strong> Moeho Ohira, Hina, Haruya Maki, Ryo Kanda
               </div>
             </div>
           </div>
