@@ -244,7 +244,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div
               className="ticker-marquee-track"
               style={{
-                animationDuration: nowPerformances.length > 0 ? '22s' : '14s'
+                animationDuration: nowPerformances.length > 0 ? '26s' : '18s'
               }}
             >
               <span className="ticker-marquee-item">{tickerText}</span>
