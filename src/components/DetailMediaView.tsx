@@ -79,8 +79,8 @@ export const KNOWN_DRIVE_VIDEOS = new Set([
  */
 export const LOCAL_DRIVE_VIDEOS: Record<string, string> = {
   '1alVEMP7UT_sw4TV4NBd3JHpCRGfClRYU': '/videos/japan-homes.mp4', // Japan Homes
-  '1ndTGbnsCBiYPSBJhxhS76xaYpzsmUjrk': '/videos/ezy-tax-solutions.mp4',
-  '15atto9tD_cHy9Pw7kEiIPeM_F3sVvTWW': '/videos/ezy-tax-solutions.mp4',
+  '1ndTGbnsCBiYPSBJhxhS76xaYpzsmUjrk': '/videos/ezy-tax-solutions.mp4?v=2',
+  '15atto9tD_cHy9Pw7kEiIPeM_F3sVvTWW': '/videos/ezy-tax-solutions.mp4?v=2',
   '1q7qsRqhuB-KGsHglrxRhc-iC_zGwgGm2': '/videos/isuzu.mp4', // いすゞ
   '1U-GqDvmJGSvCE6VRknMBp0gPKNxPzhzC': '/videos/nagomi.mp4', // Nagomi&Co
   '1cHZoRKc5AQUF5asclOGmQNKIkod02v4H': '/videos/hojicha.mp4', // 芳香園ほうじ茶
