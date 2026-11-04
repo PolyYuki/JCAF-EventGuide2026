@@ -307,12 +307,51 @@ export const InfoView: React.FC<InfoViewProps> = ({
               style={{ cursor: onShowFacilityOnMap ? 'pointer' : 'default' }}
               onClick={() => onShowFacilityOnMap && onShowFacilityOnMap(fac.id)}
             >
-              <div
-                className={styles.facilityItemIcon}
-                style={{ backgroundColor: getFacilityTheme(fac.type).bg, color: getFacilityTheme(fac.type).color }}
-              >
-                {renderFacilityIcon(fac.type)}
-              </div>
+              {fac.photoUrl || fac.imageUrl ? (
+                <div style={{ position: 'relative', flexShrink: 0 }}>
+                  <img
+                    src={fac.photoUrl || fac.imageUrl}
+                    alt={isJa ? fac.nameJa : fac.nameEn}
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: 'var(--radius-md)',
+                      objectFit: 'cover',
+                      border: '1px solid var(--color-border-light)',
+                      display: 'block'
+                    }}
+                    onError={(e) => {
+                      (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: '-3px',
+                      right: '-3px',
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '3px',
+                      background: getFacilityTheme(fac.type).bg,
+                      color: getFacilityTheme(fac.type).color,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '9px',
+                      border: '1px solid #ffffff'
+                    }}
+                  >
+                    {renderFacilityIcon(fac.type)}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className={styles.facilityItemIcon}
+                  style={{ backgroundColor: getFacilityTheme(fac.type).bg, color: getFacilityTheme(fac.type).color }}
+                >
+                  {renderFacilityIcon(fac.type)}
+                </div>
+              )}
               <div className={styles.facilityItemContent}>
                 <div className={styles.facilityItemName}>
                   {isJa ? fac.nameJa : fac.nameEn}

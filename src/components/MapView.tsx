@@ -1113,23 +1113,57 @@ export const MapView: React.FC<MapViewProps> = ({
 
           {selectedItem.type === 'facility' && selectedItem.facility && (() => {
             const facTheme = getFacilityTheme(selectedItem.facility.type);
+            const photo = selectedItem.facility.photoUrl || selectedItem.facility.imageUrl;
             return (
               <>
-                <div
-                  style={{
-                    width: '42px',
-                    height: '42px',
-                    borderRadius: 'var(--radius-md)',
-                    background: facTheme.bg,
-                    color: facTheme.color,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0
-                  }}
-                >
-                  {renderFacilityIcon(selectedItem.facility.type)}
-                </div>
+                {photo ? (
+                  <div style={{ position: 'relative', flexShrink: 0 }}>
+                    <img
+                      src={photo}
+                      alt={isJa ? selectedItem.facility.nameJa : selectedItem.facility.nameEn}
+                      className={styles.detailThumbnail}
+                      style={{ objectFit: 'cover' }}
+                      onError={(e) => {
+                        (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: '-4px',
+                        right: '-4px',
+                        width: '20px',
+                        height: '20px',
+                        borderRadius: '4px',
+                        background: facTheme.bg,
+                        color: facTheme.color,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                        border: '1px solid #ffffff'
+                      }}
+                    >
+                      {renderFacilityIcon(selectedItem.facility.type)}
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      width: '42px',
+                      height: '42px',
+                      borderRadius: 'var(--radius-md)',
+                      background: facTheme.bg,
+                      color: facTheme.color,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}
+                  >
+                    {renderFacilityIcon(selectedItem.facility.type)}
+                  </div>
+                )}
                 <div className={styles.detailInfo}>
                   <span
                     className={styles.detailBoothBadge}

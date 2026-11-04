@@ -940,7 +940,18 @@ export async function loadFacilitiesData(): Promise<{ data: Facility[]; isFromRe
           const rawX = Number(getVal(row, 'mapX', 'map_x', 'X', 'x', 'Ｘ', 'マップX', 'マップＸ', 'X座標', 'Ｘ座標'));
           const rawY = Number(getVal(row, 'mapY', 'map_y', 'Y', 'y', 'Ｙ', 'マップY', 'マップＹ', 'Y座標', 'Ｙ座標'));
 
-          return {
+          const rawLogoUrl = getVal(row, 'logo', 'Logo', 'LOGO', 'ロゴ', 'ロゴURL', 'アイコン画像');
+          const rawPhotoUrl = getVal(
+            row,
+            'photo', 'Photo', 'PHOTO', '写真', '写真URL', '写真のリンク', '写真リンク',
+            '画像', '画像URL', '画像のリンク', '画像リンク',
+            'photoUrl', 'imageUrl', 'image', 'Image', 'IMAGE'
+          ) || getValContaining(row, '写真', 'photo', '画像', 'image');
+
+          const imageUrl = rawLogoUrl ? formatImageUrl(rawLogoUrl) : undefined;
+          const photoUrl = rawPhotoUrl ? formatImageUrl(rawPhotoUrl) : undefined;
+
+          const facility: Facility = {
             id: getVal(row, 'id', 'ID') || `fac-${index + 1}`,
             type,
             nameJa: nameJa || nameEn,
@@ -948,8 +959,11 @@ export async function loadFacilitiesData(): Promise<{ data: Facility[]; isFromRe
             descJa,
             descEn,
             mapX: !isNaN(rawX) && rawX > 0 ? rawX : 50,
-            mapY: !isNaN(rawY) && rawY > 0 ? rawY : 50
+            mapY: !isNaN(rawY) && rawY > 0 ? rawY : 50,
+            imageUrl,
+            photoUrl: photoUrl || imageUrl
           };
+          return facility;
         })
         .filter((f): f is Facility => f !== null);
 

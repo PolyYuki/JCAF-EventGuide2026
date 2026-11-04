@@ -86,6 +86,8 @@ export interface Facility {
   descEn: string;
   mapX: number; // percentage (0 - 100)
   mapY: number; // percentage (0 - 100)
+  imageUrl?: string;
+  photoUrl?: string;
 }
 
 export interface EventInfo {
