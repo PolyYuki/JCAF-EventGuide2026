@@ -758,6 +758,8 @@ function translateFacilityNameEn(nameJa: string, type: Facility['type']): string
       return 'Entrance Gate';
     case 'welcome':
       return 'Welcome Table';
+    case 'lucky_draw':
+      return 'Lucky Draw ($2)';
     case 'no_entry':
       return 'Do Not Enter Area';
     case 'toilet':
@@ -838,6 +840,8 @@ function translateFacilityDescEn(descJa: string, _nameJa: string, type: Facility
       return 'Venue entrance & access point';
     case 'welcome':
       return 'Welcome board, exhibition & event brochures';
+    case 'lucky_draw':
+      return 'Lucky Draw raffle booth ($2 per entry)';
     case 'no_entry':
       return 'Restricted area / Under construction (Do not enter)';
     case 'toilet':
@@ -886,6 +890,19 @@ export async function loadFacilitiesData(): Promise<{ data: Facility[]; isFromRe
             rawName.includes('do not enter')
           ) {
             type = 'no_entry';
+          } else if (
+            rawType.includes('lucky') ||
+            rawType.includes('draw') ||
+            rawType.includes('raffle') ||
+            rawType.includes('抽選') ||
+            rawType.includes('ガラガラ') ||
+            rawName.includes('lucky draw') ||
+            rawName.includes('luckydraw') ||
+            rawName.includes('抽選') ||
+            rawName.includes('ガラガラ') ||
+            rawName.includes('raffle')
+          ) {
+            type = 'lucky_draw';
           } else if (
             rawType.includes('welcome') ||
             rawName.includes('ウェルカム') ||

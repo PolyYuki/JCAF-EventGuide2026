@@ -69,6 +69,7 @@ export type FacilityType =
   | 'toilet'
   | 'info'
   | 'welcome'
+  | 'lucky_draw'
   | 'no_entry'
   | 'firstaid'
   | 'food_court'

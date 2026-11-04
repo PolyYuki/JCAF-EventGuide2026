@@ -13,6 +13,7 @@ import {
   Info,
   ShieldAlert,
   Sparkles,
+  Gift,
   Ban,
   Coffee,
   Trash2,
@@ -469,6 +470,8 @@ export const MapView: React.FC<MapViewProps> = ({
         return <Info size={13} strokeWidth={2.5} />;
       case 'welcome':
         return <Sparkles size={13} strokeWidth={2.5} />;
+      case 'lucky_draw':
+        return <Gift size={13} strokeWidth={2.4} />;
       case 'no_entry':
         return <Ban size={13} strokeWidth={2.5} />;
       case 'firstaid':
@@ -492,6 +495,8 @@ export const MapView: React.FC<MapViewProps> = ({
         return { bg: '#dc2626', color: '#ffffff', labelJa: '立入禁止', labelEn: 'Do Not Enter' };
       case 'welcome':
         return { bg: '#059669', color: '#ffffff', labelJa: 'ウェルカム', labelEn: 'Welcome' };
+      case 'lucky_draw':
+        return { bg: '#ea580c', color: '#ffffff', labelJa: 'ガラガラ抽選', labelEn: 'Lucky Draw' };
       case 'info':
         return { bg: '#0284c7', color: '#ffffff', labelJa: '総合案内', labelEn: 'Information' };
       case 'firstaid':

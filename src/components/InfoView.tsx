@@ -14,6 +14,7 @@ import {
   Navigation,
   Info,
   Sparkles,
+  Gift,
   Ban,
   Coffee,
   Trash2,
@@ -53,6 +54,8 @@ export const InfoView: React.FC<InfoViewProps> = ({
         return <Info size={14} strokeWidth={2.5} />;
       case 'welcome':
         return <Sparkles size={14} strokeWidth={2.5} />;
+      case 'lucky_draw':
+        return <Gift size={14} strokeWidth={2.4} />;
       case 'no_entry':
         return <Ban size={14} strokeWidth={2.5} />;
       case 'firstaid':
@@ -76,6 +79,8 @@ export const InfoView: React.FC<InfoViewProps> = ({
         return { bg: '#dc2626', color: '#ffffff' };
       case 'welcome':
         return { bg: '#059669', color: '#ffffff' };
+      case 'lucky_draw':
+        return { bg: '#ea580c', color: '#ffffff' };
       case 'info':
         return { bg: '#0284c7', color: '#ffffff' };
       case 'firstaid':
