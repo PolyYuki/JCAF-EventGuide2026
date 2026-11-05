@@ -69,7 +69,7 @@
 .mapControls {
   position: absolute;
   right: 12px;
-  bottom: calc(var(--bottom-nav-height, 64px) + env(safe-area-inset-bottom, 16px) + 130px);
+  bottom: calc(var(--bottom-nav-height, 64px) + env(safe-area-inset-bottom, 16px) + 16px);
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -288,6 +288,12 @@
 }
 
 @media (max-width: 600px) {
+  .mapControls {
+    right: 10px;
+    bottom: calc(var(--bottom-nav-height, 64px) + env(safe-area-inset-bottom, 16px) + 14px);
+    gap: 5px;
+  }
+
   .detailPopup,
   .detailBottomCard {
     bottom: calc(var(--bottom-nav-height, 64px) + env(safe-area-inset-bottom, 16px) + 40px);
