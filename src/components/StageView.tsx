@@ -35,13 +35,11 @@ const InstagramIcon: React.FC<{ size?: number; style?: React.CSSProperties }> = 
 interface StageViewProps {
   stages: StagePerformance[];
   initialStageFilter?: 'all' | 'stage' | 'outdoor';
-  onShowStageOnMap?: (stageId: string) => void;
 }
 
 export const StageView: React.FC<StageViewProps> = ({
   stages,
-  initialStageFilter = 'all',
-  onShowStageOnMap
+  initialStageFilter = 'all'
 }) => {
   const { lang, t } = useLanguage();
   const isJa = lang === 'ja';
@@ -438,19 +436,6 @@ export const StageView: React.FC<StageViewProps> = ({
                         </a>
                       )}
 
-                      {onShowStageOnMap && (
-                        <button
-                          className="btn btn-outline"
-                          style={{ width: '100%', fontSize: '0.75rem', padding: '6px' }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onShowStageOnMap(perf.stageId);
-                          }}
-                        >
-                          <MapPin size={13} />
-                          <span>{isJa ? '地図でこのステージの場所を見る' : 'View stage on map'}</span>
-                        </button>
-                      )}
                     </div>
                   </div>
                   );

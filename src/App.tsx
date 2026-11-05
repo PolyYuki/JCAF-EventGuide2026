@@ -97,11 +97,6 @@ const AppContent: React.FC = () => {
     setActiveTab('map');
   };
 
-  // ステージから「地図で見る」をクリックした時
-  const handleShowStageOnMap = (_stageId: string) => {
-    setActiveTab('map');
-  };
-
   // 施設から「地図で見る」をクリックした時
   const handleShowFacilityOnMap = (facilityId: string) => {
     setFocusedStallId(null);
@@ -173,7 +168,6 @@ const AppContent: React.FC = () => {
           <StageView
             stages={stages}
             initialStageFilter={focusedStageArea}
-            onShowStageOnMap={handleShowStageOnMap}
           />
         )}
 
