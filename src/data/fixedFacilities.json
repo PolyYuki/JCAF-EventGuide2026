@@ -1,0 +1,104 @@
+[
+  {
+    "id": "fac-1",
+    "type": "entrance",
+    "nameJa": "正面入口 (Hoddle St)",
+    "nameEn": "Main Entrance",
+    "descJa": "正面入口",
+    "descEn": "Main Entrance on Hoddle St.",
+    "mapX": 94.5,
+    "mapY": 28.2
+  },
+  {
+    "id": "fac-2",
+    "type": "entrance",
+    "nameJa": "裏口 (Eddy Ct)",
+    "nameEn": "Back Entrance",
+    "descJa": "Collingwood駅徒歩1分",
+    "descEn": "Back Entrance on Eddy Ct. 1-minute walk from Collingwood station.",
+    "mapX": 6.1,
+    "mapY": 30.3
+  },
+  {
+    "id": "fac-3",
+    "type": "welcome",
+    "nameJa": "ウェルカムテーブル",
+    "nameEn": "Welcome Table",
+    "descJa": "生け花展示、ウェルカムボード、チラシ、イベントガイド（QRコード、紙面）",
+    "descEn": "Ikebana exhibitions, Welcome board, leaflets, event guides (QR codes, printed versions)",
+    "mapX": 85.3,
+    "mapY": 30.7,
+    "photoUrl": "https://drive.google.com/thumbnail?id=1lgzDab60QTbRNHYRuUsZTcw6iJzJK-Qk&sz=w1000"
+  },
+  {
+    "id": "fac-4",
+    "type": "info",
+    "nameJa": "インフォメーション",
+    "nameEn": "Information",
+    "descJa": "総合案内、ドリンク販売",
+    "descEn": "General Enquiries, Drinks on Sale",
+    "mapX": 64.5,
+    "mapY": 26.8
+  },
+  {
+    "id": "fac-5",
+    "type": "lucky_draw",
+    "nameJa": "抽選会 ($2)",
+    "nameEn": "Lucky Draw ($2)",
+    "descJa": "ガラガラ抽選",
+    "descEn": "Lucky Draw",
+    "mapX": 67,
+    "mapY": 26.8,
+    "photoUrl": "https://drive.google.com/thumbnail?id=1qpnBTvKdy-puXjsu7HsjgGwoE6aadE-M&sz=w1000"
+  },
+  {
+    "id": "fac-6",
+    "type": "toilet",
+    "nameJa": "トイレ (メインホール横)",
+    "nameEn": "Toilet (Main Hall)",
+    "descJa": "Toilet (Main Hall)",
+    "descEn": "Toilet (Main Hall)",
+    "mapX": 67.2,
+    "mapY": 39.2
+  },
+  {
+    "id": "fac-7",
+    "type": "toilet",
+    "nameJa": "トイレ (キッチン横)",
+    "nameEn": "Toilet (Beside Kitchen)",
+    "descJa": "Toilet (Beside Kitchen)",
+    "descEn": "Toilet (Beside Kitchen)",
+    "mapX": 30.1,
+    "mapY": 35.1
+  },
+  {
+    "id": "fac-8",
+    "type": "firstaid",
+    "nameJa": "救護車 Emergency First Aid",
+    "nameEn": "First Aid",
+    "descJa": "気分が悪くなったり、怪我をされた場合は、ファーストエイドまたは最寄りのスタッフへお声がけください。",
+    "descEn": "If you feel unwell or have sustained an injury, please contact the first-aid team or a member of staff nearby.",
+    "mapX": 90.3,
+    "mapY": 60.8
+  },
+  {
+    "id": "fac-9",
+    "type": "toilet",
+    "nameJa": "トイレ (DC/Courtyard横)",
+    "nameEn": "Toilet (DC/Courtyard)",
+    "descJa": "Toilet (DC/Courtyard)",
+    "descEn": "Toilet (DC/Courtyard)",
+    "mapX": 12.5,
+    "mapY": 81.5
+  },
+  {
+    "id": "fac-10",
+    "type": "no_entry",
+    "nameJa": "立入禁止（建設中）",
+    "nameEn": "Do Not Enter (Under construction)",
+    "descJa": "建設中のため、ロープで囲まれたエリアへの立入は禁止です。",
+    "descEn": "As construction work is in progress, entry to the area cordoned off with ropes is prohibited.",
+    "mapX": 75.2,
+    "mapY": 65
+  }
+]

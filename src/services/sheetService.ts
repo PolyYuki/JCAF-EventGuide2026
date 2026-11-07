@@ -1,6 +1,7 @@
 import Papa from 'papaparse';
 import type { Stall, StagePerformance, Facility, StallCategory, PerformanceArea } from '../types';
-import { getBoothCoordinates } from '../data/boothCoordinates';
+import { getBoothCoordinates } from '../data/boothCoordinates.ts';
+import { initialStalls, initialStages, initialFacilities } from '../data/mockData.ts';
 
 const STORAGE_KEYS = {
   // 個別7シートURL
@@ -506,11 +507,11 @@ export async function loadStallsData(): Promise<{ data: Stall[]; isFromRemote: b
           // ignore
         }
       }
-      return { data: [], isFromRemote: false, error: errorMessage };
+      return { data: initialStalls, isFromRemote: false, error: errorMessage };
     }
   }
 
-  // URL未指定の場合はキャッシュまたは空配列
+  // URL未指定の場合はキャッシュまたは固定データ
   const cached = localStorage.getItem(STORAGE_KEYS.CACHED_STALLS);
   if (cached) {
     try {
@@ -523,7 +524,7 @@ export async function loadStallsData(): Promise<{ data: Stall[]; isFromRemote: b
     }
   }
 
-  return { data: [], isFromRemote: false };
+  return { data: initialStalls, isFromRemote: false };
 }
 
 /**
@@ -670,7 +671,15 @@ export async function loadStagesData(): Promise<{ data: StagePerformance[]; isFr
     } catch (err: unknown) {
       console.warn('Failed to fetch stages from sheets:', err);
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      return { data: [], isFromRemote: false, error: errorMessage };
+      const cached = localStorage.getItem(STORAGE_KEYS.CACHED_STAGES);
+      if (cached) {
+        try {
+          return { data: JSON.parse(cached), isFromRemote: false, error: errorMessage };
+        } catch {
+          // ignore
+        }
+      }
+      return { data: initialStages, isFromRemote: false, error: errorMessage };
     }
   }
 
@@ -683,7 +692,7 @@ export async function loadStagesData(): Promise<{ data: StagePerformance[]; isFr
     }
   }
 
-  return { data: [], isFromRemote: false };
+  return { data: initialStages, isFromRemote: false };
 }
 
 /**
@@ -988,7 +997,7 @@ export async function loadFacilitiesData(): Promise<{ data: Facility[]; isFromRe
     }
   }
 
-  return { data: [], isFromRemote: false };
+  return { data: initialFacilities, isFromRemote: false };
 }
 
 /**

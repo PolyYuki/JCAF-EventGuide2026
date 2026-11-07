@@ -22,10 +22,14 @@ export const initialEventInfo: EventInfo = {
   announcementEn: 'Welcome to JCAF 2026! Sunday, Nov 8, 11:00 AM - 4:00 PM.  |  Lucky Draw NOW ON! Just $2 per entry!'
 };
 
-// 内蔵サンプルデータは全削除（スプレッドシートから動的に読み込みます）
-export const initialStalls: Stall[] = [];
-export const initialStages: StagePerformance[] = [];
-export const initialFacilities: Facility[] = [];
+import fixedStalls from './fixedStalls.json';
+import fixedStages from './fixedStages.json';
+import fixedFacilities from './fixedFacilities.json';
+
+// 確定固定データ（オフライン時や初回ロード時に即時表示されるバンドルデータ）
+export const initialStalls: Stall[] = fixedStalls as Stall[];
+export const initialStages: StagePerformance[] = fixedStages as StagePerformance[];
+export const initialFacilities: Facility[] = fixedFacilities as Facility[];
 
 export const initialFaqs: FaqItem[] = [
   {

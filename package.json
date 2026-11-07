@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "export-data": "node --experimental-strip-types scripts/exportFixedData.ts",
     "lint": "oxlint",
     "preview": "vite preview"
   },
